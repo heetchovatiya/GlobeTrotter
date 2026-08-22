@@ -17,6 +17,13 @@ export const BottomNav: React.FC = () => {
 
   const isActive = (path: string) => {
     if (path === '/') return location.pathname === '/';
+    if (path === '/trips') {
+      return (
+        location.pathname === '/trips' ||
+        (location.pathname.startsWith('/trips/') &&
+          !location.pathname.startsWith('/trips/new'))
+      );
+    }
     return location.pathname.startsWith(path);
   };
 

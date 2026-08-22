@@ -11,6 +11,16 @@ import { Modal } from '../components/common/Modal';
 import { Skeleton } from '../components/common/Skeleton';
 import { Price } from '../components/common/Price';
 import { useUIStore } from '../store/uiStore';
+import { EditTripModal } from '../components/trips/EditTripModal';
+import { DownloadPlanButton } from '../components/trip/DownloadPlanButton';
+import { TripMobileActionBar } from '../components/trip/TripMobileActionBar';
+import { TripRouteMap } from '../components/trip/TripRouteMap';
+import { AddExpenseModal } from '../components/expenses/AddExpenseModal';
+import { ExpenseList } from '../components/expenses/ExpenseList';
+import { expensesApi } from '../api/expenses';
+import { tripsApi } from '../api/trips';
+import { Expense } from '../types';
+import { formatTripDuration } from '../utils/validation';
 import {
   Calendar,
   Share2,
@@ -25,6 +35,7 @@ import {
   Compass,
   Users,
   IndianRupee,
+  Copy,
 } from 'lucide-react';
 
 export const ItineraryView: React.FC = () => {
@@ -38,6 +49,11 @@ export const ItineraryView: React.FC = () => {
   const [expandedDays, setExpandedDays] = useState<number[]>([1, 2]); // Expand Day 1 and 2 by default
   const [isShareModalOpen, setIsShareModalOpen] = useState(false);
   const [shareUrl, setShareUrl] = useState('');
+  const [editTripOpen, setEditTripOpen] = useState(false);
+  const [expenseModalOpen, setExpenseModalOpen] = useState(false);
+  const [expenses, setExpenses] = useState<Expense[]>([]);
+  const [expensesLoading, setExpensesLoading] = useState(false);
+  const [duplicating, setDuplicating] = useState(false);
 
   useEffect(() => {
     const loadData = async () => {
@@ -45,6 +61,9 @@ export const ItineraryView: React.FC = () => {
       try {
         const res = await itineraryApi.getItinerary(id || '1');
         setItinerary(res);
+        if (res.days.length > 0) {
+          setExpandedDays([res.days[0].day_number]);
+        }
       } catch (err) {
         console.error('Failed to load itinerary:', err);
       } finally {
@@ -53,6 +72,49 @@ export const ItineraryView: React.FC = () => {
     };
     loadData();
   }, [id]);
+
+  const reloadItinerary = async () => {
+    if (!id) return;
+    const res = await itineraryApi.getItinerary(id);
+    setItinerary(res);
+  };
+
+  const loadExpenses = async () => {
+    if (!id) return;
+    setExpensesLoading(true);
+    try {
+      const rows = await expensesApi.listExpenses(id);
+      setExpenses(rows);
+    } catch {
+      /* optional */
+    } finally {
+      setExpensesLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    if (activeTab === 'budget' && id) {
+      loadExpenses();
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [activeTab, id]);
+
+  const handleDeleteExpense = async (expenseId: number) => {
+    if (!id) return;
+    try {
+      await expensesApi.deleteExpense(id, expenseId);
+      showToast('success', 'Expense removed.');
+      await loadExpenses();
+      await reloadItinerary();
+    } catch {
+      showToast('error', 'Could not delete expense.');
+    }
+  };
+
+  const handleExpenseSaved = async () => {
+    await loadExpenses();
+    await reloadItinerary();
+  };
 
   const toggleDayExpansion = (dayNumber: number) => {
     setExpandedDays((prev) =>
@@ -81,7 +143,21 @@ export const ItineraryView: React.FC = () => {
   };
 
   const handleAddExpense = () => {
-    showToast('info', 'Manual expense logging is not available yet. Budget is calculated from itinerary sections.');
+    setExpenseModalOpen(true);
+  };
+
+  const handleDuplicateTrip = async () => {
+    if (!id) return;
+    setDuplicating(true);
+    try {
+      const res = await tripsApi.duplicateTrip(id);
+      showToast('success', 'Trip duplicated!');
+      navigate(`/trips/${res.trip_id}/confirmed`);
+    } catch {
+      showToast('error', 'Could not duplicate trip.');
+    } finally {
+      setDuplicating(false);
+    }
   };
 
   if (loading || !itinerary) {
@@ -98,9 +174,23 @@ export const ItineraryView: React.FC = () => {
   }
 
   const { trip, days, budget } = itinerary;
+  const durationLabel = formatTripDuration(trip.start_date, trip.end_date);
 
   return (
-    <div className="space-y-8 pb-16">
+    <div className="space-y-8 pb-28 sm:pb-16">
+      <EditTripModal
+        trip={trip}
+        isOpen={editTripOpen}
+        onClose={() => setEditTripOpen(false)}
+        onSaved={async (updated) => {
+          setItinerary((prev) =>
+            prev ? { ...prev, trip: { ...prev.trip, ...updated } } : prev
+          );
+          showToast('success', 'Trip details updated.');
+          const res = await itineraryApi.getItinerary(id || trip.id);
+          setItinerary(res);
+        }}
+      />
       {/* Hero Header for Itinerary (Screen 9 wireframe) */}
       <div className="relative rounded-3xl overflow-hidden bg-slate-900 text-white min-h-[260px] flex flex-col justify-end p-6 sm:p-8 shadow-card">
         <img
@@ -117,7 +207,17 @@ export const ItineraryView: React.FC = () => {
             </Badge>
 
             {/* Actions */}
-            <div className="flex items-center gap-2">
+            <div className="flex flex-wrap items-center gap-2">
+              <DownloadPlanButton tripId={trip.id} variant="glass" size="sm" />
+              <Button
+                variant="glass"
+                size="sm"
+                isLoading={duplicating}
+                onClick={handleDuplicateTrip}
+                leftIcon={<Copy className="h-4 w-4" />}
+              >
+                Duplicate
+              </Button>
               <Button
                 variant="glass"
                 size="sm"
@@ -133,6 +233,14 @@ export const ItineraryView: React.FC = () => {
                 leftIcon={<Share2 className="h-4 w-4" />}
               >
                 Copy Link
+              </Button>
+              <Button
+                variant="glass"
+                size="sm"
+                onClick={() => setEditTripOpen(true)}
+                leftIcon={<Edit3 className="h-4 w-4" />}
+              >
+                Edit Trip
               </Button>
               <Link to={`/trips/${trip.id}/build`}>
                 <Button
@@ -163,6 +271,7 @@ export const ItineraryView: React.FC = () => {
             <span className="flex items-center gap-1.5">
               <Calendar className="h-4 w-4 text-brand-400" />
               {trip.start_date} – {trip.end_date}
+              <span className="text-brand-300">({durationLabel})</span>
             </span>
             <span className="flex items-center gap-1.5">
               Budget: <Price amount={budget.total_budget} /> (
@@ -172,6 +281,8 @@ export const ItineraryView: React.FC = () => {
           </div>
         </div>
       </div>
+
+      <TripRouteMap tripId={trip.id} />
 
       {/* Navigation Tabs (Timeline vs Budget) */}
       <div className="flex items-center justify-between bg-white p-2 rounded-2xl border border-slate-200/80 shadow-soft">
@@ -327,6 +438,14 @@ export const ItineraryView: React.FC = () => {
       {activeTab === 'budget' && (
         <div className="space-y-6">
           <BudgetOverview budget={budget} />
+          <div className="space-y-3">
+            <h3 className="text-sm font-bold text-slate-900">Manual expenses</h3>
+            <ExpenseList
+              expenses={expenses}
+              loading={expensesLoading}
+              onDelete={handleDeleteExpense}
+            />
+          </div>
         </div>
       )}
 
@@ -360,6 +479,17 @@ export const ItineraryView: React.FC = () => {
           </div>
         </div>
       </Modal>
+
+      <TripMobileActionBar tripId={trip.id} onShare={handleShareTrip} />
+
+      <AddExpenseModal
+        tripId={trip.id}
+        tripStartDate={trip.start_date}
+        tripEndDate={trip.end_date}
+        isOpen={expenseModalOpen}
+        onClose={() => setExpenseModalOpen(false)}
+        onSaved={handleExpenseSaved}
+      />
     </div>
   );
 };

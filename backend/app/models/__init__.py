@@ -26,6 +26,7 @@ class UserRole(str, enum.Enum):
 
 
 class TripStatus(str, enum.Enum):
+    draft = "draft"
     planning = "planning"
     ongoing = "ongoing"
     completed = "completed"
@@ -215,6 +216,9 @@ class Expense(Base):
     section_id: Mapped[int | None] = mapped_column(
         ForeignKey("trip_sections.id", ondelete="SET NULL"), nullable=True
     )
+    note: Mapped[str | None] = mapped_column(Text, nullable=True)
+    expense_date: Mapped[date | None] = mapped_column(Date, nullable=True)
+    receipt_url: Mapped[str | None] = mapped_column(String(512), nullable=True)
 
     trip: Mapped["Trip"] = relationship(back_populates="expenses")
     section: Mapped["TripSection | None"] = relationship(back_populates="expenses")

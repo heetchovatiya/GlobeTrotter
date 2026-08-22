@@ -23,7 +23,8 @@ python -m venv venv
 source venv/bin/activate   # on Windows: venv\Scripts\activate
 pip install -r requirements.txt
 alembic upgrade head
-python -m app.seed
+python -m app.seed          # loads seed_destinations.json (88 cities, 440 activities)
+python -m app.seed --force  # refresh after updating the seed file
 uvicorn app.main:app --reload
 
 # 3. Frontend (new terminal)

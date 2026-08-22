@@ -1,13 +1,16 @@
 import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { Trip } from '../../types';
 import { Badge } from '../common/Badge';
 import { Price } from '../common/Price';
 import { Modal } from '../common/Modal';
 import { Button } from '../common/Button';
-import { Calendar, MapPin, ArrowRight, Share2, Edit3, Trash2, Eye } from 'lucide-react';
+import { Calendar, MapPin, ArrowRight, Share2, Edit3, Trash2, Eye, Printer, Copy } from 'lucide-react';
+import { DownloadPlanButton } from '../trip/DownloadPlanButton';
 import { useUIStore } from '../../store/uiStore';
+import { formatTripDuration, tripDurationDays } from '../../utils/validation';
 import { sharingApi } from '../../api/sharing';
+import { tripsApi } from '../../api/trips';
 
 interface TripCardProps {
   trip: Trip;
@@ -22,12 +25,16 @@ export const TripCard: React.FC<TripCardProps> = ({
   onDelete,
   compact = false,
 }) => {
+  const navigate = useNavigate();
   const { showToast } = useUIStore();
   const [confirmDelete, setConfirmDelete] = useState(false);
+  const [duplicating, setDuplicating] = useState(false);
   const stopsCount = destinationCount ?? trip.stops?.length ?? 0;
 
   const getStatusBadge = (status: Trip['status']) => {
     switch (status) {
+      case 'draft':
+        return <Badge variant="default">Draft</Badge>;
       case 'ongoing':
         return <Badge variant="success">Ongoing</Badge>;
       case 'upcoming':
@@ -56,6 +63,21 @@ export const TripCard: React.FC<TripCardProps> = ({
     setConfirmDelete(false);
   };
 
+  const handleDuplicate = async (e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setDuplicating(true);
+    try {
+      const res = await tripsApi.duplicateTrip(trip.id);
+      showToast('success', 'Trip duplicated!');
+      navigate(`/trips/${res.trip_id}/confirmed`);
+    } catch {
+      showToast('error', 'Could not duplicate trip.');
+    } finally {
+      setDuplicating(false);
+    }
+  };
+
   const formattedDates = `${new Date(trip.start_date).toLocaleDateString('en-US', {
     month: 'short',
     day: 'numeric',
@@ -64,6 +86,8 @@ export const TripCard: React.FC<TripCardProps> = ({
     day: 'numeric',
     year: 'numeric',
   })}`;
+  const durationLabel = formatTripDuration(trip.start_date, trip.end_date);
+  const isDayTrip = tripDurationDays(trip.start_date, trip.end_date) === 1;
 
   if (compact) {
     return (
@@ -145,6 +169,11 @@ export const TripCard: React.FC<TripCardProps> = ({
               <div className="flex items-center gap-1.5">
                 <Calendar className="h-4 w-4 text-brand-500" />
                 <span>{formattedDates}</span>
+                {durationLabel && (
+                  <span className="text-brand-700 font-semibold">
+                    · {isDayTrip ? 'Day trip' : durationLabel}
+                  </span>
+                )}
               </div>
               <div className="flex items-center gap-1.5">
                 <MapPin className="h-4 w-4 text-brand-500" />
@@ -184,6 +213,26 @@ export const TripCard: React.FC<TripCardProps> = ({
                 <Eye className="h-3.5 w-3.5" />
                 <span>View</span>
               </Link>
+
+              <Link
+                to={`/trips/${trip.id}/print`}
+                className="inline-flex items-center gap-1.5 text-xs font-semibold text-slate-600 hover:text-slate-900 bg-slate-100 hover:bg-slate-200 px-3 py-1.5 rounded-xl transition-colors"
+              >
+                <Printer className="h-3.5 w-3.5" />
+                <span>Print</span>
+              </Link>
+
+              <DownloadPlanButton tripId={trip.id} variant="ghost" size="sm" />
+
+              <button
+                type="button"
+                disabled={duplicating}
+                onClick={handleDuplicate}
+                className="inline-flex items-center gap-1.5 text-xs font-semibold text-slate-600 hover:text-slate-900 bg-slate-100 hover:bg-slate-200 px-3 py-1.5 rounded-xl transition-colors disabled:opacity-50"
+              >
+                <Copy className="h-3.5 w-3.5" />
+                <span>{duplicating ? 'Copying…' : 'Duplicate'}</span>
+              </button>
 
               {onDelete && (
                 <button

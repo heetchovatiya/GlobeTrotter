@@ -14,13 +14,13 @@ export interface User {
   created_at: string;
 }
 
-export type TripStatus = 'planning' | 'ongoing' | 'upcoming' | 'completed';
+export type TripStatus = 'draft' | 'planning' | 'ongoing' | 'upcoming' | 'completed';
 
 export interface City {
   id: number;
   name: string;
   country: string;
-  cost_index: number; // 1-5 scale or monetary index
+  cost_index: number; // 0–100 affordability index from API (legacy mocks may use 1–5)
   popularity_score: number; // 1-100
   image_url: string;
   description?: string;
@@ -102,8 +102,61 @@ export interface Expense {
   category: ExpenseCategory;
   amount: number;
   section_id?: number;
-  date?: string;
+  expense_date?: string;
   note?: string;
+  receipt_url?: string;
+  is_manual?: boolean;
+}
+
+export interface LedgerRow {
+  trip_id: number;
+  trip_name: string;
+  status: TripStatus;
+  start_date: string;
+  end_date: string;
+  planned_budget: number;
+  total_spent: number;
+  variance: number;
+}
+
+export interface LedgerTotals {
+  trip_count: number;
+  total_planned: number;
+  total_spent: number;
+  total_variance: number;
+}
+
+export interface TravelLedger {
+  rows: LedgerRow[];
+  totals: LedgerTotals;
+  filters_applied: Record<string, string | null>;
+}
+
+export interface TripTemplate {
+  id: string;
+  name: string;
+  description: string;
+  duration_days: number;
+  city_names: string[];
+  stop_count: number;
+  section_count: number;
+}
+
+export interface RouteStop {
+  order_index: number;
+  city_id: number;
+  city_name: string;
+  country: string;
+  latitude: number;
+  longitude: number;
+  arrival_date?: string;
+  departure_date?: string;
+}
+
+export interface TripRoute {
+  trip_id: number;
+  trip_name: string;
+  stops: RouteStop[];
 }
 
 export interface CategoryExpense {

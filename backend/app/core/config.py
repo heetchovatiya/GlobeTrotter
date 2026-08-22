@@ -13,6 +13,8 @@ class Settings(BaseSettings):
     JWT_ALGORITHM: str = "HS256"
     ACCESS_TOKEN_EXPIRE_MINUTES: int = 60 * 24
     FRONTEND_URL: str = "http://localhost:5173"
+    # Optional — Unsplash search for city cover photos (falls back to Wikimedia Commons)
+    UNSPLASH_ACCESS_KEY: str = ""
     # Comma-separated list of allowed browser origins for CORS (dev may use 127.0.0.1 or alternate ports)
     CORS_ORIGINS: str = ""
 

@@ -4,7 +4,7 @@ from datetime import date, timedelta
 from fastapi import HTTPException, status
 from sqlalchemy.orm import Session, selectinload
 
-from app.crud.trips import derive_trip_status, get_owned_trip
+from app.crud.trips import get_owned_trip, resolve_trip_status
 from app.models import Stop, Trip, TripActivity, TripSection, User
 from app.schemas.views import (
     ActivityPublic,
@@ -104,6 +104,6 @@ def build_itinerary_response(trip: Trip) -> ItineraryResponse:
         name=trip.name,
         start_date=trip.start_date,
         end_date=trip.end_date,
-        status=derive_trip_status(trip.start_date, trip.end_date),
+        status=resolve_trip_status(trip),
         days=days,
     )

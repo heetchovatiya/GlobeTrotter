@@ -1,6 +1,7 @@
-from sqlalchemy.orm import Session
+from sqlalchemy.orm import Session, joinedload
 
 from app.models import Activity, ActivityType, City
+from app.services.city_images import ensure_city_images
 
 
 def list_cities(
@@ -29,7 +30,9 @@ def list_cities(
 
     if limit is not None:
         query = query.limit(limit)
-    return query.all()
+    cities = query.all()
+    ensure_city_images(db, cities)
+    return cities
 
 
 def list_activities(
@@ -43,7 +46,7 @@ def list_activities(
     sort: str | None = None,
     limit: int | None = None,
 ) -> list[Activity]:
-    query = db.query(Activity)
+    query = db.query(Activity).options(joinedload(Activity.city))
     if q:
         like = f"%{q.strip()}%"
         query = query.filter(Activity.name.ilike(like))
@@ -75,4 +78,8 @@ def list_activities(
 
     if limit is not None:
         query = query.limit(limit)
-    return query.all()
+    activities = query.all()
+    for activity in activities:
+        if not activity.image_url and activity.city and activity.city.image_url:
+            activity.image_url = activity.city.image_url
+    return activities

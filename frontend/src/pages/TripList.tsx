@@ -7,7 +7,8 @@ import { TripCard } from '../components/trips/TripCard';
 import { Button } from '../components/common/Button';
 import { Skeleton } from '../components/common/Skeleton';
 import { useUIStore } from '../store/uiStore';
-import { Plus, Search, SlidersHorizontal, MapPin } from 'lucide-react';
+import { Plus, Search, SlidersHorizontal, MapPin, Download } from 'lucide-react';
+import { exportsApi } from '../api/exports';
 
 type TripWithStops = Trip & { destinationCount: number };
 
@@ -59,6 +60,7 @@ export const TripList: React.FC = () => {
 
   const tabs: { label: string; value: 'all' | TripStatus }[] = [
     { label: 'All Itineraries', value: 'all' },
+    { label: 'Drafts', value: 'draft' },
     { label: 'Ongoing', value: 'ongoing' },
     { label: 'Upcoming', value: 'upcoming' },
     { label: 'Completed', value: 'completed' },
@@ -94,11 +96,29 @@ export const TripList: React.FC = () => {
           </p>
         </div>
 
-        <Link to="/trips/new">
-          <Button variant="primary" leftIcon={<Plus className="h-4 w-4" />} className="shadow-md shadow-brand-500/20">
-            Plan New Trip
-          </Button>
-        </Link>
+        <div className="flex flex-wrap items-center gap-2">
+          {trips.length > 0 && (
+            <Button
+              variant="outline"
+              leftIcon={<Download className="h-4 w-4" />}
+              onClick={async () => {
+                try {
+                  await exportsApi.downloadAllTripsCsv();
+                  showToast('success', 'Trips export downloaded.');
+                } catch {
+                  showToast('error', 'Could not export trips.');
+                }
+              }}
+            >
+              Export all (CSV)
+            </Button>
+          )}
+          <Link to="/trips/new">
+            <Button variant="primary" leftIcon={<Plus className="h-4 w-4" />} className="shadow-md shadow-brand-500/20">
+              Plan New Trip
+            </Button>
+          </Link>
+        </div>
       </div>
 
       <div className="flex flex-col md:flex-row items-center justify-between gap-4 bg-white p-4 rounded-2xl border border-slate-200/80 shadow-soft">

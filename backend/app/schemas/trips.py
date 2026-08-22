@@ -7,10 +7,11 @@ from app.models import ExpenseCategory, SectionType, TripStatus
 
 class TripCreate(BaseModel):
     name: str = Field(min_length=1, max_length=255)
-    start_date: date
-    end_date: date
+    start_date: date | None = None
+    end_date: date | None = None
     description: str | None = None
     cover_photo_url: str | None = Field(default=None, max_length=512)
+    save_as_draft: bool = False
 
 
 class TripUpdate(BaseModel):
@@ -20,6 +21,7 @@ class TripUpdate(BaseModel):
     description: str | None = None
     cover_photo_url: str | None = Field(default=None, max_length=512)
     is_public: bool | None = None
+    status: TripStatus | None = None
 
 
 class TripPublic(BaseModel):

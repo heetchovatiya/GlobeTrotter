@@ -7,7 +7,7 @@ import { useUIStore } from '../store/uiStore';
 import { Button } from '../components/common/Button';
 import { Badge } from '../components/common/Badge';
 import { Skeleton } from '../components/common/Skeleton';
-import { Price } from '../components/common/Price';
+import { Price, useFormatPrice } from '../components/common/Price';
 import { BudgetOverview } from '../components/budget/BudgetOverview';
 import {
   Copy,
@@ -35,6 +35,7 @@ export const PublicTrip: React.FC = () => {
   const [notFound, setNotFound] = useState(false);
   const [isCopying, setIsCopying] = useState(false);
   const [activeTab, setActiveTab] = useState<'timeline' | 'budget'>('timeline');
+  const formatPrice = useFormatPrice();
 
   const publicUrl = useMemo(
     () => (slug ? `${window.location.origin}/t/${slug}` : ''),
@@ -203,7 +204,7 @@ export const PublicTrip: React.FC = () => {
           <h2 className="text-sm font-bold text-slate-900 uppercase tracking-wide">Itinerary Summary</h2>
           <p className="mt-2 text-sm text-slate-600 leading-relaxed">
             {trip.description ||
-              `A ${days.length}-day travel plan with ${days.reduce((sum, d) => sum + d.sections.length, 0)} scheduled sections and an estimated budget of ${budget.total_budget}.`}
+              `A ${days.length}-day travel plan with ${days.reduce((sum, d) => sum + d.sections.length, 0)} scheduled sections and an estimated budget of ${formatPrice(budget.total_budget)}.`}
           </p>
         </div>
 

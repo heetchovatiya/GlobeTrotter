@@ -3,6 +3,8 @@ import { Activity } from '../../types';
 import { Badge } from '../common/Badge';
 import { Price } from '../common/Price';
 import { Button } from '../common/Button';
+import { SafeImage } from '../common/SafeImage';
+import { DEFAULT_ACTIVITY_IMAGE } from '../../constants/images';
 import { Clock, Plus, Check, Eye } from 'lucide-react';
 
 interface ActivityCardProps {
@@ -46,8 +48,9 @@ export const ActivityCard: React.FC<ActivityCardProps> = ({
         onClick={() => onQuickView?.(activity)}
         className="relative h-44 w-full overflow-hidden bg-slate-100 text-left"
       >
-        <img
+        <SafeImage
           src={activity.image_url}
+          fallback={DEFAULT_ACTIVITY_IMAGE}
           alt={activity.name}
           className="h-full w-full object-cover group-hover:scale-105 transition-transform duration-300"
         />

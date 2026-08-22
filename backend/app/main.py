@@ -11,6 +11,8 @@ from app.routers import (
     budget,
     cities,
     community,
+    expenses,
+    exports,
     itinerary,
     sections,
     sharing,
@@ -33,6 +35,8 @@ app.add_middleware(
 app.include_router(auth.router, prefix="/auth", tags=["auth"])
 app.include_router(users.router, prefix="/users", tags=["users"])
 app.include_router(trips.router, prefix="/trips", tags=["trips"])
+app.include_router(exports.router, tags=["exports"])
+app.include_router(expenses.router, tags=["expenses"])
 app.include_router(stops.router, tags=["stops"])
 app.include_router(sections.router, tags=["sections"])
 app.include_router(cities.router, prefix="/cities", tags=["cities"])

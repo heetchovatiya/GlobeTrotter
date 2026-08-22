@@ -1,0 +1,3788 @@
+{
+  "cities": [
+    {
+      "name": "Delhi",
+      "country": "India",
+      "cost_index": 40,
+      "image": "https://commons.wikimedia.org/wiki/Special:FilePath/Delhi.jpg",
+      "places": [
+        {
+          "name": "India Gate",
+          "Activity type": "sightseeing",
+          "duration_minutes": 60,
+          "estimated_cost": 0,
+          "image": "https://commons.wikimedia.org/wiki/Special:FilePath/India_Gate_Delhi.jpg"
+        },
+        {
+          "name": "Red Fort",
+          "Activity type": "historical",
+          "duration_minutes": 120,
+          "estimated_cost": 50,
+          "image": "https://commons.wikimedia.org/wiki/Special:FilePath/Red_Fort_Delhi.jpg"
+        },
+        {
+          "name": "Qutub Minar",
+          "Activity type": "historical",
+          "duration_minutes": 120,
+          "estimated_cost": 50,
+          "image": "https://commons.wikimedia.org/wiki/Special:FilePath/Qutub_Minar_Delhi.jpg"
+        },
+        {
+          "name": "Old Delhi Food Walk",
+          "Activity type": "food tour",
+          "duration_minutes": 150,
+          "estimated_cost": 800,
+          "image": "https://commons.wikimedia.org/wiki/Special:FilePath/Old_Delhi_Food_Walk_Delhi.jpg"
+        },
+        {
+          "name": "Humayun's Tomb",
+          "Activity type": "historical",
+          "duration_minutes": 90,
+          "estimated_cost": 50,
+          "image": "https://commons.wikimedia.org/wiki/Special:FilePath/Humayun's_Tomb_Delhi.jpg"
+        }
+      ]
+    },
+    {
+      "name": "Agra",
+      "country": "India",
+      "cost_index": 28,
+      "image": "https://commons.wikimedia.org/wiki/Special:FilePath/Agra.jpg",
+      "places": [
+        {
+          "name": "Taj Mahal",
+          "Activity type": "historical",
+          "duration_minutes": 180,
+          "estimated_cost": 50,
+          "image": "https://commons.wikimedia.org/wiki/Special:FilePath/Taj_Mahal_Agra.jpg"
+        },
+        {
+          "name": "Agra Fort",
+          "Activity type": "historical",
+          "duration_minutes": 120,
+          "estimated_cost": 50,
+          "image": "https://commons.wikimedia.org/wiki/Special:FilePath/Agra_Fort_Agra.jpg"
+        },
+        {
+          "name": "Mehtab Bagh",
+          "Activity type": "sightseeing",
+          "duration_minutes": 90,
+          "estimated_cost": 50,
+          "image": "https://commons.wikimedia.org/wiki/Special:FilePath/Mehtab_Bagh_Agra.jpg"
+        },
+        {
+          "name": "Fatehpur Sikri",
+          "Activity type": "historical",
+          "duration_minutes": 180,
+          "estimated_cost": 50,
+          "image": "https://commons.wikimedia.org/wiki/Special:FilePath/Fatehpur_Sikri_Agra.jpg"
+        },
+        {
+          "name": "Agra Mughlai Food Tour",
+          "Activity type": "food tour",
+          "duration_minutes": 150,
+          "estimated_cost": 1000,
+          "image": "https://commons.wikimedia.org/wiki/Special:FilePath/Agra_Mughlai_Food_Tour_Agra.jpg"
+        }
+      ]
+    },
+    {
+      "name": "Jaipur",
+      "country": "India",
+      "cost_index": 30,
+      "image": "https://commons.wikimedia.org/wiki/Special:FilePath/Jaipur.jpg",
+      "places": [
+        {
+          "name": "Amber Fort",
+          "Activity type": "historical",
+          "duration_minutes": 180,
+          "estimated_cost": 100,
+          "image": "https://commons.wikimedia.org/wiki/Special:FilePath/Amber_Fort_Jaipur.jpg"
+        },
+        {
+          "name": "Hawa Mahal",
+          "Activity type": "sightseeing",
+          "duration_minutes": 60,
+          "estimated_cost": 50,
+          "image": "https://commons.wikimedia.org/wiki/Special:FilePath/Hawa_Mahal_Jaipur.jpg"
+        },
+        {
+          "name": "City Palace",
+          "Activity type": "historical",
+          "duration_minutes": 120,
+          "estimated_cost": 200,
+          "image": "https://commons.wikimedia.org/wiki/Special:FilePath/City_Palace_Jaipur.jpg"
+        },
+        {
+          "name": "Jantar Mantar",
+          "Activity type": "historical",
+          "duration_minutes": 90,
+          "estimated_cost": 50,
+          "image": "https://commons.wikimedia.org/wiki/Special:FilePath/Jantar_Mantar_Jaipur.jpg"
+        },
+        {
+          "name": "Jaipur Street Food Tour",
+          "Activity type": "food tour",
+          "duration_minutes": 150,
+          "estimated_cost": 1000,
+          "image": "https://commons.wikimedia.org/wiki/Special:FilePath/Jaipur_Street_Food_Tour_Jaipur.jpg"
+        }
+      ]
+    },
+    {
+      "name": "Udaipur",
+      "country": "India",
+      "cost_index": 32,
+      "image": "https://commons.wikimedia.org/wiki/Special:FilePath/Udaipur.jpg",
+      "places": [
+        {
+          "name": "City Palace",
+          "Activity type": "historical",
+          "duration_minutes": 150,
+          "estimated_cost": 400,
+          "image": "https://commons.wikimedia.org/wiki/Special:FilePath/City_Palace_Udaipur.jpg"
+        },
+        {
+          "name": "Lake Pichola Boat Ride",
+          "Activity type": "sightseeing",
+          "duration_minutes": 90,
+          "estimated_cost": 700,
+          "image": "https://commons.wikimedia.org/wiki/Special:FilePath/Lake_Pichola_Boat_Ride_Udaipur.jpg"
+        },
+        {
+          "name": "Sajjangarh Monsoon Palace",
+          "Activity type": "sightseeing",
+          "duration_minutes": 120,
+          "estimated_cost": 150,
+          "image": "https://commons.wikimedia.org/wiki/Special:FilePath/Sajjangarh_Monsoon_Palace_Udaipur.jpg"
+        },
+        {
+          "name": "Bagore Ki Haveli",
+          "Activity type": "historical",
+          "duration_minutes": 90,
+          "estimated_cost": 100,
+          "image": "https://commons.wikimedia.org/wiki/Special:FilePath/Bagore_Ki_Haveli_Udaipur.jpg"
+        },
+        {
+          "name": "Udaipur Food Walk",
+          "Activity type": "food tour",
+          "duration_minutes": 150,
+          "estimated_cost": 900,
+          "image": "https://commons.wikimedia.org/wiki/Special:FilePath/Udaipur_Food_Walk_Udaipur.jpg"
+        }
+      ]
+    },
+    {
+      "name": "Jodhpur",
+      "country": "India",
+      "cost_index": 30,
+      "image": "https://commons.wikimedia.org/wiki/Special:FilePath/Jodhpur.jpg",
+      "places": [
+        {
+          "name": "Mehrangarh Fort",
+          "Activity type": "historical",
+          "duration_minutes": 150,
+          "estimated_cost": 200,
+          "image": "https://commons.wikimedia.org/wiki/Special:FilePath/Mehrangarh_Fort_Jodhpur.jpg"
+        },
+        {
+          "name": "Jaswant Thada",
+          "Activity type": "historical",
+          "duration_minutes": 60,
+          "estimated_cost": 50,
+          "image": "https://commons.wikimedia.org/wiki/Special:FilePath/Jaswant_Thada_Jodhpur.jpg"
+        },
+        {
+          "name": "Umaid Bhawan Palace",
+          "Activity type": "historical",
+          "duration_minutes": 120,
+          "estimated_cost": 100,
+          "image": "https://commons.wikimedia.org/wiki/Special:FilePath/Umaid_Bhawan_Palace_Jodhpur.jpg"
+        },
+        {
+          "name": "Blue City Walking Tour",
+          "Activity type": "sightseeing",
+          "duration_minutes": 150,
+          "estimated_cost": 800,
+          "image": "https://commons.wikimedia.org/wiki/Special:FilePath/Blue_City_Walking_Tour_Jodhpur.jpg"
+        },
+        {
+          "name": "Jodhpur Food Tour",
+          "Activity type": "food tour",
+          "duration_minutes": 150,
+          "estimated_cost": 900,
+          "image": "https://commons.wikimedia.org/wiki/Special:FilePath/Jodhpur_Food_Tour_Jodhpur.jpg"
+        }
+      ]
+    },
+    {
+      "name": "Jaisalmer",
+      "country": "India",
+      "cost_index": 27,
+      "image": "https://commons.wikimedia.org/wiki/Special:FilePath/Jaisalmer.jpg",
+      "places": [
+        {
+          "name": "Jaisalmer Fort",
+          "Activity type": "historical",
+          "duration_minutes": 120,
+          "estimated_cost": 0,
+          "image": "https://commons.wikimedia.org/wiki/Special:FilePath/Jaisalmer_Fort_Jaisalmer.jpg"
+        },
+        {
+          "name": "Patwon Ki Haveli",
+          "Activity type": "historical",
+          "duration_minutes": 60,
+          "estimated_cost": 100,
+          "image": "https://commons.wikimedia.org/wiki/Special:FilePath/Patwon_Ki_Haveli_Jaisalmer.jpg"
+        },
+        {
+          "name": "Sam Sand Dunes",
+          "Activity type": "adventure",
+          "duration_minutes": 180,
+          "estimated_cost": 1200,
+          "image": "https://commons.wikimedia.org/wiki/Special:FilePath/Sam_Sand_Dunes_Jaisalmer.jpg"
+        },
+        {
+          "name": "Desert Camel Safari",
+          "Activity type": "adventure",
+          "duration_minutes": 120,
+          "estimated_cost": 800,
+          "image": "https://commons.wikimedia.org/wiki/Special:FilePath/Desert_Camel_Safari_Jaisalmer.jpg"
+        },
+        {
+          "name": "Jaisalmer Food Walk",
+          "Activity type": "food tour",
+          "duration_minutes": 120,
+          "estimated_cost": 700,
+          "image": "https://commons.wikimedia.org/wiki/Special:FilePath/Jaisalmer_Food_Walk_Jaisalmer.jpg"
+        }
+      ]
+    },
+    {
+      "name": "Amritsar",
+      "country": "India",
+      "cost_index": 27,
+      "image": "https://commons.wikimedia.org/wiki/Special:FilePath/Amritsar.jpg",
+      "places": [
+        {
+          "name": "Golden Temple",
+          "Activity type": "sightseeing",
+          "duration_minutes": 120,
+          "estimated_cost": 0,
+          "image": "https://commons.wikimedia.org/wiki/Special:FilePath/Golden_Temple_Amritsar.jpg"
+        },
+        {
+          "name": "Jallianwala Bagh",
+          "Activity type": "historical",
+          "duration_minutes": 60,
+          "estimated_cost": 0,
+          "image": "https://commons.wikimedia.org/wiki/Special:FilePath/Jallianwala_Bagh_Amritsar.jpg"
+        },
+        {
+          "name": "Wagah Border Ceremony",
+          "Activity type": "sightseeing",
+          "duration_minutes": 180,
+          "estimated_cost": 0,
+          "image": "https://commons.wikimedia.org/wiki/Special:FilePath/Wagah_Border_Ceremony_Amritsar.jpg"
+        },
+        {
+          "name": "Partition Museum",
+          "Activity type": "historical",
+          "duration_minutes": 90,
+          "estimated_cost": 150,
+          "image": "https://commons.wikimedia.org/wiki/Special:FilePath/Partition_Museum_Amritsar.jpg"
+        },
+        {
+          "name": "Amritsari Food Tour",
+          "Activity type": "food tour",
+          "duration_minutes": 150,
+          "estimated_cost": 900,
+          "image": "https://commons.wikimedia.org/wiki/Special:FilePath/Amritsari_Food_Tour_Amritsar.jpg"
+        }
+      ]
+    },
+    {
+      "name": "Chandigarh",
+      "country": "India",
+      "cost_index": 35,
+      "image": "https://commons.wikimedia.org/wiki/Special:FilePath/Chandigarh.jpg",
+      "places": [
+        {
+          "name": "Rock Garden",
+          "Activity type": "sightseeing",
+          "duration_minutes": 90,
+          "estimated_cost": 50,
+          "image": "https://commons.wikimedia.org/wiki/Special:FilePath/Rock_Garden_Chandigarh.jpg"
+        },
+        {
+          "name": "Sukhna Lake",
+          "Activity type": "sightseeing",
+          "duration_minutes": 90,
+          "estimated_cost": 0,
+          "image": "https://commons.wikimedia.org/wiki/Special:FilePath/Sukhna_Lake_Chandigarh.jpg"
+        },
+        {
+          "name": "Capitol Complex",
+          "Activity type": "historical",
+          "duration_minutes": 90,
+          "estimated_cost": 0,
+          "image": "https://commons.wikimedia.org/wiki/Special:FilePath/Capitol_Complex_Chandigarh.jpg"
+        },
+        {
+          "name": "Rose Garden",
+          "Activity type": "sightseeing",
+          "duration_minutes": 60,
+          "estimated_cost": 0,
+          "image": "https://commons.wikimedia.org/wiki/Special:FilePath/Rose_Garden_Chandigarh.jpg"
+        },
+        {
+          "name": "Chandigarh Food Walk",
+          "Activity type": "food tour",
+          "duration_minutes": 120,
+          "estimated_cost": 800,
+          "image": "https://commons.wikimedia.org/wiki/Special:FilePath/Chandigarh_Food_Walk_Chandigarh.jpg"
+        }
+      ]
+    },
+    {
+      "name": "Shimla",
+      "country": "India",
+      "cost_index": 33,
+      "image": "https://commons.wikimedia.org/wiki/Special:FilePath/Shimla.jpg",
+      "places": [
+        {
+          "name": "The Ridge",
+          "Activity type": "sightseeing",
+          "duration_minutes": 60,
+          "estimated_cost": 0,
+          "image": "https://commons.wikimedia.org/wiki/Special:FilePath/The_Ridge_Shimla.jpg"
+        },
+        {
+          "name": "Mall Road",
+          "Activity type": "sightseeing",
+          "duration_minutes": 120,
+          "estimated_cost": 0,
+          "image": "https://commons.wikimedia.org/wiki/Special:FilePath/Mall_Road_Shimla.jpg"
+        },
+        {
+          "name": "Christ Church",
+          "Activity type": "historical",
+          "duration_minutes": 60,
+          "estimated_cost": 0,
+          "image": "https://commons.wikimedia.org/wiki/Special:FilePath/Christ_Church_Shimla.jpg"
+        },
+        {
+          "name": "Jakhoo Temple",
+          "Activity type": "sightseeing",
+          "duration_minutes": 90,
+          "estimated_cost": 0,
+          "image": "https://commons.wikimedia.org/wiki/Special:FilePath/Jakhoo_Temple_Shimla.jpg"
+        },
+        {
+          "name": "Shimla Cafe & Food Walk",
+          "Activity type": "food tour",
+          "duration_minutes": 120,
+          "estimated_cost": 800,
+          "image": "https://commons.wikimedia.org/wiki/Special:FilePath/Shimla_Cafe_%26_Food_Walk_Shimla.jpg"
+        }
+      ]
+    },
+    {
+      "name": "Manali",
+      "country": "India",
+      "cost_index": 30,
+      "image": "https://commons.wikimedia.org/wiki/Special:FilePath/Manali.jpg",
+      "places": [
+        {
+          "name": "Solang Valley",
+          "Activity type": "adventure",
+          "duration_minutes": 180,
+          "estimated_cost": 500,
+          "image": "https://commons.wikimedia.org/wiki/Special:FilePath/Solang_Valley_Manali.jpg"
+        },
+        {
+          "name": "Rohtang Pass",
+          "Activity type": "adventure",
+          "duration_minutes": 240,
+          "estimated_cost": 800,
+          "image": "https://commons.wikimedia.org/wiki/Special:FilePath/Rohtang_Pass_Manali.jpg"
+        },
+        {
+          "name": "Hadimba Temple",
+          "Activity type": "historical",
+          "duration_minutes": 60,
+          "estimated_cost": 0,
+          "image": "https://commons.wikimedia.org/wiki/Special:FilePath/Hadimba_Temple_Manali.jpg"
+        },
+        {
+          "name": "Old Manali",
+          "Activity type": "sightseeing",
+          "duration_minutes": 120,
+          "estimated_cost": 0,
+          "image": "https://commons.wikimedia.org/wiki/Special:FilePath/Old_Manali_Manali.jpg"
+        },
+        {
+          "name": "Himalayan Food Walk",
+          "Activity type": "food tour",
+          "duration_minutes": 120,
+          "estimated_cost": 700,
+          "image": "https://commons.wikimedia.org/wiki/Special:FilePath/Himalayan_Food_Walk_Manali.jpg"
+        }
+      ]
+    },
+    {
+      "name": "Dharamshala",
+      "country": "India",
+      "cost_index": 26,
+      "image": "https://commons.wikimedia.org/wiki/Special:FilePath/Dharamshala.jpg",
+      "places": [
+        {
+          "name": "Tsuglagkhang Complex",
+          "Activity type": "sightseeing",
+          "duration_minutes": 90,
+          "estimated_cost": 0,
+          "image": "https://commons.wikimedia.org/wiki/Special:FilePath/Tsuglagkhang_Complex_Dharamshala.jpg"
+        },
+        {
+          "name": "Namgyal Monastery",
+          "Activity type": "historical",
+          "duration_minutes": 60,
+          "estimated_cost": 0,
+          "image": "https://commons.wikimedia.org/wiki/Special:FilePath/Namgyal_Monastery_Dharamshala.jpg"
+        },
+        {
+          "name": "Triund Trek",
+          "Activity type": "adventure",
+          "duration_minutes": 360,
+          "estimated_cost": 500,
+          "image": "https://commons.wikimedia.org/wiki/Special:FilePath/Triund_Trek_Dharamshala.jpg"
+        },
+        {
+          "name": "Bhagsu Waterfall",
+          "Activity type": "sightseeing",
+          "duration_minutes": 120,
+          "estimated_cost": 0,
+          "image": "https://commons.wikimedia.org/wiki/Special:FilePath/Bhagsu_Waterfall_Dharamshala.jpg"
+        },
+        {
+          "name": "Tibetan Food Tour",
+          "Activity type": "food tour",
+          "duration_minutes": 120,
+          "estimated_cost": 700,
+          "image": "https://commons.wikimedia.org/wiki/Special:FilePath/Tibetan_Food_Tour_Dharamshala.jpg"
+        }
+      ]
+    },
+    {
+      "name": "Rishikesh",
+      "country": "India",
+      "cost_index": 28,
+      "image": "https://commons.wikimedia.org/wiki/Special:FilePath/Rishikesh.jpg",
+      "places": [
+        {
+          "name": "River Rafting",
+          "Activity type": "adventure",
+          "duration_minutes": 180,
+          "estimated_cost": 1500,
+          "image": "https://commons.wikimedia.org/wiki/Special:FilePath/River_Rafting_Rishikesh.jpg"
+        },
+        {
+          "name": "Laxman Jhula Area",
+          "Activity type": "sightseeing",
+          "duration_minutes": 90,
+          "estimated_cost": 0,
+          "image": "https://commons.wikimedia.org/wiki/Special:FilePath/Laxman_Jhula_Area_Rishikesh.jpg"
+        },
+        {
+          "name": "Triveni Ghat Ganga Aarti",
+          "Activity type": "sightseeing",
+          "duration_minutes": 90,
+          "estimated_cost": 0,
+          "image": "https://commons.wikimedia.org/wiki/Special:FilePath/Triveni_Ghat_Ganga_Aarti_Rishikesh.jpg"
+        },
+        {
+          "name": "Beatles Ashram",
+          "Activity type": "historical",
+          "duration_minutes": 90,
+          "estimated_cost": 150,
+          "image": "https://commons.wikimedia.org/wiki/Special:FilePath/Beatles_Ashram_Rishikesh.jpg"
+        },
+        {
+          "name": "Ganga Side Food Walk",
+          "Activity type": "food tour",
+          "duration_minutes": 120,
+          "estimated_cost": 600,
+          "image": "https://commons.wikimedia.org/wiki/Special:FilePath/Ganga_Side_Food_Walk_Rishikesh.jpg"
+        }
+      ]
+    },
+    {
+      "name": "Nainital",
+      "country": "India",
+      "cost_index": 27,
+      "image": "https://commons.wikimedia.org/wiki/Special:FilePath/Nainital.jpg",
+      "places": [
+        {
+          "name": "Naini Lake Boating",
+          "Activity type": "adventure",
+          "duration_minutes": 90,
+          "estimated_cost": 500,
+          "image": "https://commons.wikimedia.org/wiki/Special:FilePath/Naini_Lake_Boating_Nainital.jpg"
+        },
+        {
+          "name": "Naina Devi Temple",
+          "Activity type": "sightseeing",
+          "duration_minutes": 60,
+          "estimated_cost": 0,
+          "image": "https://commons.wikimedia.org/wiki/Special:FilePath/Naina_Devi_Temple_Nainital.jpg"
+        },
+        {
+          "name": "Snow View Point",
+          "Activity type": "sightseeing",
+          "duration_minutes": 90,
+          "estimated_cost": 300,
+          "image": "https://commons.wikimedia.org/wiki/Special:FilePath/Snow_View_Point_Nainital.jpg"
+        },
+        {
+          "name": "Eco Cave Gardens",
+          "Activity type": "sightseeing",
+          "duration_minutes": 90,
+          "estimated_cost": 50,
+          "image": "https://commons.wikimedia.org/wiki/Special:FilePath/Eco_Cave_Gardens_Nainital.jpg"
+        },
+        {
+          "name": "Nainital Food Walk",
+          "Activity type": "food tour",
+          "duration_minutes": 120,
+          "estimated_cost": 700,
+          "image": "https://commons.wikimedia.org/wiki/Special:FilePath/Nainital_Food_Walk_Nainital.jpg"
+        }
+      ]
+    },
+    {
+      "name": "Leh",
+      "country": "India",
+      "cost_index": 32,
+      "image": "https://commons.wikimedia.org/wiki/Special:FilePath/Leh.jpg",
+      "places": [
+        {
+          "name": "Leh Palace",
+          "Activity type": "historical",
+          "duration_minutes": 90,
+          "estimated_cost": 0,
+          "image": "https://commons.wikimedia.org/wiki/Special:FilePath/Leh_Palace_Leh.jpg"
+        },
+        {
+          "name": "Shanti Stupa",
+          "Activity type": "sightseeing",
+          "duration_minutes": 60,
+          "estimated_cost": 0,
+          "image": "https://commons.wikimedia.org/wiki/Special:FilePath/Shanti_Stupa_Leh.jpg"
+        },
+        {
+          "name": "Pangong Lake Excursion",
+          "Activity type": "adventure",
+          "duration_minutes": 600,
+          "estimated_cost": 2500,
+          "image": "https://commons.wikimedia.org/wiki/Special:FilePath/Pangong_Lake_Excursion_Leh.jpg"
+        },
+        {
+          "name": "Khardung La Pass",
+          "Activity type": "adventure",
+          "duration_minutes": 240,
+          "estimated_cost": 1500,
+          "image": "https://commons.wikimedia.org/wiki/Special:FilePath/Khardung_La_Pass_Leh.jpg"
+        },
+        {
+          "name": "Leh Local Food Tour",
+          "Activity type": "food tour",
+          "duration_minutes": 120,
+          "estimated_cost": 900,
+          "image": "https://commons.wikimedia.org/wiki/Special:FilePath/Leh_Local_Food_Tour_Leh.jpg"
+        }
+      ]
+    },
+    {
+      "name": "Srinagar",
+      "country": "India",
+      "cost_index": 30,
+      "image": "https://commons.wikimedia.org/wiki/Special:FilePath/Srinagar.jpg",
+      "places": [
+        {
+          "name": "Dal Lake Shikara Ride",
+          "Activity type": "sightseeing",
+          "duration_minutes": 120,
+          "estimated_cost": 1000,
+          "image": "https://commons.wikimedia.org/wiki/Special:FilePath/Dal_Lake_Shikara_Ride_Srinagar.jpg"
+        },
+        {
+          "name": "Mughal Gardens",
+          "Activity type": "sightseeing",
+          "duration_minutes": 120,
+          "estimated_cost": 50,
+          "image": "https://commons.wikimedia.org/wiki/Special:FilePath/Mughal_Gardens_Srinagar.jpg"
+        },
+        {
+          "name": "Hazratbal Shrine",
+          "Activity type": "historical",
+          "duration_minutes": 60,
+          "estimated_cost": 0,
+          "image": "https://commons.wikimedia.org/wiki/Special:FilePath/Hazratbal_Shrine_Srinagar.jpg"
+        },
+        {
+          "name": "Shankaracharya Temple",
+          "Activity type": "historical",
+          "duration_minutes": 120,
+          "estimated_cost": 0,
+          "image": "https://commons.wikimedia.org/wiki/Special:FilePath/Shankaracharya_Temple_Srinagar.jpg"
+        },
+        {
+          "name": "Kashmiri Food Tour",
+          "Activity type": "food tour",
+          "duration_minutes": 150,
+          "estimated_cost": 1200,
+          "image": "https://commons.wikimedia.org/wiki/Special:FilePath/Kashmiri_Food_Tour_Srinagar.jpg"
+        }
+      ]
+    },
+    {
+      "name": "Varanasi",
+      "country": "India",
+      "cost_index": 25,
+      "image": "https://commons.wikimedia.org/wiki/Special:FilePath/Varanasi.jpg",
+      "places": [
+        {
+          "name": "Ganges Sunrise Boat Ride",
+          "Activity type": "sightseeing",
+          "duration_minutes": 120,
+          "estimated_cost": 700,
+          "image": "https://commons.wikimedia.org/wiki/Special:FilePath/Ganges_Sunrise_Boat_Ride_Varanasi.jpg"
+        },
+        {
+          "name": "Kashi Vishwanath Temple",
+          "Activity type": "historical",
+          "duration_minutes": 90,
+          "estimated_cost": 0,
+          "image": "https://commons.wikimedia.org/wiki/Special:FilePath/Kashi_Vishwanath_Temple_Varanasi.jpg"
+        },
+        {
+          "name": "Sarnath",
+          "Activity type": "historical",
+          "duration_minutes": 180,
+          "estimated_cost": 50,
+          "image": "https://commons.wikimedia.org/wiki/Special:FilePath/Sarnath_Varanasi.jpg"
+        },
+        {
+          "name": "Ganga Aarti",
+          "Activity type": "sightseeing",
+          "duration_minutes": 90,
+          "estimated_cost": 0,
+          "image": "https://commons.wikimedia.org/wiki/Special:FilePath/Ganga_Aarti_Varanasi.jpg"
+        },
+        {
+          "name": "Varanasi Street Food Tour",
+          "Activity type": "food tour",
+          "duration_minutes": 150,
+          "estimated_cost": 700,
+          "image": "https://commons.wikimedia.org/wiki/Special:FilePath/Varanasi_Street_Food_Tour_Varanasi.jpg"
+        }
+      ]
+    },
+    {
+      "name": "Lucknow",
+      "country": "India",
+      "cost_index": 30,
+      "image": "https://commons.wikimedia.org/wiki/Special:FilePath/Lucknow.jpg",
+      "places": [
+        {
+          "name": "Bara Imambara",
+          "Activity type": "historical",
+          "duration_minutes": 120,
+          "estimated_cost": 50,
+          "image": "https://commons.wikimedia.org/wiki/Special:FilePath/Bara_Imambara_Lucknow.jpg"
+        },
+        {
+          "name": "Chota Imambara",
+          "Activity type": "historical",
+          "duration_minutes": 90,
+          "estimated_cost": 50,
+          "image": "https://commons.wikimedia.org/wiki/Special:FilePath/Chota_Imambara_Lucknow.jpg"
+        },
+        {
+          "name": "British Residency",
+          "Activity type": "historical",
+          "duration_minutes": 90,
+          "estimated_cost": 0,
+          "image": "https://commons.wikimedia.org/wiki/Special:FilePath/British_Residency_Lucknow.jpg"
+        },
+        {
+          "name": "Rumi Darwaza",
+          "Activity type": "sightseeing",
+          "duration_minutes": 45,
+          "estimated_cost": 0,
+          "image": "https://commons.wikimedia.org/wiki/Special:FilePath/Rumi_Darwaza_Lucknow.jpg"
+        },
+        {
+          "name": "Lucknow Awadhi Food Tour",
+          "Activity type": "food tour",
+          "duration_minutes": 150,
+          "estimated_cost": 1000,
+          "image": "https://commons.wikimedia.org/wiki/Special:FilePath/Lucknow_Awadhi_Food_Tour_Lucknow.jpg"
+        }
+      ]
+    },
+    {
+      "name": "Khajuraho",
+      "country": "India",
+      "cost_index": 24,
+      "image": "https://commons.wikimedia.org/wiki/Special:FilePath/Khajuraho.jpg",
+      "places": [
+        {
+          "name": "Khajuraho Group of Monuments",
+          "Activity type": "historical",
+          "duration_minutes": 180,
+          "estimated_cost": 50,
+          "image": "https://commons.wikimedia.org/wiki/Special:FilePath/Khajuraho_Group_of_Monuments_Khajuraho.jpg"
+        },
+        {
+          "name": "Kandariya Mahadeva Temple",
+          "Activity type": "historical",
+          "duration_minutes": 90,
+          "estimated_cost": 50,
+          "image": "https://commons.wikimedia.org/wiki/Special:FilePath/Kandariya_Mahadeva_Temple_Khajuraho.jpg"
+        },
+        {
+          "name": "Lakshmana Temple",
+          "Activity type": "historical",
+          "duration_minutes": 60,
+          "estimated_cost": 50,
+          "image": "https://commons.wikimedia.org/wiki/Special:FilePath/Lakshmana_Temple_Khajuraho.jpg"
+        },
+        {
+          "name": "Light and Sound Show",
+          "Activity type": "sightseeing",
+          "duration_minutes": 90,
+          "estimated_cost": 300,
+          "image": "https://commons.wikimedia.org/wiki/Special:FilePath/Light_and_Sound_Show_Khajuraho.jpg"
+        },
+        {
+          "name": "Khajuraho Village Walk",
+          "Activity type": "sightseeing",
+          "duration_minutes": 120,
+          "estimated_cost": 500,
+          "image": "https://commons.wikimedia.org/wiki/Special:FilePath/Khajuraho_Village_Walk_Khajuraho.jpg"
+        }
+      ]
+    },
+    {
+      "name": "Mumbai",
+      "country": "India",
+      "cost_index": 45,
+      "image": "https://commons.wikimedia.org/wiki/Special:FilePath/Mumbai.jpg",
+      "places": [
+        {
+          "name": "Gateway of India",
+          "Activity type": "sightseeing",
+          "duration_minutes": 60,
+          "estimated_cost": 0,
+          "image": "https://commons.wikimedia.org/wiki/Special:FilePath/Gateway_of_India_Mumbai.jpg"
+        },
+        {
+          "name": "Chhatrapati Shivaji Maharaj Terminus",
+          "Activity type": "historical",
+          "duration_minutes": 60,
+          "estimated_cost": 0,
+          "image": "https://commons.wikimedia.org/wiki/Special:FilePath/Chhatrapati_Shivaji_Maharaj_Terminus_Mumbai.jpg"
+        },
+        {
+          "name": "Elephanta Caves",
+          "Activity type": "historical",
+          "duration_minutes": 240,
+          "estimated_cost": 50,
+          "image": "https://commons.wikimedia.org/wiki/Special:FilePath/Elephanta_Caves_Mumbai.jpg"
+        },
+        {
+          "name": "Colaba Food Walk",
+          "Activity type": "food tour",
+          "duration_minutes": 150,
+          "estimated_cost": 1200,
+          "image": "https://commons.wikimedia.org/wiki/Special:FilePath/Colaba_Food_Walk_Mumbai.jpg"
+        },
+        {
+          "name": "Marine Drive Sunset",
+          "Activity type": "sightseeing",
+          "duration_minutes": 90,
+          "estimated_cost": 0,
+          "image": "https://commons.wikimedia.org/wiki/Special:FilePath/Marine_Drive_Sunset_Mumbai.jpg"
+        }
+      ]
+    },
+    {
+      "name": "Goa",
+      "country": "India",
+      "cost_index": 42,
+      "image": "https://commons.wikimedia.org/wiki/Special:FilePath/Goa.jpg",
+      "places": [
+        {
+          "name": "Baga Beach",
+          "Activity type": "sightseeing",
+          "duration_minutes": 120,
+          "estimated_cost": 0,
+          "image": "https://commons.wikimedia.org/wiki/Special:FilePath/Baga_Beach_Goa.jpg"
+        },
+        {
+          "name": "Basilica of Bom Jesus",
+          "Activity type": "historical",
+          "duration_minutes": 60,
+          "estimated_cost": 0,
+          "image": "https://commons.wikimedia.org/wiki/Special:FilePath/Basilica_of_Bom_Jesus_Goa.jpg"
+        },
+        {
+          "name": "Fort Aguada",
+          "Activity type": "historical",
+          "duration_minutes": 90,
+          "estimated_cost": 0,
+          "image": "https://commons.wikimedia.org/wiki/Special:FilePath/Fort_Aguada_Goa.jpg"
+        },
+        {
+          "name": "Scuba Diving",
+          "Activity type": "adventure",
+          "duration_minutes": 180,
+          "estimated_cost": 2500,
+          "image": "https://commons.wikimedia.org/wiki/Special:FilePath/Scuba_Diving_Goa.jpg"
+        },
+        {
+          "name": "Goan Food Tour",
+          "Activity type": "food tour",
+          "duration_minutes": 150,
+          "estimated_cost": 1200,
+          "image": "https://commons.wikimedia.org/wiki/Special:FilePath/Goan_Food_Tour_Goa.jpg"
+        }
+      ]
+    },
+    {
+      "name": "Pune",
+      "country": "India",
+      "cost_index": 38,
+      "image": "https://commons.wikimedia.org/wiki/Special:FilePath/Pune.jpg",
+      "places": [
+        {
+          "name": "Aga Khan Palace",
+          "Activity type": "historical",
+          "duration_minutes": 90,
+          "estimated_cost": 250,
+          "image": "https://commons.wikimedia.org/wiki/Special:FilePath/Aga_Khan_Palace_Pune.jpg"
+        },
+        {
+          "name": "Shaniwar Wada",
+          "Activity type": "historical",
+          "duration_minutes": 90,
+          "estimated_cost": 0,
+          "image": "https://commons.wikimedia.org/wiki/Special:FilePath/Shaniwar_Wada_Pune.jpg"
+        },
+        {
+          "name": "Sinhagad Fort",
+          "Activity type": "adventure",
+          "duration_minutes": 180,
+          "estimated_cost": 50,
+          "image": "https://commons.wikimedia.org/wiki/Special:FilePath/Sinhagad_Fort_Pune.jpg"
+        },
+        {
+          "name": "Pataleshwar Cave Temple",
+          "Activity type": "historical",
+          "duration_minutes": 60,
+          "estimated_cost": 0,
+          "image": "https://commons.wikimedia.org/wiki/Special:FilePath/Pataleshwar_Cave_Temple_Pune.jpg"
+        },
+        {
+          "name": "Pune Food Walk",
+          "Activity type": "food tour",
+          "duration_minutes": 150,
+          "estimated_cost": 800,
+          "image": "https://commons.wikimedia.org/wiki/Special:FilePath/Pune_Food_Walk_Pune.jpg"
+        }
+      ]
+    },
+    {
+      "name": "Ahmedabad",
+      "country": "India",
+      "cost_index": 33,
+      "image": "https://commons.wikimedia.org/wiki/Special:FilePath/Ahmedabad.jpg",
+      "places": [
+        {
+          "name": "Sabarmati Ashram",
+          "Activity type": "historical",
+          "duration_minutes": 90,
+          "estimated_cost": 0,
+          "image": "https://commons.wikimedia.org/wiki/Special:FilePath/Sabarmati_Ashram_Ahmedabad.jpg"
+        },
+        {
+          "name": "Adalaj Stepwell",
+          "Activity type": "historical",
+          "duration_minutes": 90,
+          "estimated_cost": 0,
+          "image": "https://commons.wikimedia.org/wiki/Special:FilePath/Adalaj_Stepwell_Ahmedabad.jpg"
+        },
+        {
+          "name": "Sidi Saiyyed Mosque",
+          "Activity type": "historical",
+          "duration_minutes": 45,
+          "estimated_cost": 0,
+          "image": "https://commons.wikimedia.org/wiki/Special:FilePath/Sidi_Saiyyed_Mosque_Ahmedabad.jpg"
+        },
+        {
+          "name": "Kankaria Lake",
+          "Activity type": "sightseeing",
+          "duration_minutes": 120,
+          "estimated_cost": 50,
+          "image": "https://commons.wikimedia.org/wiki/Special:FilePath/Kankaria_Lake_Ahmedabad.jpg"
+        },
+        {
+          "name": "Ahmedabad Food Tour",
+          "Activity type": "food tour",
+          "duration_minutes": 150,
+          "estimated_cost": 800,
+          "image": "https://commons.wikimedia.org/wiki/Special:FilePath/Ahmedabad_Food_Tour_Ahmedabad.jpg"
+        }
+      ]
+    },
+    {
+      "name": "Bhuj",
+      "country": "India",
+      "cost_index": 24,
+      "image": "https://commons.wikimedia.org/wiki/Special:FilePath/Bhuj.jpg",
+      "places": [
+        {
+          "name": "Aina Mahal",
+          "Activity type": "historical",
+          "duration_minutes": 90,
+          "estimated_cost": 50,
+          "image": "https://commons.wikimedia.org/wiki/Special:FilePath/Aina_Mahal_Bhuj.jpg"
+        },
+        {
+          "name": "Prag Mahal",
+          "Activity type": "historical",
+          "duration_minutes": 90,
+          "estimated_cost": 50,
+          "image": "https://commons.wikimedia.org/wiki/Special:FilePath/Prag_Mahal_Bhuj.jpg"
+        },
+        {
+          "name": "Kutch Museum",
+          "Activity type": "historical",
+          "duration_minutes": 60,
+          "estimated_cost": 0,
+          "image": "https://commons.wikimedia.org/wiki/Special:FilePath/Kutch_Museum_Bhuj.jpg"
+        },
+        {
+          "name": "Hamirsar Lake",
+          "Activity type": "sightseeing",
+          "duration_minutes": 60,
+          "estimated_cost": 0,
+          "image": "https://commons.wikimedia.org/wiki/Special:FilePath/Hamirsar_Lake_Bhuj.jpg"
+        },
+        {
+          "name": "Kutch Village & Handicraft Tour",
+          "Activity type": "sightseeing",
+          "duration_minutes": 240,
+          "estimated_cost": 1200,
+          "image": "https://commons.wikimedia.org/wiki/Special:FilePath/Kutch_Village_%26_Handicraft_Tour_Bhuj.jpg"
+        }
+      ]
+    },
+    {
+      "name": "Mount Abu",
+      "country": "India",
+      "cost_index": 26,
+      "image": "https://commons.wikimedia.org/wiki/Special:FilePath/Mount_Abu.jpg",
+      "places": [
+        {
+          "name": "Dilwara Temples",
+          "Activity type": "historical",
+          "duration_minutes": 90,
+          "estimated_cost": 0,
+          "image": "https://commons.wikimedia.org/wiki/Special:FilePath/Dilwara_Temples_Mount_Abu.jpg"
+        },
+        {
+          "name": "Nakki Lake",
+          "Activity type": "sightseeing",
+          "duration_minutes": 90,
+          "estimated_cost": 300,
+          "image": "https://commons.wikimedia.org/wiki/Special:FilePath/Nakki_Lake_Mount_Abu.jpg"
+        },
+        {
+          "name": "Guru Shikhar",
+          "Activity type": "sightseeing",
+          "duration_minutes": 120,
+          "estimated_cost": 0,
+          "image": "https://commons.wikimedia.org/wiki/Special:FilePath/Guru_Shikhar_Mount_Abu.jpg"
+        },
+        {
+          "name": "Sunset Point",
+          "Activity type": "sightseeing",
+          "duration_minutes": 60,
+          "estimated_cost": 0,
+          "image": "https://commons.wikimedia.org/wiki/Special:FilePath/Sunset_Point_Mount_Abu.jpg"
+        },
+        {
+          "name": "Mount Abu Food Walk",
+          "Activity type": "food tour",
+          "duration_minutes": 120,
+          "estimated_cost": 700,
+          "image": "https://commons.wikimedia.org/wiki/Special:FilePath/Mount_Abu_Food_Walk_Mount_Abu.jpg"
+        }
+      ]
+    },
+    {
+      "name": "Bengaluru",
+      "country": "India",
+      "cost_index": 44,
+      "image": "https://commons.wikimedia.org/wiki/Special:FilePath/Bengaluru.jpg",
+      "places": [
+        {
+          "name": "Bengaluru Palace",
+          "Activity type": "historical",
+          "duration_minutes": 120,
+          "estimated_cost": 450,
+          "image": "https://commons.wikimedia.org/wiki/Special:FilePath/Bengaluru_Palace_Bengaluru.jpg"
+        },
+        {
+          "name": "Lalbagh Botanical Garden",
+          "Activity type": "sightseeing",
+          "duration_minutes": 120,
+          "estimated_cost": 50,
+          "image": "https://commons.wikimedia.org/wiki/Special:FilePath/Lalbagh_Botanical_Garden_Bengaluru.jpg"
+        },
+        {
+          "name": "Cubbon Park",
+          "Activity type": "sightseeing",
+          "duration_minutes": 90,
+          "estimated_cost": 0,
+          "image": "https://commons.wikimedia.org/wiki/Special:FilePath/Cubbon_Park_Bengaluru.jpg"
+        },
+        {
+          "name": "Nandi Hills Sunrise",
+          "Activity type": "adventure",
+          "duration_minutes": 240,
+          "estimated_cost": 500,
+          "image": "https://commons.wikimedia.org/wiki/Special:FilePath/Nandi_Hills_Sunrise_Bengaluru.jpg"
+        },
+        {
+          "name": "Bengaluru Food Walk",
+          "Activity type": "food tour",
+          "duration_minutes": 150,
+          "estimated_cost": 1000,
+          "image": "https://commons.wikimedia.org/wiki/Special:FilePath/Bengaluru_Food_Walk_Bengaluru.jpg"
+        }
+      ]
+    },
+    {
+      "name": "Chennai",
+      "country": "India",
+      "cost_index": 38,
+      "image": "https://commons.wikimedia.org/wiki/Special:FilePath/Chennai.jpg",
+      "places": [
+        {
+          "name": "Marina Beach",
+          "Activity type": "sightseeing",
+          "duration_minutes": 120,
+          "estimated_cost": 0,
+          "image": "https://commons.wikimedia.org/wiki/Special:FilePath/Marina_Beach_Chennai.jpg"
+        },
+        {
+          "name": "Kapaleeshwarar Temple",
+          "Activity type": "historical",
+          "duration_minutes": 60,
+          "estimated_cost": 0,
+          "image": "https://commons.wikimedia.org/wiki/Special:FilePath/Kapaleeshwarar_Temple_Chennai.jpg"
+        },
+        {
+          "name": "Fort St. George",
+          "Activity type": "historical",
+          "duration_minutes": 90,
+          "estimated_cost": 100,
+          "image": "https://commons.wikimedia.org/wiki/Special:FilePath/Fort_St._George_Chennai.jpg"
+        },
+        {
+          "name": "Mahabalipuram Day Trip",
+          "Activity type": "historical",
+          "duration_minutes": 480,
+          "estimated_cost": 1000,
+          "image": "https://commons.wikimedia.org/wiki/Special:FilePath/Mahabalipuram_Day_Trip_Chennai.jpg"
+        },
+        {
+          "name": "Chennai Food Tour",
+          "Activity type": "food tour",
+          "duration_minutes": 150,
+          "estimated_cost": 900,
+          "image": "https://commons.wikimedia.org/wiki/Special:FilePath/Chennai_Food_Tour_Chennai.jpg"
+        }
+      ]
+    },
+    {
+      "name": "Hyderabad",
+      "country": "India",
+      "cost_index": 37,
+      "image": "https://commons.wikimedia.org/wiki/Special:FilePath/Hyderabad.jpg",
+      "places": [
+        {
+          "name": "Charminar",
+          "Activity type": "historical",
+          "duration_minutes": 90,
+          "estimated_cost": 0,
+          "image": "https://commons.wikimedia.org/wiki/Special:FilePath/Charminar_Hyderabad.jpg"
+        },
+        {
+          "name": "Golconda Fort",
+          "Activity type": "historical",
+          "duration_minutes": 150,
+          "estimated_cost": 0,
+          "image": "https://commons.wikimedia.org/wiki/Special:FilePath/Golconda_Fort_Hyderabad.jpg"
+        },
+        {
+          "name": "Salar Jung Museum",
+          "Activity type": "historical",
+          "duration_minutes": 150,
+          "estimated_cost": 0,
+          "image": "https://commons.wikimedia.org/wiki/Special:FilePath/Salar_Jung_Museum_Hyderabad.jpg"
+        },
+        {
+          "name": "Hussain Sagar Lake",
+          "Activity type": "sightseeing",
+          "duration_minutes": 90,
+          "estimated_cost": 0,
+          "image": "https://commons.wikimedia.org/wiki/Special:FilePath/Hussain_Sagar_Lake_Hyderabad.jpg"
+        },
+        {
+          "name": "Hyderabadi Food Tour",
+          "Activity type": "food tour",
+          "duration_minutes": 150,
+          "estimated_cost": 1000,
+          "image": "https://commons.wikimedia.org/wiki/Special:FilePath/Hyderabadi_Food_Tour_Hyderabad.jpg"
+        }
+      ]
+    },
+    {
+      "name": "Kochi",
+      "country": "India",
+      "cost_index": 35,
+      "image": "https://commons.wikimedia.org/wiki/Special:FilePath/Kochi.jpg",
+      "places": [
+        {
+          "name": "Fort Kochi",
+          "Activity type": "sightseeing",
+          "duration_minutes": 150,
+          "estimated_cost": 0,
+          "image": "https://commons.wikimedia.org/wiki/Special:FilePath/Fort_Kochi_Kochi.jpg"
+        },
+        {
+          "name": "Chinese Fishing Nets",
+          "Activity type": "sightseeing",
+          "duration_minutes": 60,
+          "estimated_cost": 0,
+          "image": "https://commons.wikimedia.org/wiki/Special:FilePath/Chinese_Fishing_Nets_Kochi.jpg"
+        },
+        {
+          "name": "Mattancherry Palace",
+          "Activity type": "historical",
+          "duration_minutes": 90,
+          "estimated_cost": 0,
+          "image": "https://commons.wikimedia.org/wiki/Special:FilePath/Mattancherry_Palace_Kochi.jpg"
+        },
+        {
+          "name": "Jewish Synagogue",
+          "Activity type": "historical",
+          "duration_minutes": 60,
+          "estimated_cost": 0,
+          "image": "https://commons.wikimedia.org/wiki/Special:FilePath/Jewish_Synagogue_Kochi.jpg"
+        },
+        {
+          "name": "Kerala Food Walk",
+          "Activity type": "food tour",
+          "duration_minutes": 150,
+          "estimated_cost": 900,
+          "image": "https://commons.wikimedia.org/wiki/Special:FilePath/Kerala_Food_Walk_Kochi.jpg"
+        }
+      ]
+    },
+    {
+      "name": "Munnar",
+      "country": "India",
+      "cost_index": 30,
+      "image": "https://commons.wikimedia.org/wiki/Special:FilePath/Munnar.jpg",
+      "places": [
+        {
+          "name": "Tea Museum",
+          "Activity type": "historical",
+          "duration_minutes": 90,
+          "estimated_cost": 150,
+          "image": "https://commons.wikimedia.org/wiki/Special:FilePath/Tea_Museum_Munnar.jpg"
+        },
+        {
+          "name": "Eravikulam National Park",
+          "Activity type": "sightseeing",
+          "duration_minutes": 180,
+          "estimated_cost": 200,
+          "image": "https://commons.wikimedia.org/wiki/Special:FilePath/Eravikulam_National_Park_Munnar.jpg"
+        },
+        {
+          "name": "Mattupetty Dam",
+          "Activity type": "sightseeing",
+          "duration_minutes": 90,
+          "estimated_cost": 50,
+          "image": "https://commons.wikimedia.org/wiki/Special:FilePath/Mattupetty_Dam_Munnar.jpg"
+        },
+        {
+          "name": "Kolukkumalai Sunrise",
+          "Activity type": "adventure",
+          "duration_minutes": 360,
+          "estimated_cost": 1500,
+          "image": "https://commons.wikimedia.org/wiki/Special:FilePath/Kolukkumalai_Sunrise_Munnar.jpg"
+        },
+        {
+          "name": "Munnar Tea & Food Tour",
+          "Activity type": "food tour",
+          "duration_minutes": 120,
+          "estimated_cost": 700,
+          "image": "https://commons.wikimedia.org/wiki/Special:FilePath/Munnar_Tea_%26_Food_Tour_Munnar.jpg"
+        }
+      ]
+    },
+    {
+      "name": "Alleppey",
+      "country": "India",
+      "cost_index": 30,
+      "image": "https://commons.wikimedia.org/wiki/Special:FilePath/Alleppey.jpg",
+      "places": [
+        {
+          "name": "Alleppey Houseboat Cruise",
+          "Activity type": "sightseeing",
+          "duration_minutes": 480,
+          "estimated_cost": 5000,
+          "image": "https://commons.wikimedia.org/wiki/Special:FilePath/Alleppey_Houseboat_Cruise_Alleppey.jpg"
+        },
+        {
+          "name": "Alappuzha Beach",
+          "Activity type": "sightseeing",
+          "duration_minutes": 90,
+          "estimated_cost": 0,
+          "image": "https://commons.wikimedia.org/wiki/Special:FilePath/Alappuzha_Beach_Alleppey.jpg"
+        },
+        {
+          "name": "Backwater Canoe Ride",
+          "Activity type": "adventure",
+          "duration_minutes": 180,
+          "estimated_cost": 1500,
+          "image": "https://commons.wikimedia.org/wiki/Special:FilePath/Backwater_Canoe_Ride_Alleppey.jpg"
+        },
+        {
+          "name": "Kuttanad Village Tour",
+          "Activity type": "sightseeing",
+          "duration_minutes": 180,
+          "estimated_cost": 1000,
+          "image": "https://commons.wikimedia.org/wiki/Special:FilePath/Kuttanad_Village_Tour_Alleppey.jpg"
+        },
+        {
+          "name": "Kerala Food Experience",
+          "Activity type": "food tour",
+          "duration_minutes": 150,
+          "estimated_cost": 900,
+          "image": "https://commons.wikimedia.org/wiki/Special:FilePath/Kerala_Food_Experience_Alleppey.jpg"
+        }
+      ]
+    },
+    {
+      "name": "Mysuru",
+      "country": "India",
+      "cost_index": 28,
+      "image": "https://commons.wikimedia.org/wiki/Special:FilePath/Mysuru.jpg",
+      "places": [
+        {
+          "name": "Mysore Palace",
+          "Activity type": "historical",
+          "duration_minutes": 120,
+          "estimated_cost": 100,
+          "image": "https://commons.wikimedia.org/wiki/Special:FilePath/Mysore_Palace_Mysuru.jpg"
+        },
+        {
+          "name": "Chamundi Hill",
+          "Activity type": "sightseeing",
+          "duration_minutes": 120,
+          "estimated_cost": 0,
+          "image": "https://commons.wikimedia.org/wiki/Special:FilePath/Chamundi_Hill_Mysuru.jpg"
+        },
+        {
+          "name": "St. Philomena's Cathedral",
+          "Activity type": "historical",
+          "duration_minutes": 60,
+          "estimated_cost": 0,
+          "image": "https://commons.wikimedia.org/wiki/Special:FilePath/St._Philomena's_Cathedral_Mysuru.jpg"
+        },
+        {
+          "name": "Brindavan Gardens",
+          "Activity type": "sightseeing",
+          "duration_minutes": 120,
+          "estimated_cost": 50,
+          "image": "https://commons.wikimedia.org/wiki/Special:FilePath/Brindavan_Gardens_Mysuru.jpg"
+        },
+        {
+          "name": "Mysore Food Walk",
+          "Activity type": "food tour",
+          "duration_minutes": 150,
+          "estimated_cost": 800,
+          "image": "https://commons.wikimedia.org/wiki/Special:FilePath/Mysore_Food_Walk_Mysuru.jpg"
+        }
+      ]
+    },
+    {
+      "name": "Coorg",
+      "country": "India",
+      "cost_index": 29,
+      "image": "https://commons.wikimedia.org/wiki/Special:FilePath/Coorg.jpg",
+      "places": [
+        {
+          "name": "Abbey Falls",
+          "Activity type": "sightseeing",
+          "duration_minutes": 120,
+          "estimated_cost": 50,
+          "image": "https://commons.wikimedia.org/wiki/Special:FilePath/Abbey_Falls_Coorg.jpg"
+        },
+        {
+          "name": "Raja's Seat",
+          "Activity type": "sightseeing",
+          "duration_minutes": 60,
+          "estimated_cost": 0,
+          "image": "https://commons.wikimedia.org/wiki/Special:FilePath/Raja's_Seat_Coorg.jpg"
+        },
+        {
+          "name": "Dubare Elephant Camp",
+          "Activity type": "adventure",
+          "duration_minutes": 180,
+          "estimated_cost": 1000,
+          "image": "https://commons.wikimedia.org/wiki/Special:FilePath/Dubare_Elephant_Camp_Coorg.jpg"
+        },
+        {
+          "name": "Mandalpatti Jeep Ride",
+          "Activity type": "adventure",
+          "duration_minutes": 180,
+          "estimated_cost": 1500,
+          "image": "https://commons.wikimedia.org/wiki/Special:FilePath/Mandalpatti_Jeep_Ride_Coorg.jpg"
+        },
+        {
+          "name": "Coorg Coffee & Food Tour",
+          "Activity type": "food tour",
+          "duration_minutes": 150,
+          "estimated_cost": 900,
+          "image": "https://commons.wikimedia.org/wiki/Special:FilePath/Coorg_Coffee_%26_Food_Tour_Coorg.jpg"
+        }
+      ]
+    },
+    {
+      "name": "Ooty",
+      "country": "India",
+      "cost_index": 28,
+      "image": "https://commons.wikimedia.org/wiki/Special:FilePath/Ooty.jpg",
+      "places": [
+        {
+          "name": "Ooty Lake",
+          "Activity type": "sightseeing",
+          "duration_minutes": 90,
+          "estimated_cost": 200,
+          "image": "https://commons.wikimedia.org/wiki/Special:FilePath/Ooty_Lake_Ooty.jpg"
+        },
+        {
+          "name": "Nilgiri Mountain Railway",
+          "Activity type": "sightseeing",
+          "duration_minutes": 240,
+          "estimated_cost": 500,
+          "image": "https://commons.wikimedia.org/wiki/Special:FilePath/Nilgiri_Mountain_Railway_Ooty.jpg"
+        },
+        {
+          "name": "Doddabetta Peak",
+          "Activity type": "sightseeing",
+          "duration_minutes": 90,
+          "estimated_cost": 0,
+          "image": "https://commons.wikimedia.org/wiki/Special:FilePath/Doddabetta_Peak_Ooty.jpg"
+        },
+        {
+          "name": "Tea Factory & Museum",
+          "Activity type": "historical",
+          "duration_minutes": 90,
+          "estimated_cost": 150,
+          "image": "https://commons.wikimedia.org/wiki/Special:FilePath/Tea_Factory_%26_Museum_Ooty.jpg"
+        },
+        {
+          "name": "Ooty Food Walk",
+          "Activity type": "food tour",
+          "duration_minutes": 120,
+          "estimated_cost": 700,
+          "image": "https://commons.wikimedia.org/wiki/Special:FilePath/Ooty_Food_Walk_Ooty.jpg"
+        }
+      ]
+    },
+    {
+      "name": "Pondicherry",
+      "country": "India",
+      "cost_index": 30,
+      "image": "https://commons.wikimedia.org/wiki/Special:FilePath/Pondicherry.jpg",
+      "places": [
+        {
+          "name": "Promenade Beach",
+          "Activity type": "sightseeing",
+          "duration_minutes": 90,
+          "estimated_cost": 0,
+          "image": "https://commons.wikimedia.org/wiki/Special:FilePath/Promenade_Beach_Pondicherry.jpg"
+        },
+        {
+          "name": "Auroville",
+          "Activity type": "sightseeing",
+          "duration_minutes": 180,
+          "estimated_cost": 0,
+          "image": "https://commons.wikimedia.org/wiki/Special:FilePath/Auroville_Pondicherry.jpg"
+        },
+        {
+          "name": "Sri Aurobindo Ashram",
+          "Activity type": "historical",
+          "duration_minutes": 60,
+          "estimated_cost": 0,
+          "image": "https://commons.wikimedia.org/wiki/Special:FilePath/Sri_Aurobindo_Ashram_Pondicherry.jpg"
+        },
+        {
+          "name": "French Quarter Walking Tour",
+          "Activity type": "historical",
+          "duration_minutes": 150,
+          "estimated_cost": 700,
+          "image": "https://commons.wikimedia.org/wiki/Special:FilePath/French_Quarter_Walking_Tour_Pondicherry.jpg"
+        },
+        {
+          "name": "Pondicherry Cafe Tour",
+          "Activity type": "food tour",
+          "duration_minutes": 150,
+          "estimated_cost": 900,
+          "image": "https://commons.wikimedia.org/wiki/Special:FilePath/Pondicherry_Cafe_Tour_Pondicherry.jpg"
+        }
+      ]
+    },
+    {
+      "name": "Hampi",
+      "country": "India",
+      "cost_index": 24,
+      "image": "https://commons.wikimedia.org/wiki/Special:FilePath/Hampi.jpg",
+      "places": [
+        {
+          "name": "Virupaksha Temple",
+          "Activity type": "historical",
+          "duration_minutes": 90,
+          "estimated_cost": 0,
+          "image": "https://commons.wikimedia.org/wiki/Special:FilePath/Virupaksha_Temple_Hampi.jpg"
+        },
+        {
+          "name": "Vijaya Vittala Temple",
+          "Activity type": "historical",
+          "duration_minutes": 120,
+          "estimated_cost": 50,
+          "image": "https://commons.wikimedia.org/wiki/Special:FilePath/Vijaya_Vittala_Temple_Hampi.jpg"
+        },
+        {
+          "name": "Hampi Bazaar",
+          "Activity type": "sightseeing",
+          "duration_minutes": 60,
+          "estimated_cost": 0,
+          "image": "https://commons.wikimedia.org/wiki/Special:FilePath/Hampi_Bazaar_Hampi.jpg"
+        },
+        {
+          "name": "Matanga Hill Sunrise",
+          "Activity type": "adventure",
+          "duration_minutes": 120,
+          "estimated_cost": 0,
+          "image": "https://commons.wikimedia.org/wiki/Special:FilePath/Matanga_Hill_Sunrise_Hampi.jpg"
+        },
+        {
+          "name": "Hampi Heritage Walk",
+          "Activity type": "historical",
+          "duration_minutes": 180,
+          "estimated_cost": 700,
+          "image": "https://commons.wikimedia.org/wiki/Special:FilePath/Hampi_Heritage_Walk_Hampi.jpg"
+        }
+      ]
+    },
+    {
+      "name": "Mahabalipuram",
+      "country": "India",
+      "cost_index": 28,
+      "image": "https://commons.wikimedia.org/wiki/Special:FilePath/Mahabalipuram.jpg",
+      "places": [
+        {
+          "name": "Shore Temple",
+          "Activity type": "historical",
+          "duration_minutes": 90,
+          "estimated_cost": 50,
+          "image": "https://commons.wikimedia.org/wiki/Special:FilePath/Shore_Temple_Mahabalipuram.jpg"
+        },
+        {
+          "name": "Arjuna's Penance",
+          "Activity type": "historical",
+          "duration_minutes": 60,
+          "estimated_cost": 50,
+          "image": "https://commons.wikimedia.org/wiki/Special:FilePath/Arjuna's_Penance_Mahabalipuram.jpg"
+        },
+        {
+          "name": "Pancha Rathas",
+          "Activity type": "historical",
+          "duration_minutes": 90,
+          "estimated_cost": 50,
+          "image": "https://commons.wikimedia.org/wiki/Special:FilePath/Pancha_Rathas_Mahabalipuram.jpg"
+        },
+        {
+          "name": "Mahabalipuram Beach",
+          "Activity type": "sightseeing",
+          "duration_minutes": 90,
+          "estimated_cost": 0,
+          "image": "https://commons.wikimedia.org/wiki/Special:FilePath/Mahabalipuram_Beach_Mahabalipuram.jpg"
+        },
+        {
+          "name": "Seafood Food Tour",
+          "Activity type": "food tour",
+          "duration_minutes": 150,
+          "estimated_cost": 1000,
+          "image": "https://commons.wikimedia.org/wiki/Special:FilePath/Seafood_Food_Tour_Mahabalipuram.jpg"
+        }
+      ]
+    },
+    {
+      "name": "Kolkata",
+      "country": "India",
+      "cost_index": 35,
+      "image": "https://commons.wikimedia.org/wiki/Special:FilePath/Kolkata.jpg",
+      "places": [
+        {
+          "name": "Victoria Memorial",
+          "Activity type": "historical",
+          "duration_minutes": 120,
+          "estimated_cost": 50,
+          "image": "https://commons.wikimedia.org/wiki/Special:FilePath/Victoria_Memorial_Kolkata.jpg"
+        },
+        {
+          "name": "Howrah Bridge",
+          "Activity type": "sightseeing",
+          "duration_minutes": 60,
+          "estimated_cost": 0,
+          "image": "https://commons.wikimedia.org/wiki/Special:FilePath/Howrah_Bridge_Kolkata.jpg"
+        },
+        {
+          "name": "Indian Museum",
+          "Activity type": "historical",
+          "duration_minutes": 150,
+          "estimated_cost": 100,
+          "image": "https://commons.wikimedia.org/wiki/Special:FilePath/Indian_Museum_Kolkata.jpg"
+        },
+        {
+          "name": "St. Paul's Cathedral",
+          "Activity type": "historical",
+          "duration_minutes": 60,
+          "estimated_cost": 0,
+          "image": "https://commons.wikimedia.org/wiki/Special:FilePath/St._Paul's_Cathedral_Kolkata.jpg"
+        },
+        {
+          "name": "Kolkata Food Walk",
+          "Activity type": "food tour",
+          "duration_minutes": 150,
+          "estimated_cost": 900,
+          "image": "https://commons.wikimedia.org/wiki/Special:FilePath/Kolkata_Food_Walk_Kolkata.jpg"
+        }
+      ]
+    },
+    {
+      "name": "Darjeeling",
+      "country": "India",
+      "cost_index": 29,
+      "image": "https://commons.wikimedia.org/wiki/Special:FilePath/Darjeeling.jpg",
+      "places": [
+        {
+          "name": "Tiger Hill Sunrise",
+          "Activity type": "sightseeing",
+          "duration_minutes": 150,
+          "estimated_cost": 500,
+          "image": "https://commons.wikimedia.org/wiki/Special:FilePath/Tiger_Hill_Sunrise_Darjeeling.jpg"
+        },
+        {
+          "name": "Darjeeling Himalayan Railway",
+          "Activity type": "sightseeing",
+          "duration_minutes": 240,
+          "estimated_cost": 800,
+          "image": "https://commons.wikimedia.org/wiki/Special:FilePath/Darjeeling_Himalayan_Railway_Darjeeling.jpg"
+        },
+        {
+          "name": "Batasia Loop",
+          "Activity type": "sightseeing",
+          "duration_minutes": 60,
+          "estimated_cost": 50,
+          "image": "https://commons.wikimedia.org/wiki/Special:FilePath/Batasia_Loop_Darjeeling.jpg"
+        },
+        {
+          "name": "Tea Estate Visit",
+          "Activity type": "sightseeing",
+          "duration_minutes": 120,
+          "estimated_cost": 300,
+          "image": "https://commons.wikimedia.org/wiki/Special:FilePath/Tea_Estate_Visit_Darjeeling.jpg"
+        },
+        {
+          "name": "Darjeeling Food Walk",
+          "Activity type": "food tour",
+          "duration_minutes": 120,
+          "estimated_cost": 700,
+          "image": "https://commons.wikimedia.org/wiki/Special:FilePath/Darjeeling_Food_Walk_Darjeeling.jpg"
+        }
+      ]
+    },
+    {
+      "name": "Gangtok",
+      "country": "India",
+      "cost_index": 28,
+      "image": "https://commons.wikimedia.org/wiki/Special:FilePath/Gangtok.jpg",
+      "places": [
+        {
+          "name": "Rumtek Monastery",
+          "Activity type": "historical",
+          "duration_minutes": 120,
+          "estimated_cost": 0,
+          "image": "https://commons.wikimedia.org/wiki/Special:FilePath/Rumtek_Monastery_Gangtok.jpg"
+        },
+        {
+          "name": "Tsomgo Lake",
+          "Activity type": "sightseeing",
+          "duration_minutes": 240,
+          "estimated_cost": 500,
+          "image": "https://commons.wikimedia.org/wiki/Special:FilePath/Tsomgo_Lake_Gangtok.jpg"
+        },
+        {
+          "name": "Nathula Pass",
+          "Activity type": "adventure",
+          "duration_minutes": 300,
+          "estimated_cost": 700,
+          "image": "https://commons.wikimedia.org/wiki/Special:FilePath/Nathula_Pass_Gangtok.jpg"
+        },
+        {
+          "name": "MG Marg",
+          "Activity type": "sightseeing",
+          "duration_minutes": 120,
+          "estimated_cost": 0,
+          "image": "https://commons.wikimedia.org/wiki/Special:FilePath/MG_Marg_Gangtok.jpg"
+        },
+        {
+          "name": "Sikkim Food Tour",
+          "Activity type": "food tour",
+          "duration_minutes": 120,
+          "estimated_cost": 800,
+          "image": "https://commons.wikimedia.org/wiki/Special:FilePath/Sikkim_Food_Tour_Gangtok.jpg"
+        }
+      ]
+    },
+    {
+      "name": "Puri",
+      "country": "India",
+      "cost_index": 26,
+      "image": "https://commons.wikimedia.org/wiki/Special:FilePath/Puri.jpg",
+      "places": [
+        {
+          "name": "Jagannath Temple",
+          "Activity type": "historical",
+          "duration_minutes": 120,
+          "estimated_cost": 0,
+          "image": "https://commons.wikimedia.org/wiki/Special:FilePath/Jagannath_Temple_Puri.jpg"
+        },
+        {
+          "name": "Puri Beach",
+          "Activity type": "sightseeing",
+          "duration_minutes": 120,
+          "estimated_cost": 0,
+          "image": "https://commons.wikimedia.org/wiki/Special:FilePath/Puri_Beach_Puri.jpg"
+        },
+        {
+          "name": "Konark Sun Temple",
+          "Activity type": "historical",
+          "duration_minutes": 180,
+          "estimated_cost": 50,
+          "image": "https://commons.wikimedia.org/wiki/Special:FilePath/Konark_Sun_Temple_Puri.jpg"
+        },
+        {
+          "name": "Chilika Lake Boat Ride",
+          "Activity type": "adventure",
+          "duration_minutes": 240,
+          "estimated_cost": 800,
+          "image": "https://commons.wikimedia.org/wiki/Special:FilePath/Chilika_Lake_Boat_Ride_Puri.jpg"
+        },
+        {
+          "name": "Odia Food Tour",
+          "Activity type": "food tour",
+          "duration_minutes": 150,
+          "estimated_cost": 700,
+          "image": "https://commons.wikimedia.org/wiki/Special:FilePath/Odia_Food_Tour_Puri.jpg"
+        }
+      ]
+    },
+    {
+      "name": "Paris",
+      "country": "France",
+      "cost_index": 85,
+      "image": "https://commons.wikimedia.org/wiki/Special:FilePath/Paris.jpg",
+      "places": [
+        {
+          "name": "Eiffel Tower",
+          "Activity type": "sightseeing",
+          "duration_minutes": 150,
+          "estimated_cost": 3300,
+          "image": "https://commons.wikimedia.org/wiki/Special:FilePath/Eiffel_Tower_Paris.jpg"
+        },
+        {
+          "name": "Louvre Museum",
+          "Activity type": "historical",
+          "duration_minutes": 240,
+          "estimated_cost": 2800,
+          "image": "https://commons.wikimedia.org/wiki/Special:FilePath/Louvre_Museum_Paris.jpg"
+        },
+        {
+          "name": "Arc de Triomphe",
+          "Activity type": "historical",
+          "duration_minutes": 90,
+          "estimated_cost": 1800,
+          "image": "https://commons.wikimedia.org/wiki/Special:FilePath/Arc_de_Triomphe_Paris.jpg"
+        },
+        {
+          "name": "Seine River Cruise",
+          "Activity type": "sightseeing",
+          "duration_minutes": 90,
+          "estimated_cost": 2000,
+          "image": "https://commons.wikimedia.org/wiki/Special:FilePath/Seine_River_Cruise_Paris.jpg"
+        },
+        {
+          "name": "Montmartre Food Tour",
+          "Activity type": "food tour",
+          "duration_minutes": 180,
+          "estimated_cost": 8300,
+          "image": "https://commons.wikimedia.org/wiki/Special:FilePath/Montmartre_Food_Tour_Paris.jpg"
+        }
+      ]
+    },
+    {
+      "name": "Rome",
+      "country": "Italy",
+      "cost_index": 78,
+      "image": "https://commons.wikimedia.org/wiki/Special:FilePath/Rome.jpg",
+      "places": [
+        {
+          "name": "Colosseum",
+          "Activity type": "historical",
+          "duration_minutes": 180,
+          "estimated_cost": 2000,
+          "image": "https://commons.wikimedia.org/wiki/Special:FilePath/Colosseum_Rome.jpg"
+        },
+        {
+          "name": "Roman Forum",
+          "Activity type": "historical",
+          "duration_minutes": 120,
+          "estimated_cost": 2000,
+          "image": "https://commons.wikimedia.org/wiki/Special:FilePath/Roman_Forum_Rome.jpg"
+        },
+        {
+          "name": "Trevi Fountain",
+          "Activity type": "sightseeing",
+          "duration_minutes": 45,
+          "estimated_cost": 0,
+          "image": "https://commons.wikimedia.org/wiki/Special:FilePath/Trevi_Fountain_Rome.jpg"
+        },
+        {
+          "name": "Vatican Museums",
+          "Activity type": "historical",
+          "duration_minutes": 180,
+          "estimated_cost": 2800,
+          "image": "https://commons.wikimedia.org/wiki/Special:FilePath/Vatican_Museums_Rome.jpg"
+        },
+        {
+          "name": "Rome Food Tour",
+          "Activity type": "food tour",
+          "duration_minutes": 180,
+          "estimated_cost": 7800,
+          "image": "https://commons.wikimedia.org/wiki/Special:FilePath/Rome_Food_Tour_Rome.jpg"
+        }
+      ]
+    },
+    {
+      "name": "Venice",
+      "country": "Italy",
+      "cost_index": 82,
+      "image": "https://commons.wikimedia.org/wiki/Special:FilePath/Venice.jpg",
+      "places": [
+        {
+          "name": "St. Mark's Square",
+          "Activity type": "sightseeing",
+          "duration_minutes": 60,
+          "estimated_cost": 0,
+          "image": "https://commons.wikimedia.org/wiki/Special:FilePath/St._Mark's_Square_Venice.jpg"
+        },
+        {
+          "name": "Doge's Palace",
+          "Activity type": "historical",
+          "duration_minutes": 120,
+          "estimated_cost": 3300,
+          "image": "https://commons.wikimedia.org/wiki/Special:FilePath/Doge's_Palace_Venice.jpg"
+        },
+        {
+          "name": "Grand Canal Gondola Ride",
+          "Activity type": "sightseeing",
+          "duration_minutes": 60,
+          "estimated_cost": 10000,
+          "image": "https://commons.wikimedia.org/wiki/Special:FilePath/Grand_Canal_Gondola_Ride_Venice.jpg"
+        },
+        {
+          "name": "Rialto Bridge",
+          "Activity type": "sightseeing",
+          "duration_minutes": 45,
+          "estimated_cost": 0,
+          "image": "https://commons.wikimedia.org/wiki/Special:FilePath/Rialto_Bridge_Venice.jpg"
+        },
+        {
+          "name": "Venetian Food Tour",
+          "Activity type": "food tour",
+          "duration_minutes": 180,
+          "estimated_cost": 8300,
+          "image": "https://commons.wikimedia.org/wiki/Special:FilePath/Venetian_Food_Tour_Venice.jpg"
+        }
+      ]
+    },
+    {
+      "name": "Florence",
+      "country": "Italy",
+      "cost_index": 76,
+      "image": "https://commons.wikimedia.org/wiki/Special:FilePath/Florence.jpg",
+      "places": [
+        {
+          "name": "Uffizi Gallery",
+          "Activity type": "historical",
+          "duration_minutes": 150,
+          "estimated_cost": 2800,
+          "image": "https://commons.wikimedia.org/wiki/Special:FilePath/Uffizi_Gallery_Florence.jpg"
+        },
+        {
+          "name": "Duomo",
+          "Activity type": "historical",
+          "duration_minutes": 120,
+          "estimated_cost": 2200,
+          "image": "https://commons.wikimedia.org/wiki/Special:FilePath/Duomo_Florence.jpg"
+        },
+        {
+          "name": "Ponte Vecchio",
+          "Activity type": "sightseeing",
+          "duration_minutes": 45,
+          "estimated_cost": 0,
+          "image": "https://commons.wikimedia.org/wiki/Special:FilePath/Ponte_Vecchio_Florence.jpg"
+        },
+        {
+          "name": "Piazzale Michelangelo",
+          "Activity type": "sightseeing",
+          "duration_minutes": 60,
+          "estimated_cost": 0,
+          "image": "https://commons.wikimedia.org/wiki/Special:FilePath/Piazzale_Michelangelo_Florence.jpg"
+        },
+        {
+          "name": "Tuscan Food Tour",
+          "Activity type": "food tour",
+          "duration_minutes": 180,
+          "estimated_cost": 8900,
+          "image": "https://commons.wikimedia.org/wiki/Special:FilePath/Tuscan_Food_Tour_Florence.jpg"
+        }
+      ]
+    },
+    {
+      "name": "Barcelona",
+      "country": "Spain",
+      "cost_index": 70,
+      "image": "https://commons.wikimedia.org/wiki/Special:FilePath/Barcelona.jpg",
+      "places": [
+        {
+          "name": "Sagrada Familia",
+          "Activity type": "historical",
+          "duration_minutes": 150,
+          "estimated_cost": 2900,
+          "image": "https://commons.wikimedia.org/wiki/Special:FilePath/Sagrada_Familia_Barcelona.jpg"
+        },
+        {
+          "name": "Park Güell",
+          "Activity type": "sightseeing",
+          "duration_minutes": 120,
+          "estimated_cost": 2000,
+          "image": "https://commons.wikimedia.org/wiki/Special:FilePath/Park_G%C3%BCell_Barcelona.jpg"
+        },
+        {
+          "name": "Gothic Quarter",
+          "Activity type": "historical",
+          "duration_minutes": 150,
+          "estimated_cost": 0,
+          "image": "https://commons.wikimedia.org/wiki/Special:FilePath/Gothic_Quarter_Barcelona.jpg"
+        },
+        {
+          "name": "Barceloneta Beach",
+          "Activity type": "sightseeing",
+          "duration_minutes": 120,
+          "estimated_cost": 0,
+          "image": "https://commons.wikimedia.org/wiki/Special:FilePath/Barceloneta_Beach_Barcelona.jpg"
+        },
+        {
+          "name": "Barcelona Tapas Tour",
+          "Activity type": "food tour",
+          "duration_minutes": 180,
+          "estimated_cost": 7200,
+          "image": "https://commons.wikimedia.org/wiki/Special:FilePath/Barcelona_Tapas_Tour_Barcelona.jpg"
+        }
+      ]
+    },
+    {
+      "name": "London",
+      "country": "United Kingdom",
+      "cost_index": 92,
+      "image": "https://commons.wikimedia.org/wiki/Special:FilePath/London.jpg",
+      "places": [
+        {
+          "name": "Tower of London",
+          "Activity type": "historical",
+          "duration_minutes": 150,
+          "estimated_cost": 4900,
+          "image": "https://commons.wikimedia.org/wiki/Special:FilePath/Tower_of_London_London.jpg"
+        },
+        {
+          "name": "Buckingham Palace",
+          "Activity type": "sightseeing",
+          "duration_minutes": 90,
+          "estimated_cost": 0,
+          "image": "https://commons.wikimedia.org/wiki/Special:FilePath/Buckingham_Palace_London.jpg"
+        },
+        {
+          "name": "British Museum",
+          "Activity type": "historical",
+          "duration_minutes": 180,
+          "estimated_cost": 0,
+          "image": "https://commons.wikimedia.org/wiki/Special:FilePath/British_Museum_London.jpg"
+        },
+        {
+          "name": "London Eye",
+          "Activity type": "sightseeing",
+          "duration_minutes": 60,
+          "estimated_cost": 5800,
+          "image": "https://commons.wikimedia.org/wiki/Special:FilePath/London_Eye_London.jpg"
+        },
+        {
+          "name": "London Food Tour",
+          "Activity type": "food tour",
+          "duration_minutes": 180,
+          "estimated_cost": 9700,
+          "image": "https://commons.wikimedia.org/wiki/Special:FilePath/London_Food_Tour_London.jpg"
+        }
+      ]
+    },
+    {
+      "name": "Edinburgh",
+      "country": "United Kingdom",
+      "cost_index": 72,
+      "image": "https://commons.wikimedia.org/wiki/Special:FilePath/Edinburgh.jpg",
+      "places": [
+        {
+          "name": "Edinburgh Castle",
+          "Activity type": "historical",
+          "duration_minutes": 150,
+          "estimated_cost": 2600,
+          "image": "https://commons.wikimedia.org/wiki/Special:FilePath/Edinburgh_Castle_Edinburgh.jpg"
+        },
+        {
+          "name": "Royal Mile",
+          "Activity type": "sightseeing",
+          "duration_minutes": 120,
+          "estimated_cost": 0,
+          "image": "https://commons.wikimedia.org/wiki/Special:FilePath/Royal_Mile_Edinburgh.jpg"
+        },
+        {
+          "name": "Palace of Holyroodhouse",
+          "Activity type": "historical",
+          "duration_minutes": 120,
+          "estimated_cost": 2600,
+          "image": "https://commons.wikimedia.org/wiki/Special:FilePath/Palace_of_Holyroodhouse_Edinburgh.jpg"
+        },
+        {
+          "name": "Arthur's Seat Hike",
+          "Activity type": "adventure",
+          "duration_minutes": 180,
+          "estimated_cost": 0,
+          "image": "https://commons.wikimedia.org/wiki/Special:FilePath/Arthur's_Seat_Hike_Edinburgh.jpg"
+        },
+        {
+          "name": "Scottish Food Tour",
+          "Activity type": "food tour",
+          "duration_minutes": 150,
+          "estimated_cost": 8400,
+          "image": "https://commons.wikimedia.org/wiki/Special:FilePath/Scottish_Food_Tour_Edinburgh.jpg"
+        }
+      ]
+    },
+    {
+      "name": "Amsterdam",
+      "country": "Netherlands",
+      "cost_index": 82,
+      "image": "https://commons.wikimedia.org/wiki/Special:FilePath/Amsterdam.jpg",
+      "places": [
+        {
+          "name": "Rijksmuseum",
+          "Activity type": "historical",
+          "duration_minutes": 150,
+          "estimated_cost": 2600,
+          "image": "https://commons.wikimedia.org/wiki/Special:FilePath/Rijksmuseum_Amsterdam.jpg"
+        },
+        {
+          "name": "Anne Frank House",
+          "Activity type": "historical",
+          "duration_minutes": 90,
+          "estimated_cost": 2400,
+          "image": "https://commons.wikimedia.org/wiki/Special:FilePath/Anne_Frank_House_Amsterdam.jpg"
+        },
+        {
+          "name": "Canal Cruise",
+          "Activity type": "sightseeing",
+          "duration_minutes": 90,
+          "estimated_cost": 2800,
+          "image": "https://commons.wikimedia.org/wiki/Special:FilePath/Canal_Cruise_Amsterdam.jpg"
+        },
+        {
+          "name": "Vondelpark",
+          "Activity type": "sightseeing",
+          "duration_minutes": 90,
+          "estimated_cost": 0,
+          "image": "https://commons.wikimedia.org/wiki/Special:FilePath/Vondelpark_Amsterdam.jpg"
+        },
+        {
+          "name": "Amsterdam Food Tour",
+          "Activity type": "food tour",
+          "duration_minutes": 180,
+          "estimated_cost": 7800,
+          "image": "https://commons.wikimedia.org/wiki/Special:FilePath/Amsterdam_Food_Tour_Amsterdam.jpg"
+        }
+      ]
+    },
+    {
+      "name": "Prague",
+      "country": "Czech Republic",
+      "cost_index": 55,
+      "image": "https://commons.wikimedia.org/wiki/Special:FilePath/Prague.jpg",
+      "places": [
+        {
+          "name": "Prague Castle",
+          "Activity type": "historical",
+          "duration_minutes": 180,
+          "estimated_cost": 100,
+          "image": "https://commons.wikimedia.org/wiki/Special:FilePath/Prague_Castle_Prague.jpg"
+        },
+        {
+          "name": "Charles Bridge",
+          "Activity type": "sightseeing",
+          "duration_minutes": 60,
+          "estimated_cost": 0,
+          "image": "https://commons.wikimedia.org/wiki/Special:FilePath/Charles_Bridge_Prague.jpg"
+        },
+        {
+          "name": "Old Town Square",
+          "Activity type": "sightseeing",
+          "duration_minutes": 60,
+          "estimated_cost": 0,
+          "image": "https://commons.wikimedia.org/wiki/Special:FilePath/Old_Town_Square_Prague.jpg"
+        },
+        {
+          "name": "St. Vitus Cathedral",
+          "Activity type": "historical",
+          "duration_minutes": 90,
+          "estimated_cost": 50,
+          "image": "https://commons.wikimedia.org/wiki/Special:FilePath/St._Vitus_Cathedral_Prague.jpg"
+        },
+        {
+          "name": "Prague Food Tour",
+          "Activity type": "food tour",
+          "duration_minutes": 180,
+          "estimated_cost": 250,
+          "image": "https://commons.wikimedia.org/wiki/Special:FilePath/Prague_Food_Tour_Prague.jpg"
+        }
+      ]
+    },
+    {
+      "name": "Vienna",
+      "country": "Austria",
+      "cost_index": 75,
+      "image": "https://commons.wikimedia.org/wiki/Special:FilePath/Vienna.jpg",
+      "places": [
+        {
+          "name": "Schönbrunn Palace",
+          "Activity type": "historical",
+          "duration_minutes": 180,
+          "estimated_cost": 2800,
+          "image": "https://commons.wikimedia.org/wiki/Special:FilePath/Sch%C3%B6nbrunn_Palace_Vienna.jpg"
+        },
+        {
+          "name": "St. Stephen's Cathedral",
+          "Activity type": "historical",
+          "duration_minutes": 60,
+          "estimated_cost": 0,
+          "image": "https://commons.wikimedia.org/wiki/Special:FilePath/St._Stephen's_Cathedral_Vienna.jpg"
+        },
+        {
+          "name": "Hofburg Palace",
+          "Activity type": "historical",
+          "duration_minutes": 120,
+          "estimated_cost": 2000,
+          "image": "https://commons.wikimedia.org/wiki/Special:FilePath/Hofburg_Palace_Vienna.jpg"
+        },
+        {
+          "name": "Belvedere Palace",
+          "Activity type": "historical",
+          "duration_minutes": 120,
+          "estimated_cost": 1900,
+          "image": "https://commons.wikimedia.org/wiki/Special:FilePath/Belvedere_Palace_Vienna.jpg"
+        },
+        {
+          "name": "Viennese Food Tour",
+          "Activity type": "food tour",
+          "duration_minutes": 180,
+          "estimated_cost": 7800,
+          "image": "https://commons.wikimedia.org/wiki/Special:FilePath/Viennese_Food_Tour_Vienna.jpg"
+        }
+      ]
+    },
+    {
+      "name": "Santorini",
+      "country": "Greece",
+      "cost_index": 80,
+      "image": "https://commons.wikimedia.org/wiki/Special:FilePath/Santorini.jpg",
+      "places": [
+        {
+          "name": "Oia Sunset",
+          "Activity type": "sightseeing",
+          "duration_minutes": 120,
+          "estimated_cost": 0,
+          "image": "https://commons.wikimedia.org/wiki/Special:FilePath/Oia_Sunset_Santorini.jpg"
+        },
+        {
+          "name": "Akrotiri Archaeological Site",
+          "Activity type": "historical",
+          "duration_minutes": 120,
+          "estimated_cost": 1300,
+          "image": "https://commons.wikimedia.org/wiki/Special:FilePath/Akrotiri_Archaeological_Site_Santorini.jpg"
+        },
+        {
+          "name": "Fira to Oia Hike",
+          "Activity type": "adventure",
+          "duration_minutes": 180,
+          "estimated_cost": 0,
+          "image": "https://commons.wikimedia.org/wiki/Special:FilePath/Fira_to_Oia_Hike_Santorini.jpg"
+        },
+        {
+          "name": "Red Beach",
+          "Activity type": "sightseeing",
+          "duration_minutes": 90,
+          "estimated_cost": 0,
+          "image": "https://commons.wikimedia.org/wiki/Special:FilePath/Red_Beach_Santorini.jpg"
+        },
+        {
+          "name": "Santorini Food Tour",
+          "Activity type": "food tour",
+          "duration_minutes": 180,
+          "estimated_cost": 7800,
+          "image": "https://commons.wikimedia.org/wiki/Special:FilePath/Santorini_Food_Tour_Santorini.jpg"
+        }
+      ]
+    },
+    {
+      "name": "Lisbon",
+      "country": "Portugal",
+      "cost_index": 60,
+      "image": "https://commons.wikimedia.org/wiki/Special:FilePath/Lisbon.jpg",
+      "places": [
+        {
+          "name": "Belém Tower",
+          "Activity type": "historical",
+          "duration_minutes": 90,
+          "estimated_cost": 900,
+          "image": "https://commons.wikimedia.org/wiki/Special:FilePath/Bel%C3%A9m_Tower_Lisbon.jpg"
+        },
+        {
+          "name": "Jerónimos Monastery",
+          "Activity type": "historical",
+          "duration_minutes": 120,
+          "estimated_cost": 1300,
+          "image": "https://commons.wikimedia.org/wiki/Special:FilePath/Jer%C3%B3nimos_Monastery_Lisbon.jpg"
+        },
+        {
+          "name": "Tram 28 Ride",
+          "Activity type": "sightseeing",
+          "duration_minutes": 90,
+          "estimated_cost": 450,
+          "image": "https://commons.wikimedia.org/wiki/Special:FilePath/Tram_28_Ride_Lisbon.jpg"
+        },
+        {
+          "name": "São Jorge Castle",
+          "Activity type": "historical",
+          "duration_minutes": 120,
+          "estimated_cost": 1700,
+          "image": "https://commons.wikimedia.org/wiki/Special:FilePath/S%C3%A3o_Jorge_Castle_Lisbon.jpg"
+        },
+        {
+          "name": "Lisbon Food Tour",
+          "Activity type": "food tour",
+          "duration_minutes": 180,
+          "estimated_cost": 6700,
+          "image": "https://commons.wikimedia.org/wiki/Special:FilePath/Lisbon_Food_Tour_Lisbon.jpg"
+        }
+      ]
+    },
+    {
+      "name": "Berlin",
+      "country": "Germany",
+      "cost_index": 68,
+      "image": "https://commons.wikimedia.org/wiki/Special:FilePath/Berlin.jpg",
+      "places": [
+        {
+          "name": "Brandenburg Gate",
+          "Activity type": "sightseeing",
+          "duration_minutes": 45,
+          "estimated_cost": 0,
+          "image": "https://commons.wikimedia.org/wiki/Special:FilePath/Brandenburg_Gate_Berlin.jpg"
+        },
+        {
+          "name": "Berlin Wall Memorial",
+          "Activity type": "historical",
+          "duration_minutes": 120,
+          "estimated_cost": 0,
+          "image": "https://commons.wikimedia.org/wiki/Special:FilePath/Berlin_Wall_Memorial_Berlin.jpg"
+        },
+        {
+          "name": "Museum Island",
+          "Activity type": "historical",
+          "duration_minutes": 180,
+          "estimated_cost": 2400,
+          "image": "https://commons.wikimedia.org/wiki/Special:FilePath/Museum_Island_Berlin.jpg"
+        },
+        {
+          "name": "Reichstag Dome",
+          "Activity type": "historical",
+          "duration_minutes": 90,
+          "estimated_cost": 0,
+          "image": "https://commons.wikimedia.org/wiki/Special:FilePath/Reichstag_Dome_Berlin.jpg"
+        },
+        {
+          "name": "Berlin Food Tour",
+          "Activity type": "food tour",
+          "duration_minutes": 180,
+          "estimated_cost": 7200,
+          "image": "https://commons.wikimedia.org/wiki/Special:FilePath/Berlin_Food_Tour_Berlin.jpg"
+        }
+      ]
+    },
+    {
+      "name": "Zurich",
+      "country": "Switzerland",
+      "cost_index": 98,
+      "image": "https://commons.wikimedia.org/wiki/Special:FilePath/Zurich.jpg",
+      "places": [
+        {
+          "name": "Old Town",
+          "Activity type": "sightseeing",
+          "duration_minutes": 120,
+          "estimated_cost": 0,
+          "image": "https://commons.wikimedia.org/wiki/Special:FilePath/Old_Town_Zurich.jpg"
+        },
+        {
+          "name": "Lake Zurich Cruise",
+          "Activity type": "sightseeing",
+          "duration_minutes": 120,
+          "estimated_cost": 4200,
+          "image": "https://commons.wikimedia.org/wiki/Special:FilePath/Lake_Zurich_Cruise_Zurich.jpg"
+        },
+        {
+          "name": "Uetliberg",
+          "Activity type": "adventure",
+          "duration_minutes": 150,
+          "estimated_cost": 0,
+          "image": "https://commons.wikimedia.org/wiki/Special:FilePath/Uetliberg_Zurich.jpg"
+        },
+        {
+          "name": "Grossmünster",
+          "Activity type": "historical",
+          "duration_minutes": 60,
+          "estimated_cost": 600,
+          "image": "https://commons.wikimedia.org/wiki/Special:FilePath/Grossm%C3%BCnster_Zurich.jpg"
+        },
+        {
+          "name": "Swiss Food Tour",
+          "Activity type": "food tour",
+          "duration_minutes": 180,
+          "estimated_cost": 10800,
+          "image": "https://commons.wikimedia.org/wiki/Special:FilePath/Swiss_Food_Tour_Zurich.jpg"
+        }
+      ]
+    },
+    {
+      "name": "Reykjavik",
+      "country": "Iceland",
+      "cost_index": 90,
+      "image": "https://commons.wikimedia.org/wiki/Special:FilePath/Reykjavik.jpg",
+      "places": [
+        {
+          "name": "Hallgrímskirkja",
+          "Activity type": "historical",
+          "duration_minutes": 60,
+          "estimated_cost": 0,
+          "image": "https://commons.wikimedia.org/wiki/Special:FilePath/Hallgr%C3%ADmskirkja_Reykjavik.jpg"
+        },
+        {
+          "name": "Sun Voyager",
+          "Activity type": "sightseeing",
+          "duration_minutes": 45,
+          "estimated_cost": 0,
+          "image": "https://commons.wikimedia.org/wiki/Special:FilePath/Sun_Voyager_Reykjavik.jpg"
+        },
+        {
+          "name": "Blue Lagoon",
+          "Activity type": "adventure",
+          "duration_minutes": 180,
+          "estimated_cost": 100,
+          "image": "https://commons.wikimedia.org/wiki/Special:FilePath/Blue_Lagoon_Reykjavik.jpg"
+        },
+        {
+          "name": "Golden Circle Tour",
+          "Activity type": "adventure",
+          "duration_minutes": 480,
+          "estimated_cost": 100,
+          "image": "https://commons.wikimedia.org/wiki/Special:FilePath/Golden_Circle_Tour_Reykjavik.jpg"
+        },
+        {
+          "name": "Icelandic Food Tour",
+          "Activity type": "food tour",
+          "duration_minutes": 180,
+          "estimated_cost": 100,
+          "image": "https://commons.wikimedia.org/wiki/Special:FilePath/Icelandic_Food_Tour_Reykjavik.jpg"
+        }
+      ]
+    },
+    {
+      "name": "Tokyo",
+      "country": "Japan",
+      "cost_index": 80,
+      "image": "https://commons.wikimedia.org/wiki/Special:FilePath/Tokyo.jpg",
+      "places": [
+        {
+          "name": "Tokyo Skytree",
+          "Activity type": "sightseeing",
+          "duration_minutes": 120,
+          "estimated_cost": 0,
+          "image": "https://commons.wikimedia.org/wiki/Special:FilePath/Tokyo_Skytree_Tokyo.jpg"
+        },
+        {
+          "name": "Senso-ji Temple",
+          "Activity type": "historical",
+          "duration_minutes": 90,
+          "estimated_cost": 0,
+          "image": "https://commons.wikimedia.org/wiki/Special:FilePath/Senso-ji_Temple_Tokyo.jpg"
+        },
+        {
+          "name": "Meiji Shrine",
+          "Activity type": "historical",
+          "duration_minutes": 90,
+          "estimated_cost": 0,
+          "image": "https://commons.wikimedia.org/wiki/Special:FilePath/Meiji_Shrine_Tokyo.jpg"
+        },
+        {
+          "name": "Shibuya Crossing",
+          "Activity type": "sightseeing",
+          "duration_minutes": 60,
+          "estimated_cost": 0,
+          "image": "https://commons.wikimedia.org/wiki/Special:FilePath/Shibuya_Crossing_Tokyo.jpg"
+        },
+        {
+          "name": "Tokyo Food Tour",
+          "Activity type": "food tour",
+          "duration_minutes": 180,
+          "estimated_cost": 50,
+          "image": "https://commons.wikimedia.org/wiki/Special:FilePath/Tokyo_Food_Tour_Tokyo.jpg"
+        }
+      ]
+    },
+    {
+      "name": "Kyoto",
+      "country": "Japan",
+      "cost_index": 72,
+      "image": "https://commons.wikimedia.org/wiki/Special:FilePath/Kyoto.jpg",
+      "places": [
+        {
+          "name": "Fushimi Inari Shrine",
+          "Activity type": "historical",
+          "duration_minutes": 150,
+          "estimated_cost": 0,
+          "image": "https://commons.wikimedia.org/wiki/Special:FilePath/Fushimi_Inari_Shrine_Kyoto.jpg"
+        },
+        {
+          "name": "Kinkaku-ji",
+          "Activity type": "historical",
+          "duration_minutes": 90,
+          "estimated_cost": 0,
+          "image": "https://commons.wikimedia.org/wiki/Special:FilePath/Kinkaku-ji_Kyoto.jpg"
+        },
+        {
+          "name": "Arashiyama Bamboo Grove",
+          "Activity type": "sightseeing",
+          "duration_minutes": 120,
+          "estimated_cost": 0,
+          "image": "https://commons.wikimedia.org/wiki/Special:FilePath/Arashiyama_Bamboo_Grove_Kyoto.jpg"
+        },
+        {
+          "name": "Kiyomizu-dera",
+          "Activity type": "historical",
+          "duration_minutes": 120,
+          "estimated_cost": 0,
+          "image": "https://commons.wikimedia.org/wiki/Special:FilePath/Kiyomizu-dera_Kyoto.jpg"
+        },
+        {
+          "name": "Kyoto Food Tour",
+          "Activity type": "food tour",
+          "duration_minutes": 180,
+          "estimated_cost": 50,
+          "image": "https://commons.wikimedia.org/wiki/Special:FilePath/Kyoto_Food_Tour_Kyoto.jpg"
+        }
+      ]
+    },
+    {
+      "name": "Bangkok",
+      "country": "Thailand",
+      "cost_index": 45,
+      "image": "https://commons.wikimedia.org/wiki/Special:FilePath/Bangkok.jpg",
+      "places": [
+        {
+          "name": "Grand Palace",
+          "Activity type": "historical",
+          "duration_minutes": 120,
+          "estimated_cost": 1400,
+          "image": "https://commons.wikimedia.org/wiki/Special:FilePath/Grand_Palace_Bangkok.jpg"
+        },
+        {
+          "name": "Wat Pho",
+          "Activity type": "historical",
+          "duration_minutes": 90,
+          "estimated_cost": 850,
+          "image": "https://commons.wikimedia.org/wiki/Special:FilePath/Wat_Pho_Bangkok.jpg"
+        },
+        {
+          "name": "Wat Arun",
+          "Activity type": "historical",
+          "duration_minutes": 90,
+          "estimated_cost": 550,
+          "image": "https://commons.wikimedia.org/wiki/Special:FilePath/Wat_Arun_Bangkok.jpg"
+        },
+        {
+          "name": "Chao Phraya Boat Ride",
+          "Activity type": "sightseeing",
+          "duration_minutes": 90,
+          "estimated_cost": 400,
+          "image": "https://commons.wikimedia.org/wiki/Special:FilePath/Chao_Phraya_Boat_Ride_Bangkok.jpg"
+        },
+        {
+          "name": "Bangkok Street Food Tour",
+          "Activity type": "food tour",
+          "duration_minutes": 180,
+          "estimated_cost": 2200,
+          "image": "https://commons.wikimedia.org/wiki/Special:FilePath/Bangkok_Street_Food_Tour_Bangkok.jpg"
+        }
+      ]
+    },
+    {
+      "name": "Bali",
+      "country": "Indonesia",
+      "cost_index": 40,
+      "image": "https://commons.wikimedia.org/wiki/Special:FilePath/Bali.jpg",
+      "places": [
+        {
+          "name": "Uluwatu Temple",
+          "Activity type": "historical",
+          "duration_minutes": 120,
+          "estimated_cost": 0,
+          "image": "https://commons.wikimedia.org/wiki/Special:FilePath/Uluwatu_Temple_Bali.jpg"
+        },
+        {
+          "name": "Tegallalang Rice Terraces",
+          "Activity type": "sightseeing",
+          "duration_minutes": 120,
+          "estimated_cost": 0,
+          "image": "https://commons.wikimedia.org/wiki/Special:FilePath/Tegallalang_Rice_Terraces_Bali.jpg"
+        },
+        {
+          "name": "Mount Batur Sunrise Trek",
+          "Activity type": "adventure",
+          "duration_minutes": 360,
+          "estimated_cost": 0,
+          "image": "https://commons.wikimedia.org/wiki/Special:FilePath/Mount_Batur_Sunrise_Trek_Bali.jpg"
+        },
+        {
+          "name": "Seminyak Beach",
+          "Activity type": "sightseeing",
+          "duration_minutes": 120,
+          "estimated_cost": 0,
+          "image": "https://commons.wikimedia.org/wiki/Special:FilePath/Seminyak_Beach_Bali.jpg"
+        },
+        {
+          "name": "Balinese Food Tour",
+          "Activity type": "food tour",
+          "duration_minutes": 180,
+          "estimated_cost": 0,
+          "image": "https://commons.wikimedia.org/wiki/Special:FilePath/Balinese_Food_Tour_Bali.jpg"
+        }
+      ]
+    },
+    {
+      "name": "Singapore",
+      "country": "Singapore",
+      "cost_index": 88,
+      "image": "https://commons.wikimedia.org/wiki/Special:FilePath/Singapore.jpg",
+      "places": [
+        {
+          "name": "Gardens by the Bay",
+          "Activity type": "sightseeing",
+          "duration_minutes": 150,
+          "estimated_cost": 2400,
+          "image": "https://commons.wikimedia.org/wiki/Special:FilePath/Gardens_by_the_Bay_Singapore.jpg"
+        },
+        {
+          "name": "Marina Bay Sands SkyPark",
+          "Activity type": "sightseeing",
+          "duration_minutes": 90,
+          "estimated_cost": 2600,
+          "image": "https://commons.wikimedia.org/wiki/Special:FilePath/Marina_Bay_Sands_SkyPark_Singapore.jpg"
+        },
+        {
+          "name": "Sentosa Island",
+          "Activity type": "adventure",
+          "duration_minutes": 300,
+          "estimated_cost": 2200,
+          "image": "https://commons.wikimedia.org/wiki/Special:FilePath/Sentosa_Island_Singapore.jpg"
+        },
+        {
+          "name": "Chinatown Heritage Tour",
+          "Activity type": "historical",
+          "duration_minutes": 120,
+          "estimated_cost": 0,
+          "image": "https://commons.wikimedia.org/wiki/Special:FilePath/Chinatown_Heritage_Tour_Singapore.jpg"
+        },
+        {
+          "name": "Singapore Food Tour",
+          "Activity type": "food tour",
+          "duration_minutes": 180,
+          "estimated_cost": 4900,
+          "image": "https://commons.wikimedia.org/wiki/Special:FilePath/Singapore_Food_Tour_Singapore.jpg"
+        }
+      ]
+    },
+    {
+      "name": "Hong Kong",
+      "country": "China",
+      "cost_index": 85,
+      "image": "https://commons.wikimedia.org/wiki/Special:FilePath/Hong_Kong.jpg",
+      "places": [
+        {
+          "name": "Victoria Peak",
+          "Activity type": "sightseeing",
+          "duration_minutes": 120,
+          "estimated_cost": 150,
+          "image": "https://commons.wikimedia.org/wiki/Special:FilePath/Victoria_Peak_Hong_Kong.jpg"
+        },
+        {
+          "name": "Big Buddha",
+          "Activity type": "historical",
+          "duration_minutes": 180,
+          "estimated_cost": 0,
+          "image": "https://commons.wikimedia.org/wiki/Special:FilePath/Big_Buddha_Hong_Kong.jpg"
+        },
+        {
+          "name": "Star Ferry",
+          "Activity type": "sightseeing",
+          "duration_minutes": 60,
+          "estimated_cost": 0,
+          "image": "https://commons.wikimedia.org/wiki/Special:FilePath/Star_Ferry_Hong_Kong.jpg"
+        },
+        {
+          "name": "Tsim Sha Tsui",
+          "Activity type": "sightseeing",
+          "duration_minutes": 120,
+          "estimated_cost": 0,
+          "image": "https://commons.wikimedia.org/wiki/Special:FilePath/Tsim_Sha_Tsui_Hong_Kong.jpg"
+        },
+        {
+          "name": "Hong Kong Food Tour",
+          "Activity type": "food tour",
+          "duration_minutes": 180,
+          "estimated_cost": 800,
+          "image": "https://commons.wikimedia.org/wiki/Special:FilePath/Hong_Kong_Food_Tour_Hong_Kong.jpg"
+        }
+      ]
+    },
+    {
+      "name": "Seoul",
+      "country": "South Korea",
+      "cost_index": 68,
+      "image": "https://commons.wikimedia.org/wiki/Special:FilePath/Seoul.jpg",
+      "places": [
+        {
+          "name": "Gyeongbokgung Palace",
+          "Activity type": "historical",
+          "duration_minutes": 120,
+          "estimated_cost": 0,
+          "image": "https://commons.wikimedia.org/wiki/Special:FilePath/Gyeongbokgung_Palace_Seoul.jpg"
+        },
+        {
+          "name": "Bukchon Hanok Village",
+          "Activity type": "historical",
+          "duration_minutes": 120,
+          "estimated_cost": 0,
+          "image": "https://commons.wikimedia.org/wiki/Special:FilePath/Bukchon_Hanok_Village_Seoul.jpg"
+        },
+        {
+          "name": "N Seoul Tower",
+          "Activity type": "sightseeing",
+          "duration_minutes": 120,
+          "estimated_cost": 0,
+          "image": "https://commons.wikimedia.org/wiki/Special:FilePath/N_Seoul_Tower_Seoul.jpg"
+        },
+        {
+          "name": "Myeongdong",
+          "Activity type": "sightseeing",
+          "duration_minutes": 150,
+          "estimated_cost": 0,
+          "image": "https://commons.wikimedia.org/wiki/Special:FilePath/Myeongdong_Seoul.jpg"
+        },
+        {
+          "name": "Seoul Food Tour",
+          "Activity type": "food tour",
+          "duration_minutes": 180,
+          "estimated_cost": 0,
+          "image": "https://commons.wikimedia.org/wiki/Special:FilePath/Seoul_Food_Tour_Seoul.jpg"
+        }
+      ]
+    },
+    {
+      "name": "Dubai",
+      "country": "United Arab Emirates",
+      "cost_index": 75,
+      "image": "https://commons.wikimedia.org/wiki/Special:FilePath/Dubai.jpg",
+      "places": [
+        {
+          "name": "Burj Khalifa",
+          "Activity type": "sightseeing",
+          "duration_minutes": 150,
+          "estimated_cost": 1200,
+          "image": "https://commons.wikimedia.org/wiki/Special:FilePath/Burj_Khalifa_Dubai.jpg"
+        },
+        {
+          "name": "Dubai Mall",
+          "Activity type": "sightseeing",
+          "duration_minutes": 180,
+          "estimated_cost": 0,
+          "image": "https://commons.wikimedia.org/wiki/Special:FilePath/Dubai_Mall_Dubai.jpg"
+        },
+        {
+          "name": "Palm Jumeirah",
+          "Activity type": "sightseeing",
+          "duration_minutes": 150,
+          "estimated_cost": 0,
+          "image": "https://commons.wikimedia.org/wiki/Special:FilePath/Palm_Jumeirah_Dubai.jpg"
+        },
+        {
+          "name": "Dubai Desert Safari",
+          "Activity type": "adventure",
+          "duration_minutes": 360,
+          "estimated_cost": 1600,
+          "image": "https://commons.wikimedia.org/wiki/Special:FilePath/Dubai_Desert_Safari_Dubai.jpg"
+        },
+        {
+          "name": "Dubai Food Tour",
+          "Activity type": "food tour",
+          "duration_minutes": 180,
+          "estimated_cost": 2000,
+          "image": "https://commons.wikimedia.org/wiki/Special:FilePath/Dubai_Food_Tour_Dubai.jpg"
+        }
+      ]
+    },
+    {
+      "name": "Istanbul",
+      "country": "Turkey",
+      "cost_index": 45,
+      "image": "https://commons.wikimedia.org/wiki/Special:FilePath/Istanbul.jpg",
+      "places": [
+        {
+          "name": "Hagia Sophia",
+          "Activity type": "historical",
+          "duration_minutes": 120,
+          "estimated_cost": 0,
+          "image": "https://commons.wikimedia.org/wiki/Special:FilePath/Hagia_Sophia_Istanbul.jpg"
+        },
+        {
+          "name": "Blue Mosque",
+          "Activity type": "historical",
+          "duration_minutes": 90,
+          "estimated_cost": 0,
+          "image": "https://commons.wikimedia.org/wiki/Special:FilePath/Blue_Mosque_Istanbul.jpg"
+        },
+        {
+          "name": "Topkapi Palace",
+          "Activity type": "historical",
+          "duration_minutes": 150,
+          "estimated_cost": 50,
+          "image": "https://commons.wikimedia.org/wiki/Special:FilePath/Topkapi_Palace_Istanbul.jpg"
+        },
+        {
+          "name": "Bosphorus Cruise",
+          "Activity type": "sightseeing",
+          "duration_minutes": 120,
+          "estimated_cost": 0,
+          "image": "https://commons.wikimedia.org/wiki/Special:FilePath/Bosphorus_Cruise_Istanbul.jpg"
+        },
+        {
+          "name": "Istanbul Food Tour",
+          "Activity type": "food tour",
+          "duration_minutes": 180,
+          "estimated_cost": 50,
+          "image": "https://commons.wikimedia.org/wiki/Special:FilePath/Istanbul_Food_Tour_Istanbul.jpg"
+        }
+      ]
+    },
+    {
+      "name": "Kuala Lumpur",
+      "country": "Malaysia",
+      "cost_index": 42,
+      "image": "https://commons.wikimedia.org/wiki/Special:FilePath/Kuala_Lumpur.jpg",
+      "places": [
+        {
+          "name": "Petronas Twin Towers",
+          "Activity type": "sightseeing",
+          "duration_minutes": 120,
+          "estimated_cost": 450,
+          "image": "https://commons.wikimedia.org/wiki/Special:FilePath/Petronas_Twin_Towers_Kuala_Lumpur.jpg"
+        },
+        {
+          "name": "Batu Caves",
+          "Activity type": "historical",
+          "duration_minutes": 120,
+          "estimated_cost": 0,
+          "image": "https://commons.wikimedia.org/wiki/Special:FilePath/Batu_Caves_Kuala_Lumpur.jpg"
+        },
+        {
+          "name": "Merdeka Square",
+          "Activity type": "historical",
+          "duration_minutes": 60,
+          "estimated_cost": 0,
+          "image": "https://commons.wikimedia.org/wiki/Special:FilePath/Merdeka_Square_Kuala_Lumpur.jpg"
+        },
+        {
+          "name": "KL Tower",
+          "Activity type": "sightseeing",
+          "duration_minutes": 90,
+          "estimated_cost": 350,
+          "image": "https://commons.wikimedia.org/wiki/Special:FilePath/KL_Tower_Kuala_Lumpur.jpg"
+        },
+        {
+          "name": "Kuala Lumpur Food Tour",
+          "Activity type": "food tour",
+          "duration_minutes": 180,
+          "estimated_cost": 900,
+          "image": "https://commons.wikimedia.org/wiki/Special:FilePath/Kuala_Lumpur_Food_Tour_Kuala_Lumpur.jpg"
+        }
+      ]
+    },
+    {
+      "name": "Ho Chi Minh City",
+      "country": "Vietnam",
+      "cost_index": 32,
+      "image": "https://commons.wikimedia.org/wiki/Special:FilePath/Ho_Chi_Minh_City.jpg",
+      "places": [
+        {
+          "name": "War Remnants Museum",
+          "Activity type": "historical",
+          "duration_minutes": 120,
+          "estimated_cost": 0,
+          "image": "https://commons.wikimedia.org/wiki/Special:FilePath/War_Remnants_Museum_Ho_Chi_Minh_City.jpg"
+        },
+        {
+          "name": "Notre-Dame Cathedral Basilica",
+          "Activity type": "historical",
+          "duration_minutes": 60,
+          "estimated_cost": 0,
+          "image": "https://commons.wikimedia.org/wiki/Special:FilePath/Notre-Dame_Cathedral_Basilica_Ho_Chi_Minh_City.jpg"
+        },
+        {
+          "name": "Ben Thanh Market",
+          "Activity type": "sightseeing",
+          "duration_minutes": 120,
+          "estimated_cost": 0,
+          "image": "https://commons.wikimedia.org/wiki/Special:FilePath/Ben_Thanh_Market_Ho_Chi_Minh_City.jpg"
+        },
+        {
+          "name": "Cu Chi Tunnels",
+          "Activity type": "historical",
+          "duration_minutes": 360,
+          "estimated_cost": 0,
+          "image": "https://commons.wikimedia.org/wiki/Special:FilePath/Cu_Chi_Tunnels_Ho_Chi_Minh_City.jpg"
+        },
+        {
+          "name": "Ho Chi Minh Food Tour",
+          "Activity type": "food tour",
+          "duration_minutes": 180,
+          "estimated_cost": 0,
+          "image": "https://commons.wikimedia.org/wiki/Special:FilePath/Ho_Chi_Minh_Food_Tour_Ho_Chi_Minh_City.jpg"
+        }
+      ]
+    },
+    {
+      "name": "Siem Reap",
+      "country": "Cambodia",
+      "cost_index": 30,
+      "image": "https://commons.wikimedia.org/wiki/Special:FilePath/Siem_Reap.jpg",
+      "places": [
+        {
+          "name": "Angkor Wat",
+          "Activity type": "historical",
+          "duration_minutes": 180,
+          "estimated_cost": 0,
+          "image": "https://commons.wikimedia.org/wiki/Special:FilePath/Angkor_Wat_Siem_Reap.jpg"
+        },
+        {
+          "name": "Bayon Temple",
+          "Activity type": "historical",
+          "duration_minutes": 120,
+          "estimated_cost": 0,
+          "image": "https://commons.wikimedia.org/wiki/Special:FilePath/Bayon_Temple_Siem_Reap.jpg"
+        },
+        {
+          "name": "Ta Prohm",
+          "Activity type": "historical",
+          "duration_minutes": 120,
+          "estimated_cost": 0,
+          "image": "https://commons.wikimedia.org/wiki/Special:FilePath/Ta_Prohm_Siem_Reap.jpg"
+        },
+        {
+          "name": "Tonle Sap Lake Tour",
+          "Activity type": "sightseeing",
+          "duration_minutes": 180,
+          "estimated_cost": 0,
+          "image": "https://commons.wikimedia.org/wiki/Special:FilePath/Tonle_Sap_Lake_Tour_Siem_Reap.jpg"
+        },
+        {
+          "name": "Khmer Food Tour",
+          "Activity type": "food tour",
+          "duration_minutes": 180,
+          "estimated_cost": 0,
+          "image": "https://commons.wikimedia.org/wiki/Special:FilePath/Khmer_Food_Tour_Siem_Reap.jpg"
+        }
+      ]
+    },
+    {
+      "name": "Maldives",
+      "country": "Maldives",
+      "cost_index": 95,
+      "image": "https://commons.wikimedia.org/wiki/Special:FilePath/Maldives.jpg",
+      "places": [
+        {
+          "name": "Malé Friday Mosque",
+          "Activity type": "historical",
+          "duration_minutes": 60,
+          "estimated_cost": 0,
+          "image": "https://commons.wikimedia.org/wiki/Special:FilePath/Mal%C3%A9_Friday_Mosque_Maldives.jpg"
+        },
+        {
+          "name": "Snorkeling",
+          "Activity type": "adventure",
+          "duration_minutes": 180,
+          "estimated_cost": 250,
+          "image": "https://commons.wikimedia.org/wiki/Special:FilePath/Snorkeling_Maldives.jpg"
+        },
+        {
+          "name": "Dolphin Cruise",
+          "Activity type": "adventure",
+          "duration_minutes": 180,
+          "estimated_cost": 400,
+          "image": "https://commons.wikimedia.org/wiki/Special:FilePath/Dolphin_Cruise_Maldives.jpg"
+        },
+        {
+          "name": "Island Hopping",
+          "Activity type": "sightseeing",
+          "duration_minutes": 300,
+          "estimated_cost": 450,
+          "image": "https://commons.wikimedia.org/wiki/Special:FilePath/Island_Hopping_Maldives.jpg"
+        },
+        {
+          "name": "Maldivian Food Experience",
+          "Activity type": "food tour",
+          "duration_minutes": 150,
+          "estimated_cost": 300,
+          "image": "https://commons.wikimedia.org/wiki/Special:FilePath/Maldivian_Food_Experience_Maldives.jpg"
+        }
+      ]
+    },
+    {
+      "name": "Kathmandu",
+      "country": "Nepal",
+      "cost_index": 25,
+      "image": "https://commons.wikimedia.org/wiki/Special:FilePath/Kathmandu.jpg",
+      "places": [
+        {
+          "name": "Swayambhunath Stupa",
+          "Activity type": "historical",
+          "duration_minutes": 90,
+          "estimated_cost": 0,
+          "image": "https://commons.wikimedia.org/wiki/Special:FilePath/Swayambhunath_Stupa_Kathmandu.jpg"
+        },
+        {
+          "name": "Boudhanath Stupa",
+          "Activity type": "historical",
+          "duration_minutes": 90,
+          "estimated_cost": 0,
+          "image": "https://commons.wikimedia.org/wiki/Special:FilePath/Boudhanath_Stupa_Kathmandu.jpg"
+        },
+        {
+          "name": "Pashupatinath Temple",
+          "Activity type": "historical",
+          "duration_minutes": 120,
+          "estimated_cost": 0,
+          "image": "https://commons.wikimedia.org/wiki/Special:FilePath/Pashupatinath_Temple_Kathmandu.jpg"
+        },
+        {
+          "name": "Kathmandu Durbar Square",
+          "Activity type": "historical",
+          "duration_minutes": 120,
+          "estimated_cost": 0,
+          "image": "https://commons.wikimedia.org/wiki/Special:FilePath/Kathmandu_Durbar_Square_Kathmandu.jpg"
+        },
+        {
+          "name": "Nepali Food Tour",
+          "Activity type": "food tour",
+          "duration_minutes": 180,
+          "estimated_cost": 0,
+          "image": "https://commons.wikimedia.org/wiki/Special:FilePath/Nepali_Food_Tour_Kathmandu.jpg"
+        }
+      ]
+    },
+    {
+      "name": "Colombo",
+      "country": "Sri Lanka",
+      "cost_index": 35,
+      "image": "https://commons.wikimedia.org/wiki/Special:FilePath/Colombo.jpg",
+      "places": [
+        {
+          "name": "Gangaramaya Temple",
+          "Activity type": "historical",
+          "duration_minutes": 90,
+          "estimated_cost": 0,
+          "image": "https://commons.wikimedia.org/wiki/Special:FilePath/Gangaramaya_Temple_Colombo.jpg"
+        },
+        {
+          "name": "Galle Face Green",
+          "Activity type": "sightseeing",
+          "duration_minutes": 90,
+          "estimated_cost": 0,
+          "image": "https://commons.wikimedia.org/wiki/Special:FilePath/Galle_Face_Green_Colombo.jpg"
+        },
+        {
+          "name": "Colombo National Museum",
+          "Activity type": "historical",
+          "duration_minutes": 120,
+          "estimated_cost": 0,
+          "image": "https://commons.wikimedia.org/wiki/Special:FilePath/Colombo_National_Museum_Colombo.jpg"
+        },
+        {
+          "name": "Pettah Market",
+          "Activity type": "sightseeing",
+          "duration_minutes": 120,
+          "estimated_cost": 0,
+          "image": "https://commons.wikimedia.org/wiki/Special:FilePath/Pettah_Market_Colombo.jpg"
+        },
+        {
+          "name": "Sri Lankan Food Tour",
+          "Activity type": "food tour",
+          "duration_minutes": 180,
+          "estimated_cost": 0,
+          "image": "https://commons.wikimedia.org/wiki/Special:FilePath/Sri_Lankan_Food_Tour_Colombo.jpg"
+        }
+      ]
+    },
+    {
+      "name": "New York",
+      "country": "United States",
+      "cost_index": 100,
+      "image": "https://commons.wikimedia.org/wiki/Special:FilePath/New_York.jpg",
+      "places": [
+        {
+          "name": "Statue of Liberty",
+          "Activity type": "sightseeing",
+          "duration_minutes": 240,
+          "estimated_cost": 2400,
+          "image": "https://commons.wikimedia.org/wiki/Special:FilePath/Statue_of_Liberty_New_York.jpg"
+        },
+        {
+          "name": "Times Square",
+          "Activity type": "sightseeing",
+          "duration_minutes": 90,
+          "estimated_cost": 0,
+          "image": "https://commons.wikimedia.org/wiki/Special:FilePath/Times_Square_New_York.jpg"
+        },
+        {
+          "name": "Central Park",
+          "Activity type": "sightseeing",
+          "duration_minutes": 150,
+          "estimated_cost": 0,
+          "image": "https://commons.wikimedia.org/wiki/Special:FilePath/Central_Park_New_York.jpg"
+        },
+        {
+          "name": "Empire State Building",
+          "Activity type": "sightseeing",
+          "duration_minutes": 120,
+          "estimated_cost": 4300,
+          "image": "https://commons.wikimedia.org/wiki/Special:FilePath/Empire_State_Building_New_York.jpg"
+        },
+        {
+          "name": "New York Food Tour",
+          "Activity type": "food tour",
+          "duration_minutes": 180,
+          "estimated_cost": 8100,
+          "image": "https://commons.wikimedia.org/wiki/Special:FilePath/New_York_Food_Tour_New_York.jpg"
+        }
+      ]
+    },
+    {
+      "name": "Los Angeles",
+      "country": "United States",
+      "cost_index": 88,
+      "image": "https://commons.wikimedia.org/wiki/Special:FilePath/Los_Angeles.jpg",
+      "places": [
+        {
+          "name": "Hollywood Walk of Fame",
+          "Activity type": "sightseeing",
+          "duration_minutes": 120,
+          "estimated_cost": 0,
+          "image": "https://commons.wikimedia.org/wiki/Special:FilePath/Hollywood_Walk_of_Fame_Los_Angeles.jpg"
+        },
+        {
+          "name": "Griffith Observatory",
+          "Activity type": "sightseeing",
+          "duration_minutes": 120,
+          "estimated_cost": 0,
+          "image": "https://commons.wikimedia.org/wiki/Special:FilePath/Griffith_Observatory_Los_Angeles.jpg"
+        },
+        {
+          "name": "Santa Monica Pier",
+          "Activity type": "sightseeing",
+          "duration_minutes": 120,
+          "estimated_cost": 0,
+          "image": "https://commons.wikimedia.org/wiki/Special:FilePath/Santa_Monica_Pier_Los_Angeles.jpg"
+        },
+        {
+          "name": "Universal Studios Hollywood",
+          "Activity type": "adventure",
+          "duration_minutes": 480,
+          "estimated_cost": 10500,
+          "image": "https://commons.wikimedia.org/wiki/Special:FilePath/Universal_Studios_Hollywood_Los_Angeles.jpg"
+        },
+        {
+          "name": "Los Angeles Food Tour",
+          "Activity type": "food tour",
+          "duration_minutes": 180,
+          "estimated_cost": 8100,
+          "image": "https://commons.wikimedia.org/wiki/Special:FilePath/Los_Angeles_Food_Tour_Los_Angeles.jpg"
+        }
+      ]
+    },
+    {
+      "name": "San Francisco",
+      "country": "United States",
+      "cost_index": 95,
+      "image": "https://commons.wikimedia.org/wiki/Special:FilePath/San_Francisco.jpg",
+      "places": [
+        {
+          "name": "Golden Gate Bridge",
+          "Activity type": "sightseeing",
+          "duration_minutes": 120,
+          "estimated_cost": 0,
+          "image": "https://commons.wikimedia.org/wiki/Special:FilePath/Golden_Gate_Bridge_San_Francisco.jpg"
+        },
+        {
+          "name": "Alcatraz Island",
+          "Activity type": "historical",
+          "duration_minutes": 180,
+          "estimated_cost": 4300,
+          "image": "https://commons.wikimedia.org/wiki/Special:FilePath/Alcatraz_Island_San_Francisco.jpg"
+        },
+        {
+          "name": "Fisherman's Wharf",
+          "Activity type": "sightseeing",
+          "duration_minutes": 120,
+          "estimated_cost": 0,
+          "image": "https://commons.wikimedia.org/wiki/Special:FilePath/Fisherman's_Wharf_San_Francisco.jpg"
+        },
+        {
+          "name": "Lombard Street",
+          "Activity type": "sightseeing",
+          "duration_minutes": 45,
+          "estimated_cost": 0,
+          "image": "https://commons.wikimedia.org/wiki/Special:FilePath/Lombard_Street_San_Francisco.jpg"
+        },
+        {
+          "name": "San Francisco Food Tour",
+          "Activity type": "food tour",
+          "duration_minutes": 180,
+          "estimated_cost": 8600,
+          "image": "https://commons.wikimedia.org/wiki/Special:FilePath/San_Francisco_Food_Tour_San_Francisco.jpg"
+        }
+      ]
+    },
+    {
+      "name": "Toronto",
+      "country": "Canada",
+      "cost_index": 80,
+      "image": "https://commons.wikimedia.org/wiki/Special:FilePath/Toronto.jpg",
+      "places": [
+        {
+          "name": "CN Tower",
+          "Activity type": "sightseeing",
+          "duration_minutes": 120,
+          "estimated_cost": 3200,
+          "image": "https://commons.wikimedia.org/wiki/Special:FilePath/CN_Tower_Toronto.jpg"
+        },
+        {
+          "name": "Royal Ontario Museum",
+          "Activity type": "historical",
+          "duration_minutes": 150,
+          "estimated_cost": 1800,
+          "image": "https://commons.wikimedia.org/wiki/Special:FilePath/Royal_Ontario_Museum_Toronto.jpg"
+        },
+        {
+          "name": "Distillery Historic District",
+          "Activity type": "historical",
+          "duration_minutes": 120,
+          "estimated_cost": 0,
+          "image": "https://commons.wikimedia.org/wiki/Special:FilePath/Distillery_Historic_District_Toronto.jpg"
+        },
+        {
+          "name": "Toronto Islands",
+          "Activity type": "sightseeing",
+          "duration_minutes": 180,
+          "estimated_cost": 1000,
+          "image": "https://commons.wikimedia.org/wiki/Special:FilePath/Toronto_Islands_Toronto.jpg"
+        },
+        {
+          "name": "Toronto Food Tour",
+          "Activity type": "food tour",
+          "duration_minutes": 180,
+          "estimated_cost": 5200,
+          "image": "https://commons.wikimedia.org/wiki/Special:FilePath/Toronto_Food_Tour_Toronto.jpg"
+        }
+      ]
+    },
+    {
+      "name": "Vancouver",
+      "country": "Canada",
+      "cost_index": 82,
+      "image": "https://commons.wikimedia.org/wiki/Special:FilePath/Vancouver.jpg",
+      "places": [
+        {
+          "name": "Stanley Park",
+          "Activity type": "sightseeing",
+          "duration_minutes": 180,
+          "estimated_cost": 0,
+          "image": "https://commons.wikimedia.org/wiki/Special:FilePath/Stanley_Park_Vancouver.jpg"
+        },
+        {
+          "name": "Capilano Suspension Bridge",
+          "Activity type": "adventure",
+          "duration_minutes": 180,
+          "estimated_cost": 4600,
+          "image": "https://commons.wikimedia.org/wiki/Special:FilePath/Capilano_Suspension_Bridge_Vancouver.jpg"
+        },
+        {
+          "name": "Granville Island",
+          "Activity type": "sightseeing",
+          "duration_minutes": 120,
+          "estimated_cost": 0,
+          "image": "https://commons.wikimedia.org/wiki/Special:FilePath/Granville_Island_Vancouver.jpg"
+        },
+        {
+          "name": "Vancouver Lookout",
+          "Activity type": "sightseeing",
+          "duration_minutes": 90,
+          "estimated_cost": 1400,
+          "image": "https://commons.wikimedia.org/wiki/Special:FilePath/Vancouver_Lookout_Vancouver.jpg"
+        },
+        {
+          "name": "Vancouver Food Tour",
+          "Activity type": "food tour",
+          "duration_minutes": 180,
+          "estimated_cost": 5200,
+          "image": "https://commons.wikimedia.org/wiki/Special:FilePath/Vancouver_Food_Tour_Vancouver.jpg"
+        }
+      ]
+    },
+    {
+      "name": "Rio de Janeiro",
+      "country": "Brazil",
+      "cost_index": 50,
+      "image": "https://commons.wikimedia.org/wiki/Special:FilePath/Rio_de_Janeiro.jpg",
+      "places": [
+        {
+          "name": "Christ the Redeemer",
+          "Activity type": "sightseeing",
+          "duration_minutes": 180,
+          "estimated_cost": 250,
+          "image": "https://commons.wikimedia.org/wiki/Special:FilePath/Christ_the_Redeemer_Rio_de_Janeiro.jpg"
+        },
+        {
+          "name": "Sugarloaf Mountain",
+          "Activity type": "adventure",
+          "duration_minutes": 180,
+          "estimated_cost": 550,
+          "image": "https://commons.wikimedia.org/wiki/Special:FilePath/Sugarloaf_Mountain_Rio_de_Janeiro.jpg"
+        },
+        {
+          "name": "Copacabana Beach",
+          "Activity type": "sightseeing",
+          "duration_minutes": 120,
+          "estimated_cost": 0,
+          "image": "https://commons.wikimedia.org/wiki/Special:FilePath/Copacabana_Beach_Rio_de_Janeiro.jpg"
+        },
+        {
+          "name": "Selarón Steps",
+          "Activity type": "sightseeing",
+          "duration_minutes": 60,
+          "estimated_cost": 0,
+          "image": "https://commons.wikimedia.org/wiki/Special:FilePath/Selar%C3%B3n_Steps_Rio_de_Janeiro.jpg"
+        },
+        {
+          "name": "Rio Food Tour",
+          "Activity type": "food tour",
+          "duration_minutes": 180,
+          "estimated_cost": 900,
+          "image": "https://commons.wikimedia.org/wiki/Special:FilePath/Rio_Food_Tour_Rio_de_Janeiro.jpg"
+        }
+      ]
+    },
+    {
+      "name": "Buenos Aires",
+      "country": "Argentina",
+      "cost_index": 42,
+      "image": "https://commons.wikimedia.org/wiki/Special:FilePath/Buenos_Aires.jpg",
+      "places": [
+        {
+          "name": "Recoleta Cemetery",
+          "Activity type": "historical",
+          "duration_minutes": 120,
+          "estimated_cost": 0,
+          "image": "https://commons.wikimedia.org/wiki/Special:FilePath/Recoleta_Cemetery_Buenos_Aires.jpg"
+        },
+        {
+          "name": "Casa Rosada",
+          "Activity type": "historical",
+          "duration_minutes": 60,
+          "estimated_cost": 0,
+          "image": "https://commons.wikimedia.org/wiki/Special:FilePath/Casa_Rosada_Buenos_Aires.jpg"
+        },
+        {
+          "name": "La Boca",
+          "Activity type": "sightseeing",
+          "duration_minutes": 120,
+          "estimated_cost": 0,
+          "image": "https://commons.wikimedia.org/wiki/Special:FilePath/La_Boca_Buenos_Aires.jpg"
+        },
+        {
+          "name": "Teatro Colón",
+          "Activity type": "historical",
+          "duration_minutes": 120,
+          "estimated_cost": 0,
+          "image": "https://commons.wikimedia.org/wiki/Special:FilePath/Teatro_Col%C3%B3n_Buenos_Aires.jpg"
+        },
+        {
+          "name": "Buenos Aires Food Tour",
+          "Activity type": "food tour",
+          "duration_minutes": 180,
+          "estimated_cost": 0,
+          "image": "https://commons.wikimedia.org/wiki/Special:FilePath/Buenos_Aires_Food_Tour_Buenos_Aires.jpg"
+        }
+      ]
+    },
+    {
+      "name": "Cancun",
+      "country": "Mexico",
+      "cost_index": 55,
+      "image": "https://commons.wikimedia.org/wiki/Special:FilePath/Cancun.jpg",
+      "places": [
+        {
+          "name": "Chichen Itza",
+          "Activity type": "historical",
+          "duration_minutes": 300,
+          "estimated_cost": 200,
+          "image": "https://commons.wikimedia.org/wiki/Special:FilePath/Chichen_Itza_Cancun.jpg"
+        },
+        {
+          "name": "Isla Mujeres",
+          "Activity type": "adventure",
+          "duration_minutes": 360,
+          "estimated_cost": 300,
+          "image": "https://commons.wikimedia.org/wiki/Special:FilePath/Isla_Mujeres_Cancun.jpg"
+        },
+        {
+          "name": "Tulum Ruins",
+          "Activity type": "historical",
+          "duration_minutes": 240,
+          "estimated_cost": 150,
+          "image": "https://commons.wikimedia.org/wiki/Special:FilePath/Tulum_Ruins_Cancun.jpg"
+        },
+        {
+          "name": "Cancun Beaches",
+          "Activity type": "sightseeing",
+          "duration_minutes": 180,
+          "estimated_cost": 0,
+          "image": "https://commons.wikimedia.org/wiki/Special:FilePath/Cancun_Beaches_Cancun.jpg"
+        },
+        {
+          "name": "Yucatecan Food Tour",
+          "Activity type": "food tour",
+          "duration_minutes": 180,
+          "estimated_cost": 300,
+          "image": "https://commons.wikimedia.org/wiki/Special:FilePath/Yucatecan_Food_Tour_Cancun.jpg"
+        }
+      ]
+    },
+    {
+      "name": "Cusco",
+      "country": "Peru",
+      "cost_index": 35,
+      "image": "https://commons.wikimedia.org/wiki/Special:FilePath/Cusco.jpg",
+      "places": [
+        {
+          "name": "Machu Picchu",
+          "Activity type": "historical",
+          "duration_minutes": 360,
+          "estimated_cost": 1300,
+          "image": "https://commons.wikimedia.org/wiki/Special:FilePath/Machu_Picchu_Cusco.jpg"
+        },
+        {
+          "name": "Sacsayhuaman",
+          "Activity type": "historical",
+          "duration_minutes": 120,
+          "estimated_cost": 500,
+          "image": "https://commons.wikimedia.org/wiki/Special:FilePath/Sacsayhuaman_Cusco.jpg"
+        },
+        {
+          "name": "Plaza de Armas",
+          "Activity type": "sightseeing",
+          "duration_minutes": 60,
+          "estimated_cost": 0,
+          "image": "https://commons.wikimedia.org/wiki/Special:FilePath/Plaza_de_Armas_Cusco.jpg"
+        },
+        {
+          "name": "Rainbow Mountain Trek",
+          "Activity type": "adventure",
+          "duration_minutes": 480,
+          "estimated_cost": 800,
+          "image": "https://commons.wikimedia.org/wiki/Special:FilePath/Rainbow_Mountain_Trek_Cusco.jpg"
+        },
+        {
+          "name": "Cusco Food Tour",
+          "Activity type": "food tour",
+          "duration_minutes": 180,
+          "estimated_cost": 900,
+          "image": "https://commons.wikimedia.org/wiki/Special:FilePath/Cusco_Food_Tour_Cusco.jpg"
+        }
+      ]
+    },
+    {
+      "name": "Cape Town",
+      "country": "South Africa",
+      "cost_index": 45,
+      "image": "https://commons.wikimedia.org/wiki/Special:FilePath/Cape_Town.jpg",
+      "places": [
+        {
+          "name": "Table Mountain",
+          "Activity type": "adventure",
+          "duration_minutes": 180,
+          "estimated_cost": 150,
+          "image": "https://commons.wikimedia.org/wiki/Special:FilePath/Table_Mountain_Cape_Town.jpg"
+        },
+        {
+          "name": "Robben Island",
+          "Activity type": "historical",
+          "duration_minutes": 240,
+          "estimated_cost": 150,
+          "image": "https://commons.wikimedia.org/wiki/Special:FilePath/Robben_Island_Cape_Town.jpg"
+        },
+        {
+          "name": "V&A Waterfront",
+          "Activity type": "sightseeing",
+          "duration_minutes": 150,
+          "estimated_cost": 0,
+          "image": "https://commons.wikimedia.org/wiki/Special:FilePath/V%26A_Waterfront_Cape_Town.jpg"
+        },
+        {
+          "name": "Cape Point",
+          "Activity type": "sightseeing",
+          "duration_minutes": 300,
+          "estimated_cost": 100,
+          "image": "https://commons.wikimedia.org/wiki/Special:FilePath/Cape_Point_Cape_Town.jpg"
+        },
+        {
+          "name": "Cape Town Food Tour",
+          "Activity type": "food tour",
+          "duration_minutes": 180,
+          "estimated_cost": 250,
+          "image": "https://commons.wikimedia.org/wiki/Special:FilePath/Cape_Town_Food_Tour_Cape_Town.jpg"
+        }
+      ]
+    },
+    {
+      "name": "Marrakech",
+      "country": "Morocco",
+      "cost_index": 35,
+      "image": "https://commons.wikimedia.org/wiki/Special:FilePath/Marrakech.jpg",
+      "places": [
+        {
+          "name": "Jemaa el-Fnaa",
+          "Activity type": "sightseeing",
+          "duration_minutes": 120,
+          "estimated_cost": 0,
+          "image": "https://commons.wikimedia.org/wiki/Special:FilePath/Jemaa_el-Fnaa_Marrakech.jpg"
+        },
+        {
+          "name": "Bahia Palace",
+          "Activity type": "historical",
+          "duration_minutes": 90,
+          "estimated_cost": 100,
+          "image": "https://commons.wikimedia.org/wiki/Special:FilePath/Bahia_Palace_Marrakech.jpg"
+        },
+        {
+          "name": "Koutoubia Mosque",
+          "Activity type": "historical",
+          "duration_minutes": 60,
+          "estimated_cost": 0,
+          "image": "https://commons.wikimedia.org/wiki/Special:FilePath/Koutoubia_Mosque_Marrakech.jpg"
+        },
+        {
+          "name": "Majorelle Garden",
+          "Activity type": "sightseeing",
+          "duration_minutes": 90,
+          "estimated_cost": 150,
+          "image": "https://commons.wikimedia.org/wiki/Special:FilePath/Majorelle_Garden_Marrakech.jpg"
+        },
+        {
+          "name": "Marrakech Food Tour",
+          "Activity type": "food tour",
+          "duration_minutes": 180,
+          "estimated_cost": 350,
+          "image": "https://commons.wikimedia.org/wiki/Special:FilePath/Marrakech_Food_Tour_Marrakech.jpg"
+        }
+      ]
+    },
+    {
+      "name": "Cairo",
+      "country": "Egypt",
+      "cost_index": 30,
+      "image": "https://commons.wikimedia.org/wiki/Special:FilePath/Cairo.jpg",
+      "places": [
+        {
+          "name": "Giza Pyramids",
+          "Activity type": "historical",
+          "duration_minutes": 240,
+          "estimated_cost": 0,
+          "image": "https://commons.wikimedia.org/wiki/Special:FilePath/Giza_Pyramids_Cairo.jpg"
+        },
+        {
+          "name": "Great Sphinx",
+          "Activity type": "historical",
+          "duration_minutes": 90,
+          "estimated_cost": 0,
+          "image": "https://commons.wikimedia.org/wiki/Special:FilePath/Great_Sphinx_Cairo.jpg"
+        },
+        {
+          "name": "Egyptian Museum",
+          "Activity type": "historical",
+          "duration_minutes": 180,
+          "estimated_cost": 0,
+          "image": "https://commons.wikimedia.org/wiki/Special:FilePath/Egyptian_Museum_Cairo.jpg"
+        },
+        {
+          "name": "Khan el-Khalili",
+          "Activity type": "sightseeing",
+          "duration_minutes": 150,
+          "estimated_cost": 0,
+          "image": "https://commons.wikimedia.org/wiki/Special:FilePath/Khan_el-Khalili_Cairo.jpg"
+        },
+        {
+          "name": "Cairo Food Tour",
+          "Activity type": "food tour",
+          "duration_minutes": 180,
+          "estimated_cost": 50,
+          "image": "https://commons.wikimedia.org/wiki/Special:FilePath/Cairo_Food_Tour_Cairo.jpg"
+        }
+      ]
+    },
+    {
+      "name": "Nairobi",
+      "country": "Kenya",
+      "cost_index": 40,
+      "image": "https://commons.wikimedia.org/wiki/Special:FilePath/Nairobi.jpg",
+      "places": [
+        {
+          "name": "Nairobi National Park",
+          "Activity type": "adventure",
+          "duration_minutes": 300,
+          "estimated_cost": 50,
+          "image": "https://commons.wikimedia.org/wiki/Special:FilePath/Nairobi_National_Park_Nairobi.jpg"
+        },
+        {
+          "name": "Giraffe Centre",
+          "Activity type": "sightseeing",
+          "duration_minutes": 120,
+          "estimated_cost": 0,
+          "image": "https://commons.wikimedia.org/wiki/Special:FilePath/Giraffe_Centre_Nairobi.jpg"
+        },
+        {
+          "name": "Karen Blixen Museum",
+          "Activity type": "historical",
+          "duration_minutes": 120,
+          "estimated_cost": 0,
+          "image": "https://commons.wikimedia.org/wiki/Special:FilePath/Karen_Blixen_Museum_Nairobi.jpg"
+        },
+        {
+          "name": "Nairobi National Museum",
+          "Activity type": "historical",
+          "duration_minutes": 120,
+          "estimated_cost": 0,
+          "image": "https://commons.wikimedia.org/wiki/Special:FilePath/Nairobi_National_Museum_Nairobi.jpg"
+        },
+        {
+          "name": "Kenyan Food Tour",
+          "Activity type": "food tour",
+          "duration_minutes": 180,
+          "estimated_cost": 0,
+          "image": "https://commons.wikimedia.org/wiki/Special:FilePath/Kenyan_Food_Tour_Nairobi.jpg"
+        }
+      ]
+    },
+    {
+      "name": "Zanzibar",
+      "country": "Tanzania",
+      "cost_index": 45,
+      "image": "https://commons.wikimedia.org/wiki/Special:FilePath/Zanzibar.jpg",
+      "places": [
+        {
+          "name": "Stone Town",
+          "Activity type": "historical",
+          "duration_minutes": 150,
+          "estimated_cost": 0,
+          "image": "https://commons.wikimedia.org/wiki/Special:FilePath/Stone_Town_Zanzibar.jpg"
+        },
+        {
+          "name": "Prison Island",
+          "Activity type": "sightseeing",
+          "duration_minutes": 180,
+          "estimated_cost": 0,
+          "image": "https://commons.wikimedia.org/wiki/Special:FilePath/Prison_Island_Zanzibar.jpg"
+        },
+        {
+          "name": "Nungwi Beach",
+          "Activity type": "sightseeing",
+          "duration_minutes": 180,
+          "estimated_cost": 0,
+          "image": "https://commons.wikimedia.org/wiki/Special:FilePath/Nungwi_Beach_Zanzibar.jpg"
+        },
+        {
+          "name": "Dolphin Snorkeling Tour",
+          "Activity type": "adventure",
+          "duration_minutes": 240,
+          "estimated_cost": 0,
+          "image": "https://commons.wikimedia.org/wiki/Special:FilePath/Dolphin_Snorkeling_Tour_Zanzibar.jpg"
+        },
+        {
+          "name": "Zanzibar Food Tour",
+          "Activity type": "food tour",
+          "duration_minutes": 180,
+          "estimated_cost": 0,
+          "image": "https://commons.wikimedia.org/wiki/Special:FilePath/Zanzibar_Food_Tour_Zanzibar.jpg"
+        }
+      ]
+    },
+    {
+      "name": "Sydney",
+      "country": "Australia",
+      "cost_index": 90,
+      "image": "https://commons.wikimedia.org/wiki/Special:FilePath/Sydney.jpg",
+      "places": [
+        {
+          "name": "Sydney Opera House",
+          "Activity type": "sightseeing",
+          "duration_minutes": 120,
+          "estimated_cost": 2500,
+          "image": "https://commons.wikimedia.org/wiki/Special:FilePath/Sydney_Opera_House_Sydney.jpg"
+        },
+        {
+          "name": "Sydney Harbour Bridge",
+          "Activity type": "sightseeing",
+          "duration_minutes": 120,
+          "estimated_cost": 1600,
+          "image": "https://commons.wikimedia.org/wiki/Special:FilePath/Sydney_Harbour_Bridge_Sydney.jpg"
+        },
+        {
+          "name": "Bondi Beach",
+          "Activity type": "sightseeing",
+          "duration_minutes": 150,
+          "estimated_cost": 0,
+          "image": "https://commons.wikimedia.org/wiki/Special:FilePath/Bondi_Beach_Sydney.jpg"
+        },
+        {
+          "name": "Blue Mountains Tour",
+          "Activity type": "adventure",
+          "duration_minutes": 480,
+          "estimated_cost": 5000,
+          "image": "https://commons.wikimedia.org/wiki/Special:FilePath/Blue_Mountains_Tour_Sydney.jpg"
+        },
+        {
+          "name": "Sydney Food Tour",
+          "Activity type": "food tour",
+          "duration_minutes": 180,
+          "estimated_cost": 5000,
+          "image": "https://commons.wikimedia.org/wiki/Special:FilePath/Sydney_Food_Tour_Sydney.jpg"
+        }
+      ]
+    },
+    {
+      "name": "Auckland",
+      "country": "New Zealand",
+      "cost_index": 78,
+      "image": "https://commons.wikimedia.org/wiki/Special:FilePath/Auckland.jpg",
+      "places": [
+        {
+          "name": "Sky Tower",
+          "Activity type": "sightseeing",
+          "duration_minutes": 90,
+          "estimated_cost": 1600,
+          "image": "https://commons.wikimedia.org/wiki/Special:FilePath/Sky_Tower_Auckland.jpg"
+        },
+        {
+          "name": "Auckland War Memorial Museum",
+          "Activity type": "historical",
+          "duration_minutes": 150,
+          "estimated_cost": 1100,
+          "image": "https://commons.wikimedia.org/wiki/Special:FilePath/Auckland_War_Memorial_Museum_Auckland.jpg"
+        },
+        {
+          "name": "Waiheke Island",
+          "Activity type": "sightseeing",
+          "duration_minutes": 360,
+          "estimated_cost": 1700,
+          "image": "https://commons.wikimedia.org/wiki/Special:FilePath/Waiheke_Island_Auckland.jpg"
+        },
+        {
+          "name": "Waitakere Ranges",
+          "Activity type": "adventure",
+          "duration_minutes": 240,
+          "estimated_cost": 0,
+          "image": "https://commons.wikimedia.org/wiki/Special:FilePath/Waitakere_Ranges_Auckland.jpg"
+        },
+        {
+          "name": "Auckland Food Tour",
+          "Activity type": "food tour",
+          "duration_minutes": 180,
+          "estimated_cost": 3900,
+          "image": "https://commons.wikimedia.org/wiki/Special:FilePath/Auckland_Food_Tour_Auckland.jpg"
+        }
+      ]
+    },
+    {
+      "name": "Queenstown",
+      "country": "New Zealand",
+      "cost_index": 78,
+      "image": "https://commons.wikimedia.org/wiki/Special:FilePath/Queenstown.jpg",
+      "places": [
+        {
+          "name": "Skyline Queenstown",
+          "Activity type": "sightseeing",
+          "duration_minutes": 180,
+          "estimated_cost": 2500,
+          "image": "https://commons.wikimedia.org/wiki/Special:FilePath/Skyline_Queenstown_Queenstown.jpg"
+        },
+        {
+          "name": "Milford Sound Day Trip",
+          "Activity type": "sightseeing",
+          "duration_minutes": 720,
+          "estimated_cost": 6700,
+          "image": "https://commons.wikimedia.org/wiki/Special:FilePath/Milford_Sound_Day_Trip_Queenstown.jpg"
+        },
+        {
+          "name": "Bungee Jumping",
+          "Activity type": "adventure",
+          "duration_minutes": 120,
+          "estimated_cost": 9500,
+          "image": "https://commons.wikimedia.org/wiki/Special:FilePath/Bungee_Jumping_Queenstown.jpg"
+        },
+        {
+          "name": "Lake Wakatipu Cruise",
+          "Activity type": "sightseeing",
+          "duration_minutes": 120,
+          "estimated_cost": 2200,
+          "image": "https://commons.wikimedia.org/wiki/Special:FilePath/Lake_Wakatipu_Cruise_Queenstown.jpg"
+        },
+        {
+          "name": "Queenstown Food Tour",
+          "Activity type": "food tour",
+          "duration_minutes": 180,
+          "estimated_cost": 4200,
+          "image": "https://commons.wikimedia.org/wiki/Special:FilePath/Queenstown_Food_Tour_Queenstown.jpg"
+        }
+      ]
+    },
+    {
+      "name": "Bora Bora",
+      "country": "French Polynesia",
+      "cost_index": 98,
+      "image": "https://commons.wikimedia.org/wiki/Special:FilePath/Bora_Bora.jpg",
+      "places": [
+        {
+          "name": "Mount Otemanu",
+          "Activity type": "adventure",
+          "duration_minutes": 240,
+          "estimated_cost": 0,
+          "image": "https://commons.wikimedia.org/wiki/Special:FilePath/Mount_Otemanu_Bora_Bora.jpg"
+        },
+        {
+          "name": "Lagoon Snorkeling",
+          "Activity type": "adventure",
+          "duration_minutes": 180,
+          "estimated_cost": 100,
+          "image": "https://commons.wikimedia.org/wiki/Special:FilePath/Lagoon_Snorkeling_Bora_Bora.jpg"
+        },
+        {
+          "name": "Matira Beach",
+          "Activity type": "sightseeing",
+          "duration_minutes": 180,
+          "estimated_cost": 0,
+          "image": "https://commons.wikimedia.org/wiki/Special:FilePath/Matira_Beach_Bora_Bora.jpg"
+        },
+        {
+          "name": "Coral Garden Tour",
+          "Activity type": "adventure",
+          "duration_minutes": 180,
+          "estimated_cost": 50,
+          "image": "https://commons.wikimedia.org/wiki/Special:FilePath/Coral_Garden_Tour_Bora_Bora.jpg"
+        },
+        {
+          "name": "Polynesian Food Tour",
+          "Activity type": "food tour",
+          "duration_minutes": 180,
+          "estimated_cost": 100,
+          "image": "https://commons.wikimedia.org/wiki/Special:FilePath/Polynesian_Food_Tour_Bora_Bora.jpg"
+        }
+      ]
+    }
+  ]
+}

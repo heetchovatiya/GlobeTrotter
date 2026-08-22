@@ -18,7 +18,8 @@ python -m venv venv
 source venv/bin/activate
 pip install -r requirements.txt
 alembic upgrade head
-python -m app.seed
+python -m app.seed          # first run
+python -m app.seed --force  # refresh cities/activities from seed_destinations.json
 uvicorn app.main:app --reload
 ```
 

@@ -1,4 +1,4 @@
-from datetime import date
+from datetime import date, timedelta
 
 from fastapi import HTTPException, status
 from sqlalchemy.orm import Session
@@ -24,6 +24,17 @@ def derive_trip_status(start_date: date, end_date: date, today: date | None = No
     return TripStatus.planning
 
 
+def resolve_trip_status(trip: Trip, today: date | None = None) -> TripStatus:
+    if trip.status == TripStatus.draft:
+        return TripStatus.draft
+    return derive_trip_status(trip.start_date, trip.end_date, today)
+
+
+def _default_draft_dates(today: date | None = None) -> tuple[date, date]:
+    today = today or date.today()
+    return today, today + timedelta(days=7)
+
+
 def get_owned_trip(db: Session, trip_id: int, user: User) -> Trip:
     trip = db.query(Trip).filter(Trip.id == trip_id).first()
     if trip is None:
@@ -42,10 +53,9 @@ def list_trips_for_user(
 ) -> list[Trip]:
     trips = db.query(Trip).filter(Trip.user_id == user.id).all()
     for trip in trips:
-        trip.status = derive_trip_status(trip.start_date, trip.end_date)
+        trip.status = resolve_trip_status(trip)
 
     if status_filter:
-        # "upcoming" is an API alias for future planning trips
         if status_filter == "upcoming":
             trips = [t for t in trips if t.status == TripStatus.planning]
         else:
@@ -81,7 +91,21 @@ def list_trips_for_user(
 
 
 def create_trip(db: Session, user: User, data: TripCreate) -> Trip:
-    if data.end_date < data.start_date:
+    if data.save_as_draft:
+        start_date, end_date = data.start_date, data.end_date
+        if start_date is None or end_date is None:
+            start_date, end_date = _default_draft_dates()
+        trip_status = TripStatus.draft
+    else:
+        if data.start_date is None or data.end_date is None:
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail="start_date and end_date are required",
+            )
+        start_date, end_date = data.start_date, data.end_date
+        trip_status = derive_trip_status(start_date, end_date)
+
+    if end_date < start_date:
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
             detail="end_date must be on or after start_date",
@@ -89,11 +113,11 @@ def create_trip(db: Session, user: User, data: TripCreate) -> Trip:
     trip = Trip(
         user_id=user.id,
         name=data.name,
-        start_date=data.start_date,
-        end_date=data.end_date,
+        start_date=start_date,
+        end_date=end_date,
         description=data.description,
         cover_photo_url=data.cover_photo_url,
-        status=derive_trip_status(data.start_date, data.end_date),
+        status=trip_status,
     )
     db.add(trip)
     db.commit()
@@ -103,6 +127,7 @@ def create_trip(db: Session, user: User, data: TripCreate) -> Trip:
 
 def update_trip(db: Session, trip: Trip, data: TripUpdate) -> Trip:
     payload = data.model_dump(exclude_unset=True)
+    requested_status = payload.pop("status", None)
     for key, value in payload.items():
         setattr(trip, key, value)
     if trip.end_date < trip.start_date:
@@ -110,7 +135,15 @@ def update_trip(db: Session, trip: Trip, data: TripUpdate) -> Trip:
             status_code=status.HTTP_400_BAD_REQUEST,
             detail="end_date must be on or after start_date",
         )
-    trip.status = derive_trip_status(trip.start_date, trip.end_date)
+    if requested_status is not None:
+        if requested_status == TripStatus.draft:
+            trip.status = TripStatus.draft
+        elif trip.status == TripStatus.draft and requested_status == TripStatus.planning:
+            trip.status = derive_trip_status(trip.start_date, trip.end_date)
+        else:
+            trip.status = requested_status
+    elif trip.status != TripStatus.draft:
+        trip.status = derive_trip_status(trip.start_date, trip.end_date)
     db.commit()
     db.refresh(trip)
     return trip
@@ -122,6 +155,21 @@ def delete_trip(db: Session, trip: Trip) -> None:
 
 
 def create_stop(db: Session, trip: Trip, data: StopCreate) -> Stop:
+    if data.arrival_date and data.departure_date and data.departure_date < data.arrival_date:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="departure_date must be on or after arrival_date",
+        )
+    if data.arrival_date and data.arrival_date < trip.start_date:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="arrival_date cannot be before trip start_date",
+        )
+    if data.departure_date and data.departure_date > trip.end_date:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="departure_date cannot be after trip end_date",
+        )
     stop = Stop(
         trip_id=trip.id,
         city_id=data.city_id,
@@ -144,6 +192,25 @@ def get_owned_stop(db: Session, trip: Trip, stop_id: int) -> Stop:
 
 def update_stop(db: Session, stop: Stop, data: StopUpdate) -> Stop:
     payload = data.model_dump(exclude_unset=True)
+    arrival = payload.get("arrival_date", stop.arrival_date)
+    departure = payload.get("departure_date", stop.departure_date)
+    if arrival and departure and departure < arrival:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="departure_date must be on or after arrival_date",
+        )
+    trip = db.query(Trip).filter(Trip.id == stop.trip_id).first()
+    if trip:
+        if arrival and arrival < trip.start_date:
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail="arrival_date cannot be before trip start_date",
+            )
+        if departure and departure > trip.end_date:
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail="departure_date cannot be after trip end_date",
+            )
     for key, value in payload.items():
         setattr(stop, key, value)
     db.commit()
@@ -188,7 +255,30 @@ def _upsert_section_expense(
         existing.amount = budget
 
 
+def _validate_section_dates(
+    trip: Trip,
+    start: date | None,
+    end: date | None,
+) -> None:
+    if start and end and end < start:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="date_range_end must be on or after date_range_start",
+        )
+    if start and start < trip.start_date:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="date_range_start cannot be before trip start_date",
+        )
+    if end and end > trip.end_date:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="date_range_end cannot be after trip end_date",
+        )
+
+
 def create_section(db: Session, trip: Trip, stop: Stop, data: SectionCreate) -> TripSection:
+    _validate_section_dates(trip, data.date_range_start, data.date_range_end)
     section = TripSection(
         stop_id=stop.id,
         title=data.title,
@@ -225,6 +315,9 @@ def get_owned_section(db: Session, section_id: int, user: User) -> tuple[Trip, T
 
 def update_section(db: Session, trip: Trip, section: TripSection, data: SectionUpdate) -> TripSection:
     payload = data.model_dump(exclude_unset=True)
+    start = payload.get("date_range_start", section.date_range_start)
+    end = payload.get("date_range_end", section.date_range_end)
+    _validate_section_dates(trip, start, end)
     for key, value in payload.items():
         setattr(section, key, value)
     _upsert_section_expense(db, trip.id, section, section.type, section.budget)

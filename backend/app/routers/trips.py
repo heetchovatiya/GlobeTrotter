@@ -1,13 +1,38 @@
-from fastapi import APIRouter, Depends, Query, status
+from fastapi import APIRouter, Depends, HTTPException, Query, status
 from sqlalchemy.orm import Session
 
 from app.core.database import get_db
 from app.core.deps import get_current_user
+from app.crud import cloning as cloning_crud
+from app.crud import templates as templates_crud
 from app.crud import trips as trips_crud
 from app.models import User
+from app.schemas.templates import TemplateInstantiate, TemplatePublic
 from app.schemas.trips import TripCreate, TripPublic, TripUpdate
+from app.schemas.views import CopyTripResponse
 
 router = APIRouter()
+
+
+@router.get("/templates", response_model=list[TemplatePublic])
+def list_trip_templates() -> list[TemplatePublic]:
+    return templates_crud.list_templates()
+
+
+@router.post(
+    "/templates/{template_id}/instantiate",
+    response_model=TripPublic,
+    status_code=status.HTTP_201_CREATED,
+)
+def instantiate_trip_template(
+    template_id: str,
+    payload: TemplateInstantiate,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user),
+) -> TripPublic:
+    trip = templates_crud.instantiate_template(db, current_user, template_id, payload)
+    trip.status = trips_crud.resolve_trip_status(trip)
+    return TripPublic.model_validate(trip)
 
 
 @router.post("", response_model=TripPublic, status_code=status.HTTP_201_CREATED)
@@ -38,6 +63,20 @@ def list_trips(
     return [TripPublic.model_validate(trip) for trip in trips]
 
 
+@router.post("/{trip_id}/duplicate", response_model=CopyTripResponse, status_code=status.HTTP_201_CREATED)
+def duplicate_trip(
+    trip_id: int,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user),
+) -> CopyTripResponse:
+    trips_crud.get_owned_trip(db, trip_id, current_user)
+    source = cloning_crud.load_trip_for_clone(db, trip_id)
+    if source is None:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Trip not found")
+    cloned = cloning_crud.clone_trip(db, source, current_user)
+    return CopyTripResponse(trip_id=cloned.id)
+
+
 @router.get("/{trip_id}", response_model=TripPublic)
 def get_trip(
     trip_id: int,
@@ -45,7 +84,7 @@ def get_trip(
     current_user: User = Depends(get_current_user),
 ) -> TripPublic:
     trip = trips_crud.get_owned_trip(db, trip_id, current_user)
-    trip.status = trips_crud.derive_trip_status(trip.start_date, trip.end_date)
+    trip.status = trips_crud.resolve_trip_status(trip)
     return TripPublic.model_validate(trip)
 
 

@@ -4,11 +4,12 @@ import { Trip, TripStatus } from '../types';
 
 export interface CreateTripDTO {
   name: string;
-  start_date: string;
-  end_date: string;
+  start_date?: string;
+  end_date?: string;
   description?: string;
   cover_photo_url?: string;
   is_public?: boolean;
+  save_as_draft?: boolean;
 }
 
 export const tripsApi = {
@@ -60,5 +61,9 @@ export const tripsApi = {
 
   async deleteTrip(id: number | string): Promise<void> {
     return apiClient<void>(`/trips/${id}`, { method: 'DELETE' });
+  },
+
+  async duplicateTrip(id: number | string): Promise<{ trip_id: number }> {
+    return apiClient<{ trip_id: number }>(`/trips/${id}/duplicate`, { method: 'POST' });
   },
 };

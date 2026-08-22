@@ -5,6 +5,7 @@ import { sectionsApi } from '../api/sections';
 import { stopsApi } from '../api/stops';
 import { itineraryApi } from '../api/itinerary';
 import { flattenSections } from '../api/mappers';
+import { validateStopDates } from '../utils/validation';
 
 interface SectionDraft extends TripSection {
   isNew?: boolean;
@@ -107,10 +108,25 @@ export const useTripBuilderStore = create<TripBuilderState>((set, get) => ({
     const { trip } = get();
     if (!trip) return;
 
-    const stops = sortedStops(trip.stops).map((stop) =>
-      stop.id === stopId ? { ...stop, ...updates } : stop
+    const current = sortedStops(trip.stops).find((s) => s.id === stopId);
+    if (!current) return;
+
+    const merged = { ...current, ...updates };
+    const dateError = validateStopDates(
+      merged.arrival_date || '',
+      merged.departure_date || '',
+      trip.start_date,
+      trip.end_date
     );
-    set({ trip: { ...trip, stops }, saveStatus: 'saving' });
+    if (dateError) {
+      set({ saveStatus: 'error', error: dateError });
+      return;
+    }
+
+    const stops = sortedStops(trip.stops).map((stop) =>
+      stop.id === stopId ? merged : stop
+    );
+    set({ trip: { ...trip, stops }, saveStatus: 'saving', error: null });
 
     if (stopDebounceTimer) clearTimeout(stopDebounceTimer);
     stopDebounceTimer = setTimeout(async () => {

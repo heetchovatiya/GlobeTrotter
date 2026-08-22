@@ -5,9 +5,11 @@ import { citiesApi } from '../api/cities';
 import { useTripBuilderStore } from '../store/tripBuilderStore';
 import { SectionCard } from '../components/trips/SectionCard';
 import { StopCard } from '../components/trips/StopCard';
+import { EditTripModal } from '../components/trips/EditTripModal';
 import { Button } from '../components/common/Button';
 import { Price } from '../components/common/Price';
 import { useUIStore } from '../store/uiStore';
+import { formatTripDuration, tripDurationDays } from '../utils/validation';
 import {
   Plus,
   CheckCircle2,
@@ -16,6 +18,7 @@ import {
   Calendar,
   Layers,
   MapPin,
+  Settings2,
 } from 'lucide-react';
 
 export const BuildItinerary: React.FC = () => {
@@ -23,6 +26,7 @@ export const BuildItinerary: React.FC = () => {
   const navigate = useNavigate();
   const { showToast } = useUIStore();
   const [cities, setCities] = useState<City[]>([]);
+  const [editTripOpen, setEditTripOpen] = useState(false);
 
   const {
     trip,
@@ -80,9 +84,24 @@ export const BuildItinerary: React.FC = () => {
   };
 
   const totalAllocatedBudget = sections.reduce((sum, s) => sum + (Number(s.budget) || 0), 0);
+  const tripDuration =
+    trip?.start_date && trip?.end_date
+      ? formatTripDuration(trip.start_date, trip.end_date)
+      : '';
 
   return (
     <div className="max-w-5xl mx-auto space-y-8 pb-20">
+      {trip && (
+        <EditTripModal
+          trip={trip}
+          isOpen={editTripOpen}
+          onClose={() => setEditTripOpen(false)}
+          onSaved={(updated) => {
+            useTripBuilderStore.setState({ trip: { ...trip, ...updated, stops: trip.stops } });
+            showToast('success', 'Trip details updated.');
+          }}
+        />
+      )}
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 p-6 rounded-3xl bg-white border border-slate-200/80 shadow-soft">
         <div className="space-y-1">
           <div className="flex items-center gap-2">
@@ -110,6 +129,9 @@ export const BuildItinerary: React.FC = () => {
             <span className="flex items-center gap-1">
               <Calendar className="h-3.5 w-3.5 text-brand-500" />
               {trip?.start_date} – {trip?.end_date}
+              {tripDuration && (
+                <span className="ml-1 text-brand-700 font-bold">({tripDuration})</span>
+              )}
             </span>
             <span className="flex items-center gap-1">
               <MapPin className="h-3.5 w-3.5 text-brand-500" />
@@ -122,6 +144,15 @@ export const BuildItinerary: React.FC = () => {
               </span>
             </span>
             <span>{sections.length} section{sections.length === 1 ? '' : 's'}</span>
+            <Button
+              type="button"
+              variant="outline"
+              size="sm"
+              leftIcon={<Settings2 className="h-3.5 w-3.5" />}
+              onClick={() => setEditTripOpen(true)}
+            >
+              Edit Trip
+            </Button>
           </div>
         </div>
 
@@ -158,6 +189,8 @@ export const BuildItinerary: React.FC = () => {
                 index={index}
                 totalStops={stops.length}
                 cities={cities}
+                tripStart={trip?.start_date}
+                tripEnd={trip?.end_date}
                 onUpdate={updateStop}
                 onRemove={removeStop}
                 onReorder={reorderStop}
@@ -201,6 +234,8 @@ export const BuildItinerary: React.FC = () => {
                       key={section.id || `${stop.id}-${index}`}
                       section={section}
                       index={globalIndex}
+                      tripStart={trip?.start_date}
+                      tripEnd={trip?.end_date}
                       onUpdate={updateSection}
                       onRemove={removeSection}
                     />

@@ -24,6 +24,7 @@ import {
   Upload,
   Bookmark,
   Shield,
+  BookOpen,
 } from 'lucide-react';
 
 const LANGUAGE_OPTIONS = [
@@ -199,6 +200,11 @@ export const Profile: React.FC = () => {
           </div>
 
           <div className="flex flex-wrap justify-center gap-2">
+            <Link to="/profile/ledger">
+              <Button variant="outline" size="sm" leftIcon={<BookOpen className="h-4 w-4" />}>
+                Travel Ledger
+              </Button>
+            </Link>
             <Button
               variant="outline"
               size="sm"

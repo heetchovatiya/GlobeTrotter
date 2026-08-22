@@ -25,6 +25,9 @@ import { Community } from './pages/Community';
 import { CalendarView } from './pages/CalendarView';
 import { AdminPanel } from './pages/AdminPanel';
 import { PublicTrip } from './pages/PublicTrip';
+import { TripConfirmed } from './pages/TripConfirmed';
+import { TripPrint } from './pages/TripPrint';
+import { TravelLedger } from './pages/TravelLedger';
 
 export function App() {
   const { checkAuth } = useAuthStore();
@@ -40,16 +43,20 @@ export function App() {
     location.pathname === '/register' ||
     location.pathname === '/forgot-password';
 
+  const isPrintPage = /\/trips\/\d+\/print$/.test(location.pathname);
+
   return (
     <div className="min-h-screen flex flex-col bg-slate-50 text-slate-900 font-sans selection:bg-brand-500 selection:text-white">
       {/* Toast notifications portal */}
       <ToastContainer />
 
       {/* Top Navbar (hidden on dedicated auth pages for cleaner focus) */}
-      {!isAuthPage && <Navbar />}
+      {!isAuthPage && !isPrintPage && <Navbar />}
 
       {/* Main Content Area */}
-      <main className="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 pt-6">
+      <main
+        className={`flex-1 w-full mx-auto ${isPrintPage ? 'max-w-none px-0 pt-0' : 'max-w-7xl px-4 sm:px-6 lg:px-8 pt-6'}`}
+      >
         <Routes>
           {/* Public Unauthenticated Routes */}
           <Route path="/" element={<Dashboard />} />
@@ -65,10 +72,13 @@ export function App() {
           <Route element={<ProtectedRoute />}>
             <Route path="/trips" element={<TripList />} />
             <Route path="/trips/new" element={<CreateTrip />} />
+            <Route path="/trips/:id/confirmed" element={<TripConfirmed />} />
+            <Route path="/trips/:id/print" element={<TripPrint />} />
             <Route path="/trips/:id/build" element={<BuildItinerary />} />
             <Route path="/trips/:id" element={<ItineraryView />} />
             <Route path="/trips/:id/calendar" element={<CalendarView />} />
             <Route path="/profile" element={<Profile />} />
+            <Route path="/profile/ledger" element={<TravelLedger />} />
           </Route>
 
           {/* Role-Gated Admin Route */}
@@ -82,10 +92,10 @@ export function App() {
       </main>
 
       {/* Footer */}
-      {!isAuthPage && <Footer />}
+      {!isAuthPage && !isPrintPage && <Footer />}
 
       {/* Mobile Bottom Navigation Bar (< 640px) */}
-      {!isAuthPage && <BottomNav />}
+      {!isAuthPage && !isPrintPage && <BottomNav />}
     </div>
   );
 }

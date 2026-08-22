@@ -4,6 +4,7 @@ import { adminApi } from '../api/admin';
 import { Button } from '../components/common/Button';
 import { Badge } from '../components/common/Badge';
 import { useFormatPrice } from '../components/common/Price';
+import { CurrencyIcon } from '../components/common/CurrencyIcon';
 import { Skeleton } from '../components/common/Skeleton';
 import { useUIStore } from '../store/uiStore';
 import {
@@ -22,7 +23,6 @@ import {
   Users,
   MapPin,
   Compass,
-  DollarSign,
   TrendingUp,
   Activity,
   CheckCircle,
@@ -104,6 +104,40 @@ export const AdminPanel: React.FC = () => {
         <Badge variant="purple" size="md" className="self-start sm:self-auto font-bold">
           ADMIN PRIVILEGES VERIFIED
         </Badge>
+        <div className="flex flex-wrap gap-2 self-start sm:self-auto">
+          <Button
+            variant="outline"
+            size="sm"
+            className="border-purple-700 text-purple-100 hover:bg-purple-900"
+            onClick={async () => {
+              try {
+                const { exportsApi } = await import('../api/exports');
+                await exportsApi.downloadAdminTripsCsv();
+                showToast('success', 'Trips CSV downloaded.');
+              } catch {
+                showToast('error', 'Export failed.');
+              }
+            }}
+          >
+            Export all trips
+          </Button>
+          <Button
+            variant="outline"
+            size="sm"
+            className="border-purple-700 text-purple-100 hover:bg-purple-900"
+            onClick={async () => {
+              try {
+                const { exportsApi } = await import('../api/exports');
+                await exportsApi.downloadAdminUsersCsv();
+                showToast('success', 'Users CSV downloaded.');
+              } catch {
+                showToast('error', 'Export failed.');
+              }
+            }}
+          >
+            Export all users
+          </Button>
+        </div>
       </div>
 
       {/* KPI Cards */}
@@ -163,7 +197,7 @@ export const AdminPanel: React.FC = () => {
           <div className="flex items-center justify-between">
             <span className="text-xs font-bold uppercase text-slate-400 tracking-wider">Total Planned Spend</span>
             <div className="p-2 rounded-xl bg-amber-50 text-amber-600">
-              <DollarSign className="h-5 w-5" />
+              <CurrencyIcon className="h-5 w-5" />
             </div>
           </div>
           <div className="mt-3">

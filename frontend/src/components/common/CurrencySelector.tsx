@@ -1,11 +1,11 @@
 import React from 'react';
 import { useCurrencyStore } from '../../store/currencyStore';
-import { Currency } from '../../utils/currency';
+import { Currency, currencyLabel } from '../../utils/currency';
 import { Coins } from 'lucide-react';
 
 const OPTIONS: { value: Currency; label: string }[] = [
-  { value: 'USD', label: 'USD ($)' },
-  { value: 'INR', label: 'INR (₹)' },
+  { value: 'USD', label: currencyLabel('USD') },
+  { value: 'INR', label: currencyLabel('INR') },
 ];
 
 export const CurrencySelector: React.FC = () => {

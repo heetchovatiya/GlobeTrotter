@@ -1,4 +1,6 @@
 import React, { useEffect, useState } from 'react';
+import { CitySelect } from '../common/CitySelect';
+import { validateStopDates, syncEndDateWithStart } from '../../utils/validation';
 import { Stop, City, Activity } from '../../types';
 import { activitiesApi } from '../../api/activities';
 import { ActivityCard } from '../search/ActivityCard';
@@ -10,6 +12,8 @@ interface StopCardProps {
   index: number;
   totalStops: number;
   cities: City[];
+  tripStart?: string;
+  tripEnd?: string;
   onUpdate: (stopId: number, updates: Partial<Stop>) => void;
   onRemove: (stopId: number) => void;
   onReorder: (stopId: number, direction: 'up' | 'down') => void;
@@ -21,6 +25,8 @@ export const StopCard: React.FC<StopCardProps> = ({
   index,
   totalStops,
   cities,
+  tripStart,
+  tripEnd,
   onUpdate,
   onRemove,
   onReorder,
@@ -29,6 +35,8 @@ export const StopCard: React.FC<StopCardProps> = ({
   const [showActivities, setShowActivities] = useState(false);
   const [activities, setActivities] = useState<Activity[]>([]);
   const [loadingActivities, setLoadingActivities] = useState(false);
+
+  const [dateError, setDateError] = useState<string | null>(null);
 
   const cityName =
     cities.find((c) => c.id === stop.city_id)?.name ||
@@ -50,6 +58,14 @@ export const StopCard: React.FC<StopCardProps> = ({
     };
     loadActivities();
   }, [showActivities, stop.city_id]);
+
+  const handleDateUpdate = (updates: Partial<Stop>) => {
+    const arrival = updates.arrival_date ?? stop.arrival_date ?? '';
+    const departure = updates.departure_date ?? stop.departure_date ?? '';
+    const err = validateStopDates(arrival, departure, tripStart, tripEnd);
+    setDateError(err);
+    if (!err) onUpdate(stop.id, updates);
+  };
 
   return (
     <div className="rounded-2xl bg-white border border-slate-200/80 shadow-soft p-5 space-y-4">
@@ -95,22 +111,12 @@ export const StopCard: React.FC<StopCardProps> = ({
       </div>
 
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-        <div className="space-y-1.5">
-          <label className="text-[11px] font-bold text-slate-500 uppercase tracking-wider">
-            City
-          </label>
-          <select
-            value={stop.city_id}
-            onChange={(e) => onUpdate(stop.id, { city_id: Number(e.target.value) })}
-            className="w-full rounded-xl border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 focus:border-brand-500 focus:outline-none focus:ring-2 focus:ring-brand-500/20"
-          >
-            {cities.map((city) => (
-              <option key={city.id} value={city.id}>
-                {city.name}, {city.country}
-              </option>
-            ))}
-          </select>
-        </div>
+        <CitySelect
+          cities={cities}
+          value={stop.city_id}
+          onChange={(cityId) => onUpdate(stop.id, { city_id: cityId })}
+          label="City"
+        />
 
         <div className="space-y-1.5">
           <label className="text-[11px] font-bold text-slate-500 uppercase tracking-wider flex items-center gap-1">
@@ -119,7 +125,13 @@ export const StopCard: React.FC<StopCardProps> = ({
           <input
             type="date"
             value={stop.arrival_date || ''}
-            onChange={(e) => onUpdate(stop.id, { arrival_date: e.target.value })}
+            min={tripStart}
+            max={tripEnd}
+            onChange={(e) => {
+              const arrival = e.target.value;
+              const departure = syncEndDateWithStart(arrival, stop.departure_date || arrival);
+              handleDateUpdate({ arrival_date: arrival, departure_date: departure });
+            }}
             className="w-full rounded-xl border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 focus:border-brand-500 focus:outline-none focus:ring-2 focus:ring-brand-500/20"
           />
         </div>
@@ -131,12 +143,17 @@ export const StopCard: React.FC<StopCardProps> = ({
           <input
             type="date"
             value={stop.departure_date || ''}
-            min={stop.arrival_date || undefined}
-            onChange={(e) => onUpdate(stop.id, { departure_date: e.target.value })}
+            min={stop.arrival_date || tripStart}
+            max={tripEnd}
+            onChange={(e) => handleDateUpdate({ departure_date: e.target.value })}
             className="w-full rounded-xl border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 focus:border-brand-500 focus:outline-none focus:ring-2 focus:ring-brand-500/20"
           />
         </div>
       </div>
+
+      {dateError && (
+        <p className="text-xs text-rose-600 font-medium">{dateError}</p>
+      )}
 
       <div className="pt-2 border-t border-slate-100">
         <Button

@@ -1,6 +1,8 @@
 import React from 'react';
 import { BudgetSummary, ExpenseCategory } from '../../types';
 import { useFormatPrice, Price } from '../common/Price';
+import { useCurrencyStore } from '../../store/currencyStore';
+import { convertAmount, convertToUsd, formatAxisAmount, formatDisplayAmount } from '../../utils/currency';
 import {
   PieChart,
   Pie,
@@ -45,6 +47,9 @@ const ALL_CATEGORIES: ExpenseCategory[] = [
 
 export const BudgetOverview: React.FC<BudgetOverviewProps> = ({ budget }) => {
   const formatPrice = useFormatPrice();
+  const currency = useCurrencyStore((s) => s.currency);
+  const toDisplay = (amountUsd: number) => convertAmount(amountUsd, currency);
+  const formatChartValue = (displayValue: number) => formatDisplayAmount(displayValue, currency);
   const dayCount = Math.max(budget.by_day.length, 1);
   const avgBudgetPerDay = budget.total_budget / dayCount;
   const avgSpentPerDay = budget.total_spent / dayCount;
@@ -65,14 +70,20 @@ export const BudgetOverview: React.FC<BudgetOverviewProps> = ({ budget }) => {
     .filter((item) => item.amount > 0)
     .map((item) => ({
       name: item.label,
-      value: item.amount,
+      value: toDisplay(item.amount),
       color: item.color,
     }));
 
   const categoryBarData = fullCategoryBreakdown.map((item) => ({
     name: item.label,
-    amount: item.amount,
+    amount: toDisplay(item.amount),
     fill: item.color,
+  }));
+
+  const dailyChartData = budget.by_day.map((day) => ({
+    ...day,
+    budget: toDisplay(day.budget),
+    actual: toDisplay(day.actual),
   }));
 
   const hasOverbudgetDays = budget.overbudget_days && budget.overbudget_days.length > 0;
@@ -224,7 +235,7 @@ export const BudgetOverview: React.FC<BudgetOverviewProps> = ({ budget }) => {
                     ))}
                   </Pie>
                   <Tooltip
-                    formatter={(value: number) => [formatPrice(value), 'Amount']}
+                    formatter={(value: number) => [formatChartValue(value), 'Amount']}
                     contentStyle={{ borderRadius: '12px', border: '1px solid #e2e8f0' }}
                   />
                 </PieChart>
@@ -248,10 +259,16 @@ export const BudgetOverview: React.FC<BudgetOverviewProps> = ({ budget }) => {
           <div className="h-64 w-full">
             <ResponsiveContainer width="100%" height="100%">
               <BarChart data={categoryBarData} layout="vertical" margin={{ left: 20, right: 20 }}>
-                <XAxis type="number" tick={{ fontSize: 11 }} />
+                <XAxis
+                  type="number"
+                  tick={{ fontSize: 11 }}
+                  tickFormatter={(value) =>
+                    formatAxisAmount(convertToUsd(Number(value), currency), currency)
+                  }
+                />
                 <YAxis type="category" dataKey="name" width={90} tick={{ fontSize: 11 }} />
                 <Tooltip
-                  formatter={(val: number) => [formatPrice(val), 'Amount']}
+                  formatter={(val: number) => [formatChartValue(val), 'Amount']}
                   contentStyle={{ borderRadius: '12px', border: '1px solid #e2e8f0' }}
                 />
                 <Bar dataKey="amount" radius={[0, 6, 6, 0]}>
@@ -275,11 +292,14 @@ export const BudgetOverview: React.FC<BudgetOverviewProps> = ({ budget }) => {
 
         <div className="h-72 w-full">
           <ResponsiveContainer width="100%" height="100%">
-            <BarChart data={budget.by_day} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
+            <BarChart data={dailyChartData} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
               <XAxis dataKey="day_label" tick={{ fontSize: 11 }} />
-              <YAxis tick={{ fontSize: 11 }} />
+              <YAxis
+                tick={{ fontSize: 11 }}
+                tickFormatter={(value) => formatAxisAmount(convertToUsd(Number(value), currency), currency)}
+              />
               <Tooltip
-                formatter={(val: number) => [formatPrice(val), '']}
+                formatter={(val: number) => [formatChartValue(val), '']}
                 contentStyle={{ borderRadius: '12px', border: '1px solid #e2e8f0' }}
               />
               <Legend iconType="circle" wrapperStyle={{ fontSize: '12px', paddingTop: '10px' }} />

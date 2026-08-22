@@ -50,7 +50,9 @@ def get_budget_for_trip(db: Session, trip_id: int) -> BudgetResponse:
     )
     actual_by_day: dict[date, Decimal] = defaultdict(lambda: Decimal("0"))
     for expense in expenses:
-        if expense.section and expense.section.date_range_start:
+        if expense.expense_date:
+            day = expense.expense_date
+        elif expense.section and expense.section.date_range_start:
             day = expense.section.date_range_start
         else:
             day = trip.start_date

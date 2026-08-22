@@ -1,11 +1,18 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { TripSection, SectionType } from '../../types';
 import { Input } from '../common/Input';
-import { Plane, Home, Compass, MoreHorizontal, Trash2, DollarSign, Calendar, GripVertical } from 'lucide-react';
+import { Plane, Home, Compass, MoreHorizontal, Trash2, Calendar } from 'lucide-react';
+import { CurrencyIcon } from '../common/CurrencyIcon';
+import { useCurrencyStore } from '../../store/currencyStore';
+import { convertAmount, convertToUsd, currencySymbol } from '../../utils/currency';
+
+import { validateSectionDates, syncEndDateWithStart } from '../../utils/validation';
 
 interface SectionCardProps {
   section: TripSection;
   index: number;
+  tripStart?: string;
+  tripEnd?: string;
   onUpdate: (index: number, updates: Partial<TripSection>) => void;
   onRemove: (index: number) => void;
 }
@@ -13,9 +20,23 @@ interface SectionCardProps {
 export const SectionCard: React.FC<SectionCardProps> = ({
   section,
   index,
+  tripStart,
+  tripEnd,
   onUpdate,
   onRemove,
 }) => {
+  const currency = useCurrencyStore((s) => s.currency);
+  const displayBudget = Math.round(convertAmount(Number(section.budget) || 0, currency));
+  const [dateError, setDateError] = useState<string | null>(null);
+
+  const applyDateUpdate = (updates: Partial<TripSection>) => {
+    const start = updates.date_range_start ?? section.date_range_start;
+    const end = updates.date_range_end ?? section.date_range_end;
+    const err = validateSectionDates(start, end, tripStart, tripEnd);
+    setDateError(err);
+    if (!err) onUpdate(index, updates);
+  };
+
   const typeIcons: Record<SectionType, React.ReactNode> = {
     travel: <Plane className="h-4 w-4 text-blue-500" />,
     stay: <Home className="h-4 w-4 text-emerald-500" />,
@@ -92,7 +113,13 @@ export const SectionCard: React.FC<SectionCardProps> = ({
             type="date"
             leftIcon={<Calendar className="h-4 w-4" />}
             value={section.date_range_start}
-            onChange={(e) => onUpdate(index, { date_range_start: e.target.value })}
+            min={tripStart}
+            max={tripEnd}
+            onChange={(e) => {
+              const start = e.target.value;
+              const end = syncEndDateWithStart(start, section.date_range_end);
+              applyDateUpdate({ date_range_start: start, date_range_end: end });
+            }}
           />
         </div>
 
@@ -103,23 +130,34 @@ export const SectionCard: React.FC<SectionCardProps> = ({
             type="date"
             leftIcon={<Calendar className="h-4 w-4" />}
             value={section.date_range_end}
-            onChange={(e) => onUpdate(index, { date_range_end: e.target.value })}
+            min={section.date_range_start || tripStart}
+            max={tripEnd}
+            onChange={(e) => applyDateUpdate({ date_range_end: e.target.value })}
+            hint="Same as start for single-day activities"
           />
         </div>
 
         {/* Budget Allocation */}
         <div>
           <Input
-            label="Budget Allocation ($)"
+            label={`Budget Allocation (${currencySymbol(currency)})`}
             type="number"
             min="0"
-            step="10"
-            leftIcon={<DollarSign className="h-4 w-4" />}
-            value={section.budget}
-            onChange={(e) => onUpdate(index, { budget: parseFloat(e.target.value) || 0 })}
+            step={currency === 'INR' ? '100' : '10'}
+            leftIcon={<CurrencyIcon className="h-4 w-4" />}
+            value={displayBudget}
+            onChange={(e) =>
+              onUpdate(index, {
+                budget: convertToUsd(parseFloat(e.target.value) || 0, currency),
+              })
+            }
             placeholder="Budget amount"
           />
         </div>
+
+        {dateError && (
+          <p className="sm:col-span-2 lg:col-span-3 text-xs text-rose-600 font-medium">{dateError}</p>
+        )}
 
         {/* Notes & Information */}
         <div className="sm:col-span-2 lg:col-span-2">
