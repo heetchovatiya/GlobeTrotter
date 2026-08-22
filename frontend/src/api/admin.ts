@@ -1,32 +1,41 @@
 import { apiClient } from './client';
-import { AdminAnalytics, AdminUser } from '../types';
-import { MOCK_ADMIN_ANALYTICS, MOCK_ADMIN_USERS } from './mockData';
+import { mapAdminAnalytics, mapAdminUser } from './mappers';
+import { AdminAnalytics, AdminUser, User } from '../types';
 
 export const adminApi = {
   async getAnalytics(): Promise<AdminAnalytics> {
-    return apiClient<AdminAnalytics>('/admin/analytics/trends', {
-      method: 'GET',
-      fallbackData: MOCK_ADMIN_ANALYTICS,
-    });
+    const [trends, cities, activities] = await Promise.all([
+      apiClient<{
+        trips_over_time: { date: string; trips_created: number }[];
+        active_users: number;
+        total_trips: number;
+        total_users: number;
+      }>('/admin/analytics/trends', { method: 'GET' }),
+      apiClient<
+        { city_id: number; name: string; country: string; trip_count: number }[]
+      >('/admin/analytics/cities?limit=10', { method: 'GET' }),
+      apiClient<
+        { activity_id: number; name: string; city_id: number; booking_count: number }[]
+      >('/admin/analytics/activities?limit=10', { method: 'GET' }),
+    ]);
+    return mapAdminAnalytics(trends, cities, activities);
   },
 
   async getUsers(): Promise<AdminUser[]> {
-    return apiClient<AdminUser[]>('/admin/users', {
+    const users = await apiClient<(User & { is_suspended?: boolean })[]>('/admin/users', {
       method: 'GET',
-      fallbackData: MOCK_ADMIN_USERS,
     });
+    return users.map(mapAdminUser);
   },
 
-  async toggleUserStatus(userId: number): Promise<AdminUser> {
-    const user = MOCK_ADMIN_USERS.find((u) => u.id === userId);
-    if (user) {
-      user.is_active = !user.is_active;
-    }
-
-    return apiClient<AdminUser>(`/admin/users/${userId}/status`, {
-      method: 'PATCH',
-      fallbackData: user || MOCK_ADMIN_USERS[0],
-    });
+  async toggleUserStatus(userId: number, suspended: boolean): Promise<AdminUser> {
+    const user = await apiClient<User & { is_suspended?: boolean }>(
+      `/admin/users/${userId}/suspend`,
+      {
+        method: 'POST',
+        body: JSON.stringify({ suspended }),
+      }
+    );
+    return mapAdminUser(user);
   },
 };
-

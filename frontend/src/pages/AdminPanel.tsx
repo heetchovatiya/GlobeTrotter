@@ -53,8 +53,10 @@ export const AdminPanel: React.FC = () => {
   }, []);
 
   const handleToggleUserStatus = async (userId: number) => {
+    const current = users.find((u) => u.id === userId);
+    if (!current) return;
     try {
-      const updated = await adminApi.toggleUserStatus(userId);
+      const updated = await adminApi.toggleUserStatus(userId, current.is_active);
       setUsers((prev) => prev.map((u) => (u.id === userId ? updated : u)));
       showToast(
         'success',

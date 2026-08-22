@@ -1,14 +1,12 @@
 import React, { useEffect, useState } from 'react';
 import { useParams, Link } from 'react-router-dom';
-import { ItineraryResponse, ExpenseCategory } from '../types';
+import { ItineraryResponse } from '../types';
 import { itineraryApi } from '../api/itinerary';
-import { budgetApi } from '../api/budget';
 import { sharingApi } from '../api/sharing';
 import { BudgetOverview } from '../components/budget/BudgetOverview';
 import { Button } from '../components/common/Button';
 import { Badge } from '../components/common/Badge';
 import { Modal } from '../components/common/Modal';
-import { Input } from '../components/common/Input';
 import { Skeleton } from '../components/common/Skeleton';
 import { useUIStore } from '../store/uiStore';
 import {
@@ -38,12 +36,6 @@ export const ItineraryView: React.FC = () => {
   const [expandedDays, setExpandedDays] = useState<number[]>([1, 2]); // Expand Day 1 and 2 by default
   const [isShareModalOpen, setIsShareModalOpen] = useState(false);
   const [shareUrl, setShareUrl] = useState('');
-  const [isExpenseModalOpen, setIsExpenseModalOpen] = useState(false);
-  const [expenseForm, setExpenseForm] = useState({
-    category: 'meals' as ExpenseCategory,
-    amount: 45,
-    note: 'Dinner at local Izakaya',
-  });
 
   useEffect(() => {
     const loadData = async () => {
@@ -76,22 +68,8 @@ export const ItineraryView: React.FC = () => {
     }
   };
 
-  const handleAddExpense = async (e: React.FormEvent) => {
-    e.preventDefault();
-    try {
-      await budgetApi.addExpense(id || '1', {
-        category: expenseForm.category,
-        amount: Number(expenseForm.amount),
-        note: expenseForm.note,
-      });
-      showToast('success', 'Expense recorded successfully!');
-      setIsExpenseModalOpen(false);
-      // Refresh
-      const updated = await itineraryApi.getItinerary(id || '1');
-      setItinerary(updated);
-    } catch {
-      showToast('error', 'Failed to log expense.');
-    }
+  const handleAddExpense = () => {
+    showToast('info', 'Manual expense logging is not available yet. Budget is calculated from itinerary sections.');
   };
 
   if (loading || !itinerary) {
@@ -206,8 +184,8 @@ export const ItineraryView: React.FC = () => {
         {activeTab === 'budget' && (
           <Button
             size="sm"
-            variant="primary"
-            onClick={() => setIsExpenseModalOpen(true)}
+            variant="outline"
+            onClick={handleAddExpense}
             leftIcon={<Plus className="h-4 w-4" />}
           >
             Log Expense
@@ -361,57 +339,6 @@ export const ItineraryView: React.FC = () => {
             </Button>
           </div>
         </div>
-      </Modal>
-
-      {/* Log Expense Modal */}
-      <Modal
-        isOpen={isExpenseModalOpen}
-        onClose={() => setIsExpenseModalOpen(false)}
-        title="Record Trip Expense"
-      >
-        <form onSubmit={handleAddExpense} className="space-y-4">
-          <div>
-            <label className="block text-xs font-semibold text-slate-700 uppercase tracking-wider mb-1.5">
-              Category
-            </label>
-            <select
-              value={expenseForm.category}
-              onChange={(e) => setExpenseForm({ ...expenseForm, category: e.target.value as any })}
-              className="w-full bg-slate-50 border border-slate-300 rounded-xl px-3 py-2 text-sm text-slate-900 focus:outline-none"
-            >
-              <option value="stay">🏨 Accommodation / Stay</option>
-              <option value="transport">✈️ Transport / Flights / Trains</option>
-              <option value="activities">🎯 Sightseeing & Tours</option>
-              <option value="meals">🍽️ Meals & Dining</option>
-              <option value="other">📦 Other Misc</option>
-            </select>
-          </div>
-
-          <Input
-            label="Amount ($)"
-            type="number"
-            min="1"
-            required
-            value={expenseForm.amount}
-            onChange={(e) => setExpenseForm({ ...expenseForm, amount: parseFloat(e.target.value) || 0 })}
-          />
-
-          <Input
-            label="Note / Item"
-            value={expenseForm.note}
-            onChange={(e) => setExpenseForm({ ...expenseForm, note: e.target.value })}
-            placeholder="e.g. Kyoto Ryokan Booking"
-          />
-
-          <div className="flex justify-end gap-2 pt-2">
-            <Button type="button" variant="ghost" onClick={() => setIsExpenseModalOpen(false)}>
-              Cancel
-            </Button>
-            <Button type="submit" variant="primary">
-              Save Expense
-            </Button>
-          </div>
-        </form>
       </Modal>
     </div>
   );

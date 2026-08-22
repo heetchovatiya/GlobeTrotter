@@ -3,6 +3,8 @@ import { Trip, TripSection, SectionType, City } from '../types';
 import { tripsApi } from '../api/trips';
 import { sectionsApi } from '../api/sections';
 import { stopsApi } from '../api/stops';
+import { itineraryApi } from '../api/itinerary';
+import { flattenSections } from '../api/mappers';
 
 interface SectionDraft extends TripSection {
   isNew?: boolean;
@@ -27,61 +29,35 @@ interface TripBuilderState {
   resetBuilder: () => void;
 }
 
-let debounceTimer: NodeJS.Timeout | null = null;
+let debounceTimer: ReturnType<typeof setTimeout> | null = null;
 
 export const useTripBuilderStore = create<TripBuilderState>((set, get) => ({
   trip: null,
   selectedCity: null,
-  sections: [
-    {
-      id: 1,
-      stop_id: 1,
-      title: 'Section 1: Inbound Travel & Airport Transfer',
-      type: 'travel',
-      date_range_start: new Date().toISOString().split('T')[0],
-      date_range_end: new Date().toISOString().split('T')[0],
-      budget: 150,
-      notes: 'Flight arrival and high-speed rail transfer to city center.',
-      order_index: 1,
-      isNew: false,
-    },
-    {
-      id: 2,
-      stop_id: 1,
-      title: 'Section 2: Accommodation & Hotel Check-in',
-      type: 'stay',
-      date_range_start: new Date().toISOString().split('T')[0],
-      date_range_end: new Date(Date.now() + 86400000 * 3).toISOString().split('T')[0],
-      budget: 350,
-      notes: 'Centrally located boutique hotel with complimentary breakfast.',
-      order_index: 2,
-      isNew: false,
-    },
-    {
-      id: 3,
-      stop_id: 1,
-      title: 'Section 3: Sightseeing, Walking Tour & Experiences',
-      type: 'activity',
-      date_range_start: new Date(Date.now() + 86400000).toISOString().split('T')[0],
-      date_range_end: new Date(Date.now() + 86400000 * 2).toISOString().split('T')[0],
-      budget: 200,
-      notes: 'Explore top historical landmarks, cultural districts, and local culinary gems.',
-      order_index: 3,
-      isNew: false,
-    },
-  ],
+  sections: [],
   isLoading: false,
-  saveStatus: 'saved',
-  lastSavedAt: new Date().toLocaleTimeString(),
+  saveStatus: 'idle',
+  lastSavedAt: null,
   error: null,
 
   loadTrip: async (tripId) => {
     set({ isLoading: true, error: null });
     try {
-      const trip = await tripsApi.getTrip(tripId);
-      set({ trip, isLoading: false });
-    } catch (err: any) {
-      set({ error: err.message, isLoading: false });
+      const [trip, stops, itinerary] = await Promise.all([
+        tripsApi.getTrip(tripId),
+        stopsApi.getStops(tripId),
+        itineraryApi.getItinerary(tripId),
+      ]);
+      const sections = flattenSections(itinerary.days);
+      set({
+        trip: { ...trip, stops },
+        sections,
+        isLoading: false,
+        saveStatus: sections.length > 0 ? 'saved' : 'idle',
+      });
+    } catch (err: unknown) {
+      const message = err instanceof Error ? err.message : 'Failed to load trip';
+      set({ error: message, isLoading: false });
     }
   },
 
@@ -94,10 +70,16 @@ export const useTripBuilderStore = create<TripBuilderState>((set, get) => ({
     const nextIndex = sections.length + 1;
     const defaultStart = trip?.start_date || new Date().toISOString().split('T')[0];
     const defaultEnd = trip?.end_date || defaultStart;
+    const stopId = trip?.stops?.[0]?.id;
+
+    if (!trip || !stopId) {
+      set({ error: 'Add a destination stop before creating sections.' });
+      return;
+    }
 
     const newSection: SectionDraft = {
-      id: Date.now(), // Temporary ID until saved
-      stop_id: trip?.stops?.[0]?.id || 1,
+      id: Date.now(),
+      stop_id: stopId,
       title: `Section ${nextIndex}: New ${type.charAt(0).toUpperCase() + type.slice(1)} Block`,
       type,
       date_range_start: defaultStart,
@@ -121,7 +103,6 @@ export const useTripBuilderStore = create<TripBuilderState>((set, get) => ({
 
     set({ sections: newSections, saveStatus: 'saving' });
 
-    // Debounced autosave (1.5s as requested in MVP plan)
     if (debounceTimer) clearTimeout(debounceTimer);
     debounceTimer = setTimeout(async () => {
       try {
@@ -133,8 +114,9 @@ export const useTripBuilderStore = create<TripBuilderState>((set, get) => ({
           saveStatus: 'saved',
           lastSavedAt: new Date().toLocaleTimeString(),
         });
-      } catch (err: any) {
-        set({ saveStatus: 'error', error: err.message });
+      } catch (err: unknown) {
+        const message = err instanceof Error ? err.message : 'Autosave failed';
+        set({ saveStatus: 'error', error: message });
       }
     }, 1500);
   },
@@ -149,52 +131,59 @@ export const useTripBuilderStore = create<TripBuilderState>((set, get) => ({
     if (target.id && !target.isNew) {
       try {
         await sectionsApi.deleteSection(target.id);
-      } catch (err: any) {
+      } catch (err) {
         console.warn('Failed to delete section from backend:', err);
       }
     }
   },
 
   saveSectionImmediate: async (index) => {
-    const { sections } = get();
+    const { sections, trip } = get();
     const target = sections[index];
+    if (!trip) return;
+
     set({ saveStatus: 'saving' });
     try {
       if (target.id && !target.isNew) {
         await sectionsApi.updateSection(target.id, target);
       } else {
-        const created = await sectionsApi.createSection(target.stop_id, target);
+        const created = await sectionsApi.createSection(trip.id, target.stop_id, target);
         const updatedSections = [...sections];
         updatedSections[index] = { ...created, isNew: false };
         set({ sections: updatedSections });
       }
       set({ saveStatus: 'saved', lastSavedAt: new Date().toLocaleTimeString() });
-    } catch (err: any) {
-      set({ saveStatus: 'error', error: err.message });
+    } catch (err: unknown) {
+      const message = err instanceof Error ? err.message : 'Save failed';
+      set({ saveStatus: 'error', error: message });
     }
   },
 
   saveAllSections: async () => {
-    const { sections } = get();
+    const { sections, trip } = get();
+    if (!trip) return false;
+
     set({ saveStatus: 'saving' });
     try {
-      for (let i = 0; i < sections.length; i++) {
-        const s = sections[i];
+      const nextSections = [...sections];
+      for (let i = 0; i < nextSections.length; i++) {
+        const s = nextSections[i];
         if (s.isNew) {
-          const created = await sectionsApi.createSection(s.stop_id, s);
-          sections[i] = { ...created, isNew: false };
+          const created = await sectionsApi.createSection(trip.id, s.stop_id, s);
+          nextSections[i] = { ...created, isNew: false };
         } else {
           await sectionsApi.updateSection(s.id, s);
         }
       }
       set({
-        sections: [...sections],
+        sections: nextSections,
         saveStatus: 'saved',
         lastSavedAt: new Date().toLocaleTimeString(),
       });
       return true;
-    } catch (err: any) {
-      set({ saveStatus: 'error', error: err.message });
+    } catch (err: unknown) {
+      const message = err instanceof Error ? err.message : 'Save failed';
+      set({ saveStatus: 'error', error: message });
       return false;
     }
   },
@@ -203,9 +192,9 @@ export const useTripBuilderStore = create<TripBuilderState>((set, get) => ({
     set({
       trip: null,
       selectedCity: null,
-      saveStatus: 'saved',
+      sections: [],
+      saveStatus: 'idle',
       error: null,
     });
   },
 }));
-

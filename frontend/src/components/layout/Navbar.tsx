@@ -20,7 +20,7 @@ import {
 export const Navbar: React.FC = () => {
   const location = useLocation();
   const navigate = useNavigate();
-  const { user, isAuthenticated, isAdmin, logout, setDemoRole } = useAuthStore();
+  const { user, isAuthenticated, isAdmin, logout } = useAuthStore();
   const [profileDropdownOpen, setProfileDropdownOpen] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
@@ -138,16 +138,10 @@ export const Navbar: React.FC = () => {
                       <div className="px-4 py-3 border-b border-slate-100">
                         <p className="text-sm font-bold text-slate-900">{user?.name}</p>
                         <p className="text-xs text-slate-500 truncate">{user?.email}</p>
-                        <div className="mt-2 flex items-center justify-between bg-slate-50 px-2.5 py-1.5 rounded-lg">
+                        <div className="mt-2 flex items-center bg-slate-50 px-2.5 py-1.5 rounded-lg">
                           <span className="text-[11px] font-semibold text-slate-600 uppercase">
                             Role: <span className="text-brand-600 font-bold">{user?.role}</span>
                           </span>
-                          <button
-                            onClick={() => setDemoRole(user?.role === 'admin' ? 'user' : 'admin')}
-                            className="text-[10px] text-brand-600 hover:text-brand-700 underline font-medium"
-                          >
-                            Switch to {user?.role === 'admin' ? 'User' : 'Admin'}
-                          </button>
                         </div>
                       </div>
 

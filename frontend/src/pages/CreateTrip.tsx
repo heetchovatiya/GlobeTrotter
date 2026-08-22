@@ -100,7 +100,7 @@ export const CreateTrip: React.FC = () => {
         const selectedActs = suggestedActivities.filter((a) => selectedActivityIds.includes(a.id));
         for (let i = 0; i < selectedActs.length; i++) {
           const act = selectedActs[i];
-          await sectionsApi.createSection(stop.id, {
+          await sectionsApi.createSection(createdTrip.id, stop.id, {
             title: `Section ${i + 1}: ${act.name}`,
             type: act.type === 'adventure' ? 'activity' : act.type === 'food' ? 'activity' : 'activity',
             date_range_start: startDate,
@@ -112,7 +112,7 @@ export const CreateTrip: React.FC = () => {
         }
       } else {
         // Default seed section
-        await sectionsApi.createSection(stop.id, {
+        await sectionsApi.createSection(createdTrip.id, stop.id, {
           title: 'Section 1: Inbound Arrival & Welcome Tour',
           type: 'travel',
           date_range_start: startDate,

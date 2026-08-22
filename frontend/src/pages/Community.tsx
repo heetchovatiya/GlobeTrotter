@@ -8,10 +8,12 @@ import { Modal } from '../components/common/Modal';
 import { Input } from '../components/common/Input';
 import { Skeleton } from '../components/common/Skeleton';
 import { useUIStore } from '../store/uiStore';
+import { useAuthStore } from '../store/authStore';
 import { Users, Plus, Sparkles, Image as ImageIcon, Link as LinkIcon } from 'lucide-react';
 
 export const Community: React.FC = () => {
   const { showToast } = useUIStore();
+  const { isAuthenticated } = useAuthStore();
 
   const [posts, setPosts] = useState<CommunityPost[]>([]);
   const [userTrips, setUserTrips] = useState<Trip[]>([]);
@@ -28,12 +30,12 @@ export const Community: React.FC = () => {
     const loadCommunity = async () => {
       setLoading(true);
       try {
-        const [postsData, tripsData] = await Promise.all([
-          communityApi.getPosts(sortBy),
-          tripsApi.getTrips(),
-        ]);
+        const postsData = await communityApi.getPosts(sortBy);
         setPosts(postsData);
-        setUserTrips(tripsData);
+        if (isAuthenticated) {
+          const tripsData = await tripsApi.getTrips();
+          setUserTrips(tripsData);
+        }
       } catch (err) {
         console.error('Failed to load community feed:', err);
       } finally {
@@ -41,7 +43,7 @@ export const Community: React.FC = () => {
       }
     };
     loadCommunity();
-  }, [sortBy]);
+  }, [sortBy, isAuthenticated]);
 
   const handleCreatePost = async (e: React.FormEvent) => {
     e.preventDefault();

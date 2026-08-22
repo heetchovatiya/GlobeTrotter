@@ -21,12 +21,12 @@ export const Dashboard: React.FC = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const [cities, trips] = await Promise.all([
-          citiesApi.getCities({ sort: 'popularity', limit: 4 }),
-          tripsApi.getTrips({ sort: 'recent' }),
-        ]);
+        const cities = await citiesApi.getCities({ sort: 'popularity', limit: 4 });
         setPopularCities(cities);
-        setRecentTrips(trips);
+        if (useAuthStore.getState().isAuthenticated) {
+          const trips = await tripsApi.getTrips({ sort: 'recent', limit: 5 });
+          setRecentTrips(trips);
+        }
       } catch (err) {
         console.error('Failed to load dashboard data:', err);
       } finally {

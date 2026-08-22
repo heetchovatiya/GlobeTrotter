@@ -37,8 +37,8 @@ export const CommunityPostCard: React.FC<CommunityPostCardProps> = ({ post }) =>
 
     setIsSubmitting(true);
     try {
-      const added = await communityApi.addComment(post.id, newComment);
-      setComments([...comments, added]);
+      const updatedPost = await communityApi.addComment(post.id, newComment);
+      setComments(updatedPost.comments || []);
       setNewComment('');
       showToast('success', 'Comment posted!');
     } catch (err: any) {

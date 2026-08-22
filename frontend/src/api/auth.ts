@@ -1,6 +1,6 @@
 import { apiClient, setAuthToken } from './client';
+import { mapUser } from './mappers';
 import { User } from '../types';
-import { MOCK_CURRENT_USER } from './mockData';
 
 export interface LoginResponse {
   access_token: string;
@@ -8,76 +8,63 @@ export interface LoginResponse {
   user: User;
 }
 
+export interface RegisterPayload {
+  name: string;
+  email: string;
+  password: string;
+  phone_number?: string;
+  city?: string;
+  country?: string;
+  language_pref?: string;
+}
+
 export const authApi = {
   async login(email: string, password: string): Promise<LoginResponse> {
-    const fallbackResponse: LoginResponse = {
-      access_token: 'mock_jwt_token_' + Date.now(),
-      token_type: 'bearer',
-      user: {
-        ...MOCK_CURRENT_USER,
-        email: email || MOCK_CURRENT_USER.email,
-        role: email.toLowerCase().includes('admin') ? 'admin' : 'user',
-      },
-    };
-
-    const res = await apiClient<LoginResponse>('/auth/login', {
-      method: 'POST',
-      body: JSON.stringify({ email, password }),
-      fallbackData: fallbackResponse,
-    });
-
-    if (res?.access_token) {
-      setAuthToken(res.access_token);
-    }
-    return res;
+    const res = await apiClient<{ access_token: string; token_type: string; user: User }>(
+      '/auth/login',
+      {
+        method: 'POST',
+        body: JSON.stringify({ email, password }),
+      }
+    );
+    setAuthToken(res.access_token);
+    return { ...res, user: mapUser(res.user) };
   },
 
-  async register(userData: Partial<User> & { password?: string }): Promise<LoginResponse> {
-    const fallbackResponse: LoginResponse = {
-      access_token: 'mock_jwt_token_' + Date.now(),
-      token_type: 'bearer',
-      user: {
-        id: Math.floor(Math.random() * 1000) + 10,
-        name: userData.name || 'New Explorer',
-        email: userData.email || 'user@example.com',
-        city: userData.city,
-        country: userData.country,
-        phone_number: userData.phone_number,
-        additional_info: userData.additional_info,
-        role: 'user',
-        created_at: new Date().toISOString(),
-      },
-    };
-
-    const res = await apiClient<LoginResponse>('/auth/register', {
-      method: 'POST',
-      body: JSON.stringify(userData),
-      fallbackData: fallbackResponse,
-    });
-
-    if (res?.access_token) {
-      setAuthToken(res.access_token);
-    }
-    return res;
+  async register(userData: RegisterPayload): Promise<LoginResponse> {
+    const res = await apiClient<{ access_token: string; token_type: string; user: User }>(
+      '/auth/register',
+      {
+        method: 'POST',
+        body: JSON.stringify(userData),
+      }
+    );
+    setAuthToken(res.access_token);
+    return { ...res, user: mapUser(res.user) };
   },
 
   async getMe(): Promise<User> {
-    return apiClient<User>('/users/me', {
-      method: 'GET',
-      fallbackData: MOCK_CURRENT_USER,
-    });
+    const user = await apiClient<User>('/users/me', { method: 'GET' });
+    return mapUser(user);
   },
 
   async updateMe(data: Partial<User>): Promise<User> {
-    return apiClient<User>('/users/me', {
+    const payload = {
+      name: data.name,
+      phone_number: data.phone_number,
+      city: data.city,
+      country: data.country,
+      language_pref: data.language_pref,
+      profile_photo_url: data.profile_photo_url,
+    };
+    const user = await apiClient<User>('/users/me', {
       method: 'PATCH',
-      body: JSON.stringify(data),
-      fallbackData: { ...MOCK_CURRENT_USER, ...data },
+      body: JSON.stringify(payload),
     });
+    return mapUser(user);
   },
 
   logout() {
     setAuthToken(null);
   },
 };
-

@@ -12,8 +12,8 @@ export const Login: React.FC = () => {
   const { login, isLoading, error } = useAuthStore();
   const { showToast } = useUIStore();
 
-  const [email, setEmail] = useState('alex.morgan@example.com');
-  const [password, setPassword] = useState('password123');
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
 
   const from = (location.state as any)?.from?.pathname || '/';
 
@@ -28,11 +28,11 @@ export const Login: React.FC = () => {
 
   const handleDemoFill = (role: 'user' | 'admin') => {
     if (role === 'admin') {
-      setEmail('admin@globetrotter.com');
-      setPassword('adminPass123!');
+      setEmail('admin@example.com');
+      setPassword('ChangeMeAdmin1!');
     } else {
-      setEmail('traveler@globetrotter.com');
-      setPassword('secretPass123!');
+      setEmail('');
+      setPassword('');
     }
   };
 
