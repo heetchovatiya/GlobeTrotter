@@ -2,6 +2,8 @@
 
 Full rules live in `docs/AI_RULES.md`, read that file in full before generating code in this repo. This file is a pointer, not a substitute, do not skip reading the real document.
 
+Cursor also loads `.cursor/rules/ai-rules.mdc` on every prompt (`alwaysApply: true`). Keep that file in sync with `docs/AI_RULES.md` if the rules change.
+
 Summary, the full doc has the detail behind each of these:
 
 1. Do not hallucinate. Verify libraries against `requirements.txt`/`package.json`, verify model fields against `backend/app/models/`, verify route signatures against `backend/app/routers/`, never invent an env var or API method.

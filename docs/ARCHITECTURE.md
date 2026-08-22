@@ -2,7 +2,7 @@
 
 This is the source of truth for how the system fits together. Read this before writing code. If something here conflicts with what you are about to build, raise it in the team channel first, do not silently diverge.
 
-Reference docs: `GlobeTrotter_MVP_Plan.md` (screen-by-screen breakdown, already shared with the team) and `docs/SYSTEM_DESIGN.md` (data flow diagrams for the flows described here).
+Reference docs: `GlobeTrotter_MVP_Plan.md` (screen-by-screen breakdown, already shared with the team), `docs/SYSTEM_DESIGN.md` (data flow diagrams for the flows described here), `docs/AI_RULES.md` (required reading before using Cursor, Claude Code, or any AI assistant on this repo), and `docs/GlobeTrotter-8-hours.excalidraw` (visual 8-hour plan board).
 
 ---
 
@@ -59,6 +59,11 @@ globetrotter/
     ARCHITECTURE.md      # this file
     SYSTEM_DESIGN.md     # data flow diagrams per feature
     GlobeTrotter_MVP_Plan.md
+    AI_RULES.md          # required before any AI-assisted code
+    GlobeTrotter-8-hours.excalidraw  # visual 8-hour plan board
+  .cursorrules           # Cursor pointer to docs/AI_RULES.md
+  CLAUDE.md              # Claude Code pointer to docs/AI_RULES.md
+  .cursor/rules/         # always-on Cursor project rules
   .env.example
   docker-compose.yml
   README.md

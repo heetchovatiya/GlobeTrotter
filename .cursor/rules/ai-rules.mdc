@@ -5,34 +5,51 @@ alwaysApply: true
 
 # AI Assistant Rules, GlobeTrotter
 
-Full source of truth: `docs/AI_RULES.md`. Read that file before generating or editing any code.
+Full source of truth: `docs/AI_RULES.md`. Read that file before generating or editing any code. If a suggestion violates a rule here, the rule wins.
 
-Also read: `docs/ARCHITECTURE.md`, `docs/SYSTEM_DESIGN.md`, `docs/GlobeTrotter_MVP_Plan.md`.
+Also read before starting work: `docs/ARCHITECTURE.md`, `docs/SYSTEM_DESIGN.md`, `docs/GlobeTrotter_MVP_Plan.md`.
 
 ## 1. Do not hallucinate
 
-- Verify libraries against `requirements.txt` / `package.json`.
-- Verify model fields against `backend/app/models/`.
-- Verify routes against `backend/app/routers/` (source of truth).
-- Never invent env vars, APIs, or claim unobserved success.
-- Re-read files before editing.
+- Before using any library, function, or API, confirm it exists in `requirements.txt` (backend) or `package.json` (frontend). If it is not listed and needed, add it explicitly and say so.
+- Before referencing a database column, table, or relationship, open the actual model file in `backend/app/models/` and check it. Do not invent fields. Schema changes must be flagged.
+- Before calling an existing API route from the frontend, check the actual router file in `backend/app/routers/` for path, method, and response shape. Routers are the source of truth, not `docs/ARCHITECTURE.md`.
+- Never invent a FastAPI, SQLAlchemy, Pydantic, or React API that has not been verified.
+- Never fabricate an environment variable, config value, or file path. If needed and missing from `.env.example`, add it there and explain why.
+- Do not claim a test passed, a migration ran, or a server started unless you actually ran it and saw the output.
+- When editing a file, read its current content first. Do not edit from memory.
 
-## 2. Stay within scope
+## 2. Stay within scope, keep it stable
 
-- Model changes require a matching Alembic migration in the same change.
-- Do not touch routers outside the assigned module (see ownership table).
-- Prefer the smallest change; follow existing patterns.
-- If ambiguous, ask.
+- Do not modify `backend/app/models/` without a matching Alembic migration in the same change.
+- Do not touch a router file outside the module you were asked to work on. Check `docs/ARCHITECTURE.md`'s ownership table first.
+- Do not change the shape of an existing API response without checking every frontend consumer.
+- Prefer the smallest change that solves the task. No unrelated refactors.
+- Follow existing patterns in the codebase rather than introducing a new pattern for a similar problem.
+- If a task is ambiguous or conflicts with what is already built, ask.
 
-## 3. Security
+## 3. Security, non-negotiable
 
-- No hardcoded secrets; use `backend/app/core/config.py`.
-- Ownership checks on user data; `require_role("admin")` for `/admin/*`.
-- Only `GET /public/:slug` may skip auth.
-- SQLAlchemy only (no string-built SQL); Pydantic for request bodies.
-- CORS only `FRONTEND_URL`, never `*` with credentials.
-- Pin dependency versions.
+**Secrets**
+- Never hardcode secrets, API keys, DB passwords, or JWT signing keys. Use env vars via `backend/app/core/config.py`.
+- Never commit a `.env` file. Never log a JWT, password, or `Authorization` header.
 
-## 4. When unsure
+**Auth and access control**
+- Every route that touches a user's data must check ownership (`trip.user_id == current_user.id` via `Depends(get_current_user)`).
+- Every `/admin/*` route must use `Depends(require_role("admin"))` server-side.
+- `GET /public/:slug` is the only route allowed to skip authentication.
+- Passwords hashed with `passlib[bcrypt]`, never stored or returned in plain text.
 
-Say so. Honest uncertainty beats a confident wrong answer.
+**Data access**
+- All DB queries through SQLAlchemy ORM/query builder. Never concatenate or f-string user input into SQL.
+- All request bodies validated through Pydantic before touching the database.
+- File uploads must validate type and size server-side.
+
+**Transport and config**
+- CORS allows only `FRONTEND_URL`, never `allow_origins=["*"]` with `allow_credentials=True`.
+- Pin new third-party dependencies to specific versions.
+- Prefer in-memory JWT storage on the frontend, not `localStorage`, unless flagged as a deliberate decision.
+
+## 4. When you are not sure
+
+Say so. A confident wrong answer is worse than an honest "I don't know, here is how to check."
