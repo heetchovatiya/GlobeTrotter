@@ -23,11 +23,18 @@ def create_trip(
 @router.get("", response_model=list[TripPublic])
 def list_trips(
     status_filter: str | None = Query(default=None, alias="status"),
+    sort: str | None = Query(default="start_date_desc"),
     limit: int | None = Query(default=None, ge=1, le=100),
     db: Session = Depends(get_db),
     current_user: User = Depends(get_current_user),
 ) -> list[TripPublic]:
-    trips = trips_crud.list_trips_for_user(db, current_user, status_filter=status_filter, limit=limit)
+    trips = trips_crud.list_trips_for_user(
+        db,
+        current_user,
+        status_filter=status_filter,
+        sort=sort,
+        limit=limit,
+    )
     return [TripPublic.model_validate(trip) for trip in trips]
 
 

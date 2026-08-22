@@ -37,9 +37,10 @@ def list_trips_for_user(
     db: Session,
     user: User,
     status_filter: str | None = None,
+    sort: str | None = None,
     limit: int | None = None,
 ) -> list[Trip]:
-    trips = db.query(Trip).filter(Trip.user_id == user.id).order_by(Trip.start_date.desc()).all()
+    trips = db.query(Trip).filter(Trip.user_id == user.id).all()
     for trip in trips:
         trip.status = derive_trip_status(trip.start_date, trip.end_date)
 
@@ -56,6 +57,23 @@ def list_trips_for_user(
                     detail="Invalid status filter",
                 ) from exc
             trips = [t for t in trips if t.status == wanted]
+
+    sort_key = (sort or "start_date_desc").lower()
+    if sort_key in {"start_date", "start_date_asc"}:
+        trips.sort(key=lambda t: (t.start_date, t.id))
+    elif sort_key in {"start_date_desc", "recent"}:
+        trips.sort(key=lambda t: (t.start_date, t.id), reverse=True)
+    elif sort_key in {"end_date", "end_date_asc"}:
+        trips.sort(key=lambda t: (t.end_date, t.id))
+    elif sort_key == "name":
+        trips.sort(key=lambda t: (t.name.lower(), t.id))
+    elif sort_key == "created_at":
+        trips.sort(key=lambda t: (t.created_at, t.id), reverse=True)
+    else:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Invalid sort. Use start_date, start_date_desc, end_date, name, or created_at",
+        )
 
     if limit is not None:
         trips = trips[:limit]

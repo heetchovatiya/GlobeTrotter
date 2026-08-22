@@ -32,7 +32,17 @@ class UserPublic(BaseModel):
     city: str | None = None
     country: str | None = None
     role: UserRole
+    is_suspended: bool = False
     created_at: datetime
+
+
+class UserUpdate(BaseModel):
+    name: str | None = Field(default=None, min_length=1, max_length=255)
+    phone_number: str | None = Field(default=None, max_length=64)
+    city: str | None = Field(default=None, max_length=128)
+    country: str | None = Field(default=None, max_length=128)
+    language_pref: str | None = Field(default=None, max_length=32)
+    profile_photo_url: str | None = Field(default=None, max_length=512)
 
 
 class AuthResponse(BaseModel):
