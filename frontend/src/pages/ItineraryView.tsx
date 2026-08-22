@@ -363,4 +363,3 @@ export const ItineraryView: React.FC = () => {
     </div>
   );
 };
-
