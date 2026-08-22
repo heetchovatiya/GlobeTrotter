@@ -3,30 +3,33 @@
 Run from backend/: python -m app.seed
 """
 
+import json
+from pathlib import Path
+
 from sqlalchemy.orm import Session
 
 from app.core.database import SessionLocal
 from app.core.security import hash_password
 from app.models import Activity, ActivityType, City, User, UserRole
 
+SEED_FILE = Path(__file__).parent / "seed_cities.json"
 
-CITY_SEEDS: list[dict] = [
-    {"name": "Tokyo", "country": "Japan", "cost_index": 85.0, "popularity_score": 98},
-    {"name": "Paris", "country": "France", "cost_index": 82.0, "popularity_score": 97},
-    {"name": "Bali", "country": "Indonesia", "cost_index": 45.0, "popularity_score": 95},
-    {"name": "New York", "country": "USA", "cost_index": 90.0, "popularity_score": 96},
-    {"name": "Rome", "country": "Italy", "cost_index": 70.0, "popularity_score": 93},
-    {"name": "Barcelona", "country": "Spain", "cost_index": 65.0, "popularity_score": 91},
-    {"name": "Bangkok", "country": "Thailand", "cost_index": 40.0, "popularity_score": 94},
-    {"name": "London", "country": "UK", "cost_index": 88.0, "popularity_score": 92},
-    {"name": "Dubai", "country": "UAE", "cost_index": 80.0, "popularity_score": 90},
-    {"name": "Sydney", "country": "Australia", "cost_index": 78.0, "popularity_score": 88},
-    {"name": "Cape Town", "country": "South Africa", "cost_index": 50.0, "popularity_score": 84},
-    {"name": "Lisbon", "country": "Portugal", "cost_index": 55.0, "popularity_score": 87},
-    {"name": "Mexico City", "country": "Mexico", "cost_index": 42.0, "popularity_score": 85},
-    {"name": "Singapore", "country": "Singapore", "cost_index": 83.0, "popularity_score": 89},
-    {"name": "Istanbul", "country": "Turkey", "cost_index": 48.0, "popularity_score": 86},
-]
+
+def _load_city_seeds() -> list[dict]:
+    with open(SEED_FILE, encoding="utf-8") as f:
+        rows = json.load(f)["cities"]
+    return [
+        {
+            "name": row["name"],
+            "country": row["country"],
+            "cost_index": float(row["cost_index"]),
+            "popularity_score": int(row["cost_index"]),
+        }
+        for row in rows
+    ]
+
+
+CITY_SEEDS: list[dict] = _load_city_seeds()
 
 
 ACTIVITY_TEMPLATES: list[tuple[str, ActivityType, float, int, str]] = [
