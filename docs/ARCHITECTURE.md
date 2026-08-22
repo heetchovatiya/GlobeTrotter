@@ -2,7 +2,7 @@
 
 This is the source of truth for how the system fits together. Read this before writing code. If something here conflicts with what you are about to build, raise it in the team channel first, do not silently diverge.
 
-Reference docs: `GlobeTrotter_MVP_Plan.md` (screen-by-screen breakdown, already shared with the team) and `docs/SYSTEM_DESIGN.md` (data flow diagrams for the flows described here).
+Reference docs: `GlobeTrotter_MVP_Plan.md` (screen-by-screen breakdown, already shared with the team), `docs/SYSTEM_DESIGN.md` (data flow diagrams for the flows described here), and `docs/GlobeTrotter-8-hours.excalidraw` (visual board for the 8-hour plan).
 
 ---
 
@@ -59,6 +59,7 @@ globetrotter/
     ARCHITECTURE.md      # this file
     SYSTEM_DESIGN.md     # data flow diagrams per feature
     GlobeTrotter_MVP_Plan.md
+    GlobeTrotter-8-hours.excalidraw  # visual 8-hour plan board
   .env.example
   docker-compose.yml
   README.md

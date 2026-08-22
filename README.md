@@ -7,6 +7,7 @@ Personalized, collaborative travel planning app. Multi-city itineraries, budget 
 1. Read `docs/ARCHITECTURE.md` first. It has the module ownership map, claim a row before you write code.
 2. Read `docs/SYSTEM_DESIGN.md` for the data flow of the four core features.
 3. Read `docs/GlobeTrotter_MVP_Plan.md` for the full screen-by-screen breakdown and API surface.
+4. Open `docs/GlobeTrotter-8-hours.excalidraw` for the visual 8-hour plan board.
 
 ## Local setup
 
