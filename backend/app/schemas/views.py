@@ -54,11 +54,14 @@ class ItinerarySection(BaseModel):
     budget: float | None = None
     notes: str | None = None
     order_index: int
+    budget_allocation: str = "spread_dates"
     activities: list[TripActivityPublic] = Field(default_factory=list)
 
 
 class ItineraryDay(BaseModel):
     date: date
+    city_id: int | None = None
+    city_name: str | None = None
     sections: list[ItinerarySection] = Field(default_factory=list)
 
 
@@ -87,6 +90,12 @@ class BudgetResponse(BaseModel):
     by_category: list[CategoryTotal]
     by_day: list[DayBudget]
     overbudget_days: list[date]
+    itinerary_stay: float = 0
+    itinerary_transport: float = 0
+    itinerary_activities: float = 0
+    itinerary_total: float = 0
+    general_spent: float = 0
+    grand_total: float = 0
 
 
 class ShareResponse(BaseModel):

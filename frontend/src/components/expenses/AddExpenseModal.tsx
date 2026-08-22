@@ -102,7 +102,7 @@ export const AddExpenseModal: React.FC<AddExpenseModalProps> = ({
           </div>
 
           <Input
-            label="Amount (USD base)"
+            label="Amount"
             type="number"
             min="0.01"
             step="0.01"

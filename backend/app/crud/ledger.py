@@ -23,7 +23,7 @@ def _planned_budget_for_trip(db: Session, trip: Trip) -> float:
 def _spent_for_trip(db: Session, trip_id: int) -> float:
     total = (
         db.query(func.coalesce(func.sum(Expense.amount), 0))
-        .filter(Expense.trip_id == trip_id)
+        .filter(Expense.trip_id == trip_id, Expense.section_id.is_(None))
         .scalar()
     )
     return float(total or 0)

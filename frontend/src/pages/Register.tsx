@@ -1,10 +1,13 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuthStore } from '../store/authStore';
 import { useUIStore } from '../store/uiStore';
+import { citiesApi } from '../api/cities';
 import { Button } from '../components/common/Button';
 import { Input } from '../components/common/Input';
+import { CitySelect } from '../components/common/CitySelect';
 import { validateRegister } from '../utils/validation';
+import { City } from '../types';
 import { Compass, Mail, Lock, User, Phone, MapPin, ArrowRight } from 'lucide-react';
 
 export const Register: React.FC = () => {
@@ -12,17 +15,30 @@ export const Register: React.FC = () => {
   const { register, isLoading, error } = useAuthStore();
   const { showToast } = useUIStore();
 
+  const [cities, setCities] = useState<City[]>([]);
+  const [citiesLoading, setCitiesLoading] = useState(true);
+  const [homeCityId, setHomeCityId] = useState(0);
+
   const [formData, setFormData] = useState({
     firstName: '',
     lastName: '',
     email: '',
     password: '',
     phone: '',
-    city: '',
-    country: '',
   });
 
   const [fieldError, setFieldError] = useState<string | null>(null);
+
+  useEffect(() => {
+    citiesApi
+      .getCities()
+      .then((list) => {
+        setCities(list);
+        if (list.length > 0) setHomeCityId(list[0].id);
+      })
+      .catch(() => showToast('error', 'Could not load cities for hometown selection.'))
+      .finally(() => setCitiesLoading(false));
+  }, [showToast]);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -41,15 +57,22 @@ export const Register: React.FC = () => {
       setFieldError(validationError);
       return;
     }
+    if (!homeCityId) {
+      setFieldError('Please select your home town or place.');
+      return;
+    }
     setFieldError(null);
+
+    const homeCity = cities.find((c) => c.id === homeCityId);
 
     const success = await register({
       name: `${formData.firstName} ${formData.lastName}`.trim(),
       email: formData.email,
       password: formData.password,
       phone_number: formData.phone || undefined,
-      city: formData.city || undefined,
-      country: formData.country || undefined,
+      home_city_id: homeCityId,
+      city: homeCity?.name,
+      country: homeCity?.country,
     });
 
     if (success) {
@@ -61,7 +84,6 @@ export const Register: React.FC = () => {
   return (
     <div className="min-h-[calc(100vh-5rem)] flex items-center justify-center px-4 py-12 bg-gradient-to-b from-brand-50/50 via-slate-50 to-slate-100">
       <div className="max-w-xl w-full space-y-8 bg-white p-8 sm:p-10 rounded-3xl shadow-card border border-slate-100 animate-fade-in">
-        {/* Header */}
         <div className="text-center space-y-2">
           <div className="inline-flex h-14 w-14 rounded-2xl bg-gradient-to-tr from-brand-700 to-brand-500 items-center justify-center text-white shadow-lg shadow-brand-500/30">
             <Compass className="h-8 w-8" />
@@ -74,7 +96,6 @@ export const Register: React.FC = () => {
           </p>
         </div>
 
-        {/* Form */}
         <form onSubmit={handleSubmit} className="space-y-4">
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <Input
@@ -115,21 +136,22 @@ export const Register: React.FC = () => {
             />
           </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            <Input
-              label="City"
-              name="city"
-              leftIcon={<MapPin className="h-4 w-4" />}
-              value={formData.city}
-              onChange={handleChange}
-            />
-            <Input
-              label="Country"
-              name="country"
-              leftIcon={<MapPin className="h-4 w-4" />}
-              value={formData.country}
-              onChange={handleChange}
-            />
+          <div className="rounded-2xl border border-slate-200/80 bg-slate-50/50 p-4">
+            {citiesLoading ? (
+              <p className="text-xs text-slate-500">Loading places...</p>
+            ) : (
+              <CitySelect
+                cities={cities}
+                value={homeCityId}
+                onChange={setHomeCityId}
+                label="Home town / place"
+                placeholder="Search your city..."
+              />
+            )}
+            <p className="mt-2 text-[11px] text-slate-500 flex items-start gap-1.5">
+              <MapPin className="h-3.5 w-3.5 shrink-0 mt-0.5 text-brand-500" />
+              Used as your default starting point when you plan a new trip.
+            </p>
           </div>
 
           <Input
@@ -168,7 +190,8 @@ export const Register: React.FC = () => {
             type="submit"
             className="w-full shadow-md shadow-brand-500/25"
             size="lg"
-            isLoading={isLoading}
+            isLoading={isLoading || citiesLoading}
+            disabled={citiesLoading || !homeCityId}
             rightIcon={<ArrowRight className="h-4 w-4" />}
           >
             Register Account

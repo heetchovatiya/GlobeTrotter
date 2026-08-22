@@ -9,6 +9,7 @@ export interface User {
   phone_number?: string;
   city?: string;
   country?: string;
+  home_city_id?: number;
   additional_info?: string;
   role: UserRole;
   created_at: string;
@@ -42,6 +43,13 @@ export interface Activity {
 
 export type SectionType = 'travel' | 'stay' | 'activity' | 'other';
 
+export type BudgetAllocation =
+  | 'lump_sum'
+  | 'spread_dates'
+  | 'per_day'
+  | 'city_total'
+  | 'trip_total';
+
 export interface TripActivity {
   id: number;
   section_id: number;
@@ -56,11 +64,14 @@ export interface TripActivity {
 export interface TripSection {
   id: number;
   stop_id: number;
+  city_id?: number;
+  city_name?: string;
   title: string;
   type: SectionType;
   date_range_start: string;
   date_range_end: string;
   budget: number;
+  budget_allocation?: BudgetAllocation;
   notes?: string;
   order_index: number;
   activities?: TripActivity[];
@@ -178,6 +189,12 @@ export interface BudgetSummary {
   total_budget: number;
   total_spent: number;
   remaining_budget: number;
+  itinerary_stay: number;
+  itinerary_transport: number;
+  itinerary_activities: number;
+  itinerary_total: number;
+  general_spent: number;
+  grand_total: number;
   by_category: CategoryExpense[];
   by_day: DayBudget[];
   overbudget_days: string[];
@@ -186,6 +203,7 @@ export interface BudgetSummary {
 export interface ItineraryDay {
   date: string;
   day_number: number;
+  city_id?: number;
   city_name?: string;
   sections: TripSection[];
   total_cost: number;

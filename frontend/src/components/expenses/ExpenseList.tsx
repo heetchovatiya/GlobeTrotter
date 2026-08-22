@@ -32,7 +32,8 @@ export const ExpenseList: React.FC<ExpenseListProps> = ({
   if (manual.length === 0) {
     return (
       <p className="text-xs text-slate-500 py-4 rounded-xl bg-slate-50 border border-dashed border-slate-200 px-4">
-        No manual expenses yet. Section budgets appear automatically from your itinerary.
+        No expenses logged yet. Tap <strong>Log Expense</strong> to record transport, meals, stays, and
+        other costs as you travel.
       </p>
     );
   }
@@ -62,7 +63,7 @@ export const ExpenseList: React.FC<ExpenseListProps> = ({
                 {exp.note || '—'}
               </td>
               <td className="px-4 py-3 text-xs font-bold text-emerald-700 text-right">
-                <Price amount={exp.amount} />
+                <Price amount={exp.amount} zeroAsFree={false} />
               </td>
               {onDelete && (
                 <td className="px-2 py-3">

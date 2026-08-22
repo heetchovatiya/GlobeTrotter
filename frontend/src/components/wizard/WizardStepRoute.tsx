@@ -36,7 +36,8 @@ export const WizardStepRoute: React.FC<WizardStepRouteProps> = ({
       <div>
         <h2 className="text-lg font-bold text-slate-900">Where are you going?</h2>
         <p className="text-sm text-slate-500 mt-1">
-          Pick your destination. Add up to 4 cities — your route preview updates as you go.
+          Your home town is pre-filled as the starting point. Add up to 3 more destinations — your
+          route preview updates as you go.
         </p>
       </div>
 
@@ -45,8 +46,8 @@ export const WizardStepRoute: React.FC<WizardStepRouteProps> = ({
           cities={cities}
           value={pickerCityId}
           onChange={onPickerChange}
-          label="Search destination"
-          placeholder="Type city or country..."
+          label="Add destination"
+          placeholder="Search destination"
         />
 
         {canAddMore && (
@@ -75,7 +76,7 @@ export const WizardStepRoute: React.FC<WizardStepRouteProps> = ({
                     }`}
                   >
                     <MapPin className="h-3 w-3" />
-                    {city.name}
+                    {idx === 0 ? `Start: ${city.name}` : city.name}
                     {idx > 0 && (
                       <button
                         type="button"

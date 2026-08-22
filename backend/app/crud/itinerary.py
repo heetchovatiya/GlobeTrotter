@@ -75,30 +75,51 @@ def _section_to_public(section: TripSection, city_id: int, city_name: str | None
         budget=as_float(section.budget),
         notes=section.notes,
         order_index=section.order_index,
+        budget_allocation=section.budget_allocation or "spread_dates",
         activities=activities,
     )
+
+
+def _stop_for_date(trip: Trip, day: date) -> Stop | None:
+    for stop in sorted(trip.stops, key=lambda s: s.order_index):
+        start = stop.arrival_date or trip.start_date
+        end = stop.departure_date or stop.arrival_date or trip.end_date
+        if start <= day <= end:
+            return stop
+    return sorted(trip.stops, key=lambda s: s.order_index)[0] if trip.stops else None
 
 
 def build_itinerary_response(trip: Trip) -> ItineraryResponse:
     days_map: dict[date, list[ItinerarySection]] = defaultdict(list)
 
+    current = trip.start_date
+    while current <= trip.end_date:
+        days_map[current]
+        current += timedelta(days=1)
+
     for stop in sorted(trip.stops, key=lambda s: s.order_index):
         city_name = stop.city.name if stop.city else None
         for section in sorted(stop.sections, key=lambda s: s.order_index):
             payload = _section_to_public(section, stop.city_id, city_name)
-            start = section.date_range_start or trip.start_date
-            end = section.date_range_end or start
-            if end < start:
-                end = start
-            current = start
-            while current <= end:
-                days_map[current].append(payload)
-                current += timedelta(days=1)
+            day = section.date_range_start or trip.start_date
+            if day < trip.start_date:
+                day = trip.start_date
+            if day > trip.end_date:
+                day = trip.end_date
+            days_map[day].append(payload)
 
-    days = [
-        ItineraryDay(date=day, sections=sections)
-        for day, sections in sorted(days_map.items(), key=lambda item: item[0])
-    ]
+    days = []
+    for day in sorted(days_map.keys()):
+        stop = _stop_for_date(trip, day)
+        days.append(
+            ItineraryDay(
+                date=day,
+                city_id=stop.city_id if stop else None,
+                city_name=stop.city.name if stop and stop.city else None,
+                sections=sorted(days_map[day], key=lambda s: s.order_index),
+            )
+        )
+
     return ItineraryResponse(
         trip_id=trip.id,
         name=trip.name,

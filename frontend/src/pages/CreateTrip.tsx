@@ -8,13 +8,22 @@ import { stopsApi } from '../api/stops';
 import { sectionsApi } from '../api/sections';
 import { uploadsApi } from '../api/uploads';
 import { useUIStore } from '../store/uiStore';
+import { useAuthStore } from '../store/authStore';
 import { useTripWizardStore, WizardStepId } from '../store/tripWizardStore';
 import { validateTripDates, isValidHttpUrl, tripDurationDays } from '../utils/validation';
-import { splitTripDatesForStops } from '../utils/tripDates';
+import { resolveUserHomeCityId, defaultDestinationPickerId } from '../utils/homeCity';
+import {
+  buildActivitySchedule,
+  buildCityDaysMap,
+  cityDaysMapsEqual,
+  splitTripDatesByCityDays,
+  suggestActivitiesForCity,
+} from '../utils/scheduleBuilder';
 import { WizardSteps } from '../components/wizard/WizardSteps';
 import { WizardStickyFooter } from '../components/wizard/WizardStickyFooter';
 import { WizardStepRoute } from '../components/wizard/WizardStepRoute';
 import { WizardStepDates } from '../components/wizard/WizardStepDates';
+import { WizardStepCityDays } from '../components/wizard/WizardStepCityDays';
 import { WizardStepActivities } from '../components/wizard/WizardStepActivities';
 import { WizardStepReview } from '../components/wizard/WizardStepReview';
 import { TripTemplatePicker } from '../components/wizard/TripTemplatePicker';
@@ -22,6 +31,7 @@ import { TripTemplatePicker } from '../components/wizard/TripTemplatePicker';
 export const CreateTrip: React.FC = () => {
   const navigate = useNavigate();
   const { showToast } = useUIStore();
+  const { user } = useAuthStore();
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [pickerCityId, setPickerCityId] = React.useState(0);
   const [activitiesLoading, setActivitiesLoading] = React.useState(false);
@@ -32,6 +42,7 @@ export const CreateTrip: React.FC = () => {
   const {
     step,
     cityIds,
+    cityDays,
     startDate,
     endDate,
     name,
@@ -41,6 +52,7 @@ export const CreateTrip: React.FC = () => {
     coverFile,
     selectedActivityIds,
     suggestedActivities,
+    activitiesByCity,
     cities,
     setStep,
     nextStep,
@@ -49,6 +61,8 @@ export const CreateTrip: React.FC = () => {
     addCity,
     removeCity,
     setPrimaryCity,
+    setCityDays,
+    setCityDaysMap,
     setStartDate,
     setEndDate,
     setName,
@@ -57,6 +71,7 @@ export const CreateTrip: React.FC = () => {
     setCoverPreview,
     setCoverFile,
     setSuggestedActivities,
+    setActivitiesByCity,
     toggleActivity,
     reset,
   } = useTripWizardStore();
@@ -68,14 +83,16 @@ export const CreateTrip: React.FC = () => {
       try {
         const cityList = await citiesApi.getCities();
         setCities(cityList);
-        if (cityList.length > 0) {
-          const firstId = cityList[0].id;
-          setPickerCityId(firstId);
-          addCity(firstId);
-          const chosen = cityList[0];
-          setCoverPhotoUrl(chosen.image_url);
-          setCoverPreview(chosen.image_url);
-        }
+        if (cityList.length === 0) return;
+
+        const homeCityId = resolveUserHomeCityId(user, cityList);
+        const startCityId = homeCityId ?? cityList[0].id;
+        const startCity = cityList.find((c) => c.id === startCityId) ?? cityList[0];
+
+        addCity(startCity.id);
+        setPickerCityId(defaultDestinationPickerId(cityList, [startCity.id]));
+        setCoverPhotoUrl(startCity.image_url);
+        setCoverPreview(startCity.image_url);
       } catch (err) {
         console.error(err);
         showToast('error', 'Could not load cities.');
@@ -88,14 +105,32 @@ export const CreateTrip: React.FC = () => {
   const primaryCityId = cityIds[0];
 
   useEffect(() => {
-    if (!primaryCityId) return;
+    if (cityIds.length === 0) return;
     setActivitiesLoading(true);
-    activitiesApi
-      .getActivities({ city_id: primaryCityId })
-      .then(setSuggestedActivities)
+    Promise.all(cityIds.map((id) => activitiesApi.getActivities({ city_id: id })))
+      .then((results) => {
+        const byCity: Record<number, typeof suggestedActivities> = {};
+        cityIds.forEach((id, index) => {
+          byCity[id] = results[index] || [];
+        });
+        setActivitiesByCity(byCity);
+        setSuggestedActivities(Object.values(byCity).flat());
+      })
       .catch(console.error)
       .finally(() => setActivitiesLoading(false));
-  }, [primaryCityId, setSuggestedActivities]);
+  }, [cityIds, setActivitiesByCity, setSuggestedActivities]);
+
+  useEffect(() => {
+    if (!startDate || !endDate || cityIds.length === 0) return;
+    const total = tripDurationDays(startDate, endDate);
+    if (total <= 0) return;
+
+    const next = buildCityDaysMap(cityIds, total);
+    const current = useTripWizardStore.getState().cityDays;
+    if (cityDaysMapsEqual(current, cityIds, next)) return;
+
+    setCityDaysMap(next);
+  }, [startDate, endDate, cityIds, setCityDaysMap]);
 
   const selectedCities = useMemo(
     () =>
@@ -125,7 +160,13 @@ export const CreateTrip: React.FC = () => {
       if (s === 2) {
         return validateTripDates(startDate, endDate);
       }
-      if (s === 4) {
+      if (s === 3) {
+        const allocated = cityIds.reduce((sum, id) => sum + (cityDays[id] || 0), 0);
+        if (allocated !== dayCount) {
+          return `Allocate exactly ${dayCount} days across your cities (currently ${allocated}).`;
+        }
+      }
+      if (s === 5) {
         if (!name.trim()) return 'Please name your trip.';
         if (coverPhotoUrl && !coverFile && !isValidHttpUrl(coverPhotoUrl)) {
           return 'Cover photo URL must be a valid http or https link.';
@@ -133,7 +174,7 @@ export const CreateTrip: React.FC = () => {
       }
       return null;
     },
-    [cityIds, startDate, endDate, name, coverPhotoUrl, coverFile]
+    [cityIds, cityDays, startDate, endDate, name, coverPhotoUrl, coverFile, dayCount]
   );
 
   const handleContinue = () => {
@@ -142,11 +183,16 @@ export const CreateTrip: React.FC = () => {
       showToast('error', err);
       return;
     }
-    if (step === 4) {
+    if (step === 5) {
       handleSubmit();
     } else {
       nextStep();
     }
+  };
+
+  const handleAutoDistributeDays = () => {
+    if (!dayCount) return;
+    setCityDaysMap(buildCityDaysMap(cityIds, dayCount));
   };
 
   const handlePickerChange = (cityId: number) => {
@@ -182,7 +228,7 @@ export const CreateTrip: React.FC = () => {
     }
 
     if (!asDraft) {
-      const err = validateStep(4);
+      const err = validateStep(5);
       if (err) {
         showToast('error', err);
         return;
@@ -216,11 +262,9 @@ export const CreateTrip: React.FC = () => {
       });
 
       const effectiveStart = startDate || createdTrip.start_date;
-      const effectiveEnd = endDate || createdTrip.end_date;
+      const daysPerCity = cityIds.map((id) => cityDays[id] || 1);
       const dateSegments =
-        startDate && endDate
-          ? splitTripDatesForStops(effectiveStart, effectiveEnd, cityIds.length)
-          : [];
+        startDate && endDate ? splitTripDatesByCityDays(effectiveStart, daysPerCity) : [];
 
       const stops = [];
       for (let i = 0; i < cityIds.length; i++) {
@@ -231,37 +275,58 @@ export const CreateTrip: React.FC = () => {
           departure_date: seg?.departure_date,
           order_index: i + 1,
         });
-        stops.push(stop);
+        stops.push({ ...stop, city_id: cityIds[i] });
       }
 
-      if (!asDraft) {
-        const primaryStop = stops[0];
-        if (selectedActivityIds.length > 0) {
-          const selectedActs = suggestedActivities.filter((a) =>
-            selectedActivityIds.includes(a.id)
+      if (!asDraft && startDate && endDate) {
+        const activitiesByCityMap = new Map<number, typeof suggestedActivities>();
+        for (const cityId of cityIds) {
+          const pool = activitiesByCity[cityId] || [];
+          const selected = pool.filter((a) => selectedActivityIds.includes(a.id));
+          const numDays = cityDays[cityId] || 1;
+          activitiesByCityMap.set(
+            cityId,
+            selected.length > 0 ? selected : suggestActivitiesForCity(pool, numDays)
           );
-          for (let i = 0; i < selectedActs.length; i++) {
-            const act = selectedActs[i];
-            await sectionsApi.createSection(createdTrip.id, primaryStop.id, {
-              title: `Section ${i + 1}: ${act.name}`,
+        }
+
+        const stopWindows = stops.map((stop, i) => ({
+          cityId: cityIds[i],
+          arrivalDate: dateSegments[i]?.arrival_date || effectiveStart,
+          departureDate: dateSegments[i]?.departure_date || effectiveStart,
+        }));
+
+        const schedule = buildActivitySchedule(stopWindows, activitiesByCityMap);
+        const stopByCityId = new Map(stops.map((s) => [s.city_id, s]));
+
+        if (schedule.length > 0) {
+          for (const slot of schedule) {
+            const stop = stopByCityId.get(slot.cityId);
+            if (!stop) continue;
+            await sectionsApi.createSection(createdTrip.id, stop.id, {
+              title: `${slot.startTime} — ${slot.activity.name}`,
               type: 'activity',
-              date_range_start: effectiveStart,
-              date_range_end: effectiveStart,
-              budget: act.cost || 50,
-              notes: act.description,
-              order_index: i + 1,
+              date_range_start: slot.date,
+              date_range_end: slot.date,
+              budget: slot.activity.cost || 50,
+              notes: slot.activity.description,
+              order_index: slot.orderIndex,
             });
           }
         } else {
-          await sectionsApi.createSection(createdTrip.id, primaryStop.id, {
-            title: 'Section 1: Inbound Arrival & Welcome Tour',
-            type: 'travel',
-            date_range_start: effectiveStart,
-            date_range_end: effectiveStart,
-            budget: 150,
-            notes: 'Flight arrival and check-in.',
-            order_index: 1,
-          });
+          for (let i = 0; i < stops.length; i++) {
+            const stop = stops[i];
+            const seg = dateSegments[i];
+            await sectionsApi.createSection(createdTrip.id, stop.id, {
+              title: `Day 1 in ${selectedCities[i]?.name || 'destination'} — Arrival & explore`,
+              type: 'travel',
+              date_range_start: seg?.arrival_date || effectiveStart,
+              date_range_end: seg?.arrival_date || effectiveStart,
+              budget: 150,
+              notes: 'Arrival, check-in, and local exploration.',
+              order_index: i + 1,
+            });
+          }
         }
       }
 
@@ -370,16 +435,29 @@ export const CreateTrip: React.FC = () => {
         )}
 
         {step === 3 && (
-          <WizardStepActivities
-            activities={suggestedActivities}
-            selectedIds={selectedActivityIds}
-            onToggle={(a) => toggleActivity(a.id)}
-            loading={activitiesLoading}
-            cityName={primaryCity?.name}
+          <WizardStepCityDays
+            cities={cities}
+            cityIds={cityIds}
+            cityDays={cityDays}
+            totalTripDays={dayCount}
+            onCityDaysChange={setCityDays}
+            onAutoDistribute={handleAutoDistributeDays}
           />
         )}
 
         {step === 4 && (
+          <WizardStepActivities
+            cities={cities}
+            cityIds={cityIds}
+            cityDays={cityDays}
+            activitiesByCity={activitiesByCity}
+            selectedIds={selectedActivityIds}
+            onToggle={(a) => toggleActivity(a.id)}
+            loading={activitiesLoading}
+          />
+        )}
+
+        {step === 5 && (
           <>
             <input
               ref={fileInputRef}
@@ -426,7 +504,7 @@ export const CreateTrip: React.FC = () => {
         onBack={prevStep}
         onContinue={handleContinue}
         onSaveDraft={handleSaveDraft}
-        continueLabel={step === 4 ? 'Confirm trip' : 'Continue'}
+        continueLabel={step === 5 ? 'Confirm trip' : 'Continue'}
         isLoading={isSubmitting}
         isSavingDraft={isSavingDraft}
       />

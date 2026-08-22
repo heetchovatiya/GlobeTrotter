@@ -374,6 +374,12 @@ export const MOCK_ITINERARY_1: ItineraryResponse = {
     total_budget: 3500,
     total_spent: 3240,
     remaining_budget: 260,
+    itinerary_stay: 1250,
+    itinerary_transport: 890,
+    itinerary_activities: 620,
+    itinerary_total: 2760,
+    general_spent: 740,
+    grand_total: 3500,
     by_category: [
       { category: 'stay', amount: 1250, percentage: 38.5, color: '#0d9488' },
       { category: 'transport', amount: 890, percentage: 27.5, color: '#3b82f6' },

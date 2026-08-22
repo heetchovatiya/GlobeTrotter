@@ -1,7 +1,9 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
-import { SharedTrip } from '../types';
+import { City, SharedTrip } from '../types';
 import { sharingApi } from '../api/sharing';
+import { citiesApi } from '../api/cities';
+import { ItineraryCityTimeline } from '../components/trip/ItineraryCityTimeline';
 import { useAuthStore } from '../store/authStore';
 import { useUIStore } from '../store/uiStore';
 import { Button } from '../components/common/Button';
@@ -15,8 +17,6 @@ import {
   MapPin,
   Clock,
   Compass,
-  Plane,
-  Home,
   Share2,
   Link2,
   Twitter,
@@ -35,6 +35,7 @@ export const PublicTrip: React.FC = () => {
   const [notFound, setNotFound] = useState(false);
   const [isCopying, setIsCopying] = useState(false);
   const [activeTab, setActiveTab] = useState<'timeline' | 'budget'>('timeline');
+  const [cities, setCities] = useState<City[]>([]);
   const formatPrice = useFormatPrice();
 
   const publicUrl = useMemo(
@@ -63,6 +64,7 @@ export const PublicTrip: React.FC = () => {
       }
     };
     loadSharedTrip();
+    citiesApi.getCities().then(setCities).catch(() => undefined);
   }, [slug]);
 
   const handleCopyTrip = async () => {
@@ -279,62 +281,7 @@ export const PublicTrip: React.FC = () => {
       </div>
 
       {activeTab === 'timeline' && (
-        <div className="space-y-6">
-          {days.map((day) => (
-            <div
-              key={day.day_number}
-              className="rounded-3xl bg-white border border-slate-200/80 shadow-soft p-6 space-y-4"
-            >
-              <div className="flex items-center justify-between pb-3 border-b border-slate-100">
-                <div className="flex items-center gap-3">
-                  <div className="h-9 w-9 rounded-xl bg-brand-50 border border-brand-100 flex items-center justify-center text-xs font-bold text-brand-700">
-                    D{day.day_number}
-                  </div>
-                  <div>
-                    <h3 className="text-base font-bold text-slate-900">
-                      Day {day.day_number}: {day.date}
-                    </h3>
-                    {day.city_name && (
-                      <p className="text-xs text-slate-500 flex items-center gap-1">
-                        <MapPin className="h-3 w-3 text-brand-500" />
-                        {day.city_name}
-                      </p>
-                    )}
-                  </div>
-                </div>
-                <span className="text-xs font-bold text-emerald-600 bg-emerald-50 px-2.5 py-1 rounded-full">
-                  <Price amount={day.total_cost} />
-                </span>
-              </div>
-
-              <div className="space-y-3">
-                {day.sections.map((section, idx) => (
-                  <div
-                    key={section.id || idx}
-                    className="p-4 rounded-2xl bg-slate-50 border border-slate-200/60 space-y-2"
-                  >
-                    <div className="flex items-center justify-between">
-                      <div className="flex items-center gap-2">
-                        {section.type === 'travel' && <Plane className="h-4 w-4 text-blue-500" />}
-                        {section.type === 'stay' && <Home className="h-4 w-4 text-emerald-500" />}
-                        {section.type === 'activity' && <Compass className="h-4 w-4 text-amber-500" />}
-                        <h4 className="text-xs sm:text-sm font-bold text-slate-900">{section.title}</h4>
-                      </div>
-                      <span className="text-xs font-bold text-slate-700">
-                        <Price amount={section.budget || 0} />
-                      </span>
-                    </div>
-                    {section.notes && (
-                      <p className="text-xs text-slate-600 leading-relaxed bg-white p-3 rounded-xl border border-slate-100">
-                        {section.notes}
-                      </p>
-                    )}
-                  </div>
-                ))}
-              </div>
-            </div>
-          ))}
-        </div>
+        <ItineraryCityTimeline days={days} cities={cities} variant="readonly" />
       )}
 
       {activeTab === 'budget' && <BudgetOverview budget={budget} />}

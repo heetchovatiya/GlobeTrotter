@@ -5,6 +5,7 @@ import { SafeImage } from '../common/SafeImage';
 import { DEFAULT_CITY_IMAGE } from '../../constants/images';
 import { Star, MapPin, ArrowRight } from 'lucide-react';
 import { costTierLabel, displayCostScore, displayPopularityScore } from '../../utils/currency';
+import { cityActivitiesUrl } from '../../utils/searchRoutes';
 import { ScoreMeter } from '../common/ScoreMeter';
 
 interface CityCardProps {
@@ -65,7 +66,7 @@ export const CityCard: React.FC<CityCardProps> = ({ city }) => {
 
           <div className="flex items-center justify-end">
             <Link
-              to={`/search?city_id=${city.id}`}
+              to={cityActivitiesUrl(city.id)}
               className="inline-flex items-center gap-1 text-xs font-bold text-brand-600 hover:text-brand-700 group-hover:translate-x-0.5 transition-transform"
             >
               <span>Explore</span>

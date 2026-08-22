@@ -72,7 +72,7 @@ export const WizardSteps: React.FC<WizardStepsProps> = ({ currentStep, onStepCli
         })}
       </div>
       <p className="sm:hidden mt-2 text-center text-xs font-bold text-slate-600">
-        Step {currentStep} of 4 — {WIZARD_STEPS[currentStep - 1].label}
+        Step {currentStep} of {WIZARD_STEPS.length} — {WIZARD_STEPS[currentStep - 1].label}
       </p>
     </nav>
   );

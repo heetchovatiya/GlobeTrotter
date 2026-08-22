@@ -12,6 +12,7 @@ class RegisterRequest(BaseModel):
     phone_number: str | None = Field(default=None, max_length=64)
     city: str | None = Field(default=None, max_length=128)
     country: str | None = Field(default=None, max_length=128)
+    home_city_id: int | None = Field(default=None, ge=1)
     language_pref: str | None = Field(default=None, max_length=32)
 
 
@@ -31,6 +32,7 @@ class UserPublic(BaseModel):
     phone_number: str | None = None
     city: str | None = None
     country: str | None = None
+    home_city_id: int | None = None
     role: UserRole
     is_suspended: bool = False
     created_at: datetime
@@ -41,6 +43,7 @@ class UserUpdate(BaseModel):
     phone_number: str | None = Field(default=None, max_length=64)
     city: str | None = Field(default=None, max_length=128)
     country: str | None = Field(default=None, max_length=128)
+    home_city_id: int | None = Field(default=None, ge=1)
     language_pref: str | None = Field(default=None, max_length=32)
     profile_photo_url: str | None = Field(default=None, max_length=512)
 

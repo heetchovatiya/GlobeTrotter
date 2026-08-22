@@ -7,15 +7,20 @@ interface PriceProps {
   amount: number;
   className?: string;
   suffix?: string;
+  /** When false, zero amounts render as currency 0 instead of "Free". */
+  zeroAsFree?: boolean;
 }
 
-export const Price: React.FC<PriceProps> = ({ amount, className, suffix }) => {
+export const Price: React.FC<PriceProps> = ({
+  amount,
+  className,
+  suffix,
+  zeroAsFree = true,
+}) => {
   const currency = useCurrencyStore((s) => s.currency);
   const formatted =
-    amount === 0 && suffix === undefined
-      ? currency === 'INR'
-        ? 'Free'
-        : 'Free'
+    amount === 0 && zeroAsFree && suffix === undefined
+      ? 'Free'
       : formatAmount(amount, currency);
 
   return (

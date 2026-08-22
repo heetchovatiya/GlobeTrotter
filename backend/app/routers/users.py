@@ -1,13 +1,13 @@
 from datetime import date
 
-from fastapi import APIRouter, Depends, Query, status
+from fastapi import APIRouter, Depends, HTTPException, Query, status
 from sqlalchemy.orm import Session
 
 from app.core.database import get_db
 from app.core.deps import get_current_user
 from app.crud import ledger as ledger_crud
 from app.crud import users as users_crud
-from app.models import User
+from app.models import City, User
 from app.schemas.auth import UserPublic, UserUpdate
 from app.schemas.ledger import TravelLedgerResponse
 
@@ -42,7 +42,17 @@ def patch_me(
     db: Session = Depends(get_db),
     current_user: User = Depends(get_current_user),
 ) -> UserPublic:
-    user = users_crud.update_user(db, current_user, payload)
+    if payload.home_city_id is not None:
+        city = db.query(City).filter(City.id == payload.home_city_id).first()
+        if city is None:
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail="Invalid home city",
+            )
+    try:
+        user = users_crud.update_user(db, current_user, payload)
+    except ValueError as exc:
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=str(exc)) from exc
     return UserPublic.model_validate(user)
 
 

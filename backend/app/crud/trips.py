@@ -4,6 +4,7 @@ from fastapi import HTTPException, status
 from sqlalchemy.orm import Session
 
 from app.models import Expense, SectionType, Stop, Trip, TripSection, TripStatus, User
+from app.services.budget_allocation import section_effective_total
 from app.schemas.trips import (
     SECTION_TYPE_TO_EXPENSE,
     SectionCreate,
@@ -127,6 +128,8 @@ def create_trip(db: Session, user: User, data: TripCreate) -> Trip:
 
 def update_trip(db: Session, trip: Trip, data: TripUpdate) -> Trip:
     payload = data.model_dump(exclude_unset=True)
+    old_start = trip.start_date
+    old_end = trip.end_date
     requested_status = payload.pop("status", None)
     for key, value in payload.items():
         setattr(trip, key, value)
@@ -144,6 +147,16 @@ def update_trip(db: Session, trip: Trip, data: TripUpdate) -> Trip:
             trip.status = requested_status
     elif trip.status != TripStatus.draft:
         trip.status = derive_trip_status(trip.start_date, trip.end_date)
+
+    dates_changed = trip.start_date != old_start or trip.end_date != old_end
+    if dates_changed:
+        from app.services.trip_date_sync import load_trip_for_date_sync, sync_trip_after_date_change
+
+        db.flush()
+        loaded = load_trip_for_date_sync(db, trip.id)
+        if loaded is not None:
+            sync_trip_after_date_change(db, loaded)
+
     db.commit()
     db.refresh(trip)
     return trip
@@ -286,12 +299,14 @@ def create_section(db: Session, trip: Trip, stop: Stop, data: SectionCreate) -> 
         date_range_start=data.date_range_start,
         date_range_end=data.date_range_end,
         budget=data.budget,
+        budget_allocation=data.budget_allocation,
         notes=data.notes,
         order_index=data.order_index,
     )
     db.add(section)
     db.flush()
-    _upsert_section_expense(db, trip.id, section, data.type, data.budget)
+    effective = section_effective_total(section, stop, trip)
+    _upsert_section_expense(db, trip.id, section, data.type, effective)
     db.commit()
     db.refresh(section)
     return section
@@ -320,7 +335,9 @@ def update_section(db: Session, trip: Trip, section: TripSection, data: SectionU
     _validate_section_dates(trip, start, end)
     for key, value in payload.items():
         setattr(section, key, value)
-    _upsert_section_expense(db, trip.id, section, section.type, section.budget)
+    stop = db.query(Stop).filter(Stop.id == section.stop_id).first()
+    effective = section_effective_total(section, stop, trip)
+    _upsert_section_expense(db, trip.id, section, section.type, effective)
     db.commit()
     db.refresh(section)
     return section

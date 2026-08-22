@@ -3,7 +3,8 @@ import { Link, useParams, useSearchParams } from 'react-router-dom';
 import { Printer, ArrowLeft } from 'lucide-react';
 import { itineraryApi } from '../api/itinerary';
 import { sharingApi } from '../api/sharing';
-import { ItineraryResponse } from '../types';
+import { citiesApi } from '../api/cities';
+import { City, ItineraryResponse } from '../types';
 import { TripPrintView } from '../components/trip/TripPrintView';
 import { Skeleton } from '../components/common/Skeleton';
 import { Button } from '../components/common/Button';
@@ -13,15 +14,16 @@ export const TripPrint: React.FC = () => {
   const { id } = useParams<{ id: string }>();
   const [searchParams] = useSearchParams();
   const [itinerary, setItinerary] = useState<ItineraryResponse | null>(null);
+  const [cities, setCities] = useState<City[]>([]);
   const [shareUrl, setShareUrl] = useState<string | undefined>();
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     if (!id) return;
-    itineraryApi
-      .getItinerary(id)
-      .then(async (data) => {
+    Promise.all([itineraryApi.getItinerary(id), citiesApi.getCities()])
+      .then(async ([data, cityList]) => {
         setItinerary(data);
+        setCities(cityList);
         try {
           const share = await sharingApi.shareTrip(id);
           setShareUrl(share.share_url);
@@ -67,7 +69,7 @@ export const TripPrint: React.FC = () => {
         </Button>
       </div>
 
-      <TripPrintView itinerary={itinerary} shareUrl={shareUrl} />
+      <TripPrintView itinerary={itinerary} cities={cities} shareUrl={shareUrl} />
     </div>
   );
 };

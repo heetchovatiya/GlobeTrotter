@@ -71,6 +71,7 @@ class SectionCreate(BaseModel):
     budget: float | None = Field(default=None, ge=0)
     notes: str | None = None
     order_index: int = 0
+    budget_allocation: str = Field(default="spread_dates", max_length=32)
 
 
 class SectionUpdate(BaseModel):
@@ -81,6 +82,7 @@ class SectionUpdate(BaseModel):
     budget: float | None = Field(default=None, ge=0)
     notes: str | None = None
     order_index: int | None = None
+    budget_allocation: str | None = Field(default=None, max_length=32)
 
 
 class SectionPublic(BaseModel):
@@ -95,6 +97,7 @@ class SectionPublic(BaseModel):
     budget: float | None
     notes: str | None
     order_index: int
+    budget_allocation: str = "spread_dates"
 
 
 SECTION_TYPE_TO_EXPENSE: dict[SectionType, ExpenseCategory] = {

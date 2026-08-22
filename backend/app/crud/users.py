@@ -1,8 +1,14 @@
 from sqlalchemy.orm import Session
 
 from app.core.security import hash_password, verify_password
-from app.models import User, UserRole
+from app.models import City, User, UserRole
 from app.schemas.auth import RegisterRequest, UserUpdate
+
+
+def _resolve_home_city(db: Session, home_city_id: int | None) -> City | None:
+    if home_city_id is None:
+        return None
+    return db.query(City).filter(City.id == home_city_id).first()
 
 
 def get_user_by_email(db: Session, email: str) -> User | None:
@@ -14,13 +20,21 @@ def get_user_by_id(db: Session, user_id: int) -> User | None:
 
 
 def create_user(db: Session, data: RegisterRequest) -> User:
+    city = data.city
+    country = data.country
+    home_city = _resolve_home_city(db, data.home_city_id)
+    if home_city is not None:
+        city = home_city.name
+        country = home_city.country
+
     user = User(
         name=data.name,
         email=str(data.email).lower(),
         password_hash=hash_password(data.password),
         phone_number=data.phone_number,
-        city=data.city,
-        country=data.country,
+        city=city,
+        country=country,
+        home_city_id=data.home_city_id,
         language_pref=data.language_pref,
         role=UserRole.user,
         is_suspended=False,
@@ -44,6 +58,14 @@ def authenticate_user(db: Session, email: str, password: str) -> User | None:
 
 def update_user(db: Session, user: User, data: UserUpdate) -> User:
     payload = data.model_dump(exclude_unset=True)
+    home_city_id = payload.pop("home_city_id", None)
+    if home_city_id is not None:
+        home_city = _resolve_home_city(db, home_city_id)
+        if home_city is None:
+            raise ValueError("Invalid home city")
+        user.home_city_id = home_city_id
+        user.city = home_city.name
+        user.country = home_city.country
     for key, value in payload.items():
         setattr(user, key, value)
     db.commit()

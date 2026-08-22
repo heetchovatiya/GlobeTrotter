@@ -16,23 +16,23 @@ import { DownloadPlanButton } from '../components/trip/DownloadPlanButton';
 import { TripMobileActionBar } from '../components/trip/TripMobileActionBar';
 import { TripRouteMap } from '../components/trip/TripRouteMap';
 import { AddExpenseModal } from '../components/expenses/AddExpenseModal';
+import { AddItineraryExpenseModal } from '../components/expenses/AddItineraryExpenseModal';
 import { ExpenseList } from '../components/expenses/ExpenseList';
+import { ItineraryExpensePanel } from '../components/expenses/ItineraryExpensePanel';
+import { TripSpendingTracker } from '../components/expenses/TripSpendingTracker';
 import { expensesApi } from '../api/expenses';
 import { tripsApi } from '../api/trips';
-import { Expense } from '../types';
-import { formatTripDuration } from '../utils/validation';
+import { City, Expense, Stop, TripSection } from '../types';
+import { formatTripDuration, tripDurationDays } from '../utils/validation';
+import { stopsApi } from '../api/stops';
+import { citiesApi } from '../api/cities';
+import { ItineraryCityTimeline } from '../components/trip/ItineraryCityTimeline';
 import {
   Calendar,
   Share2,
   Edit3,
-  MapPin,
   Clock,
   Plus,
-  ChevronDown,
-  ChevronUp,
-  Plane,
-  Home,
-  Compass,
   Users,
   IndianRupee,
   Copy,
@@ -51,9 +51,17 @@ export const ItineraryView: React.FC = () => {
   const [shareUrl, setShareUrl] = useState('');
   const [editTripOpen, setEditTripOpen] = useState(false);
   const [expenseModalOpen, setExpenseModalOpen] = useState(false);
+  const [itineraryExpenseOpen, setItineraryExpenseOpen] = useState(false);
+  const [itineraryExpenseType, setItineraryExpenseType] = useState<'stay' | 'travel'>('stay');
+  const [itineraryExpenseStopId, setItineraryExpenseStopId] = useState<number | undefined>();
+  const [itineraryExpenseScope, setItineraryExpenseScope] = useState<'city' | 'trip'>('city');
+  const [editingItinerarySection, setEditingItinerarySection] = useState<TripSection | null>(null);
   const [expenses, setExpenses] = useState<Expense[]>([]);
+  const [stops, setStops] = useState<Stop[]>([]);
   const [expensesLoading, setExpensesLoading] = useState(false);
   const [duplicating, setDuplicating] = useState(false);
+  const [cityIdByName, setCityIdByName] = useState<Record<string, number>>({});
+  const [cities, setCities] = useState<City[]>([]);
 
   useEffect(() => {
     const loadData = async () => {
@@ -63,6 +71,27 @@ export const ItineraryView: React.FC = () => {
         setItinerary(res);
         if (res.days.length > 0) {
           setExpandedDays([res.days[0].day_number]);
+        }
+        try {
+          const cityList = await citiesApi.getCities();
+          setCities(cityList);
+          if (id) {
+            try {
+              const stopsList = await stopsApi.getStops(id);
+              setStops(stopsList);
+              const cityNameById = new Map(cityList.map((c) => [c.id, c.name.toLowerCase()]));
+              const map: Record<string, number> = {};
+              for (const stop of stopsList) {
+                const name = cityNameById.get(stop.city_id);
+                if (name) map[name] = stop.city_id;
+              }
+              setCityIdByName(map);
+            } catch {
+              /* optional */
+            }
+          }
+        } catch {
+          /* optional */
         }
       } catch (err) {
         console.error('Failed to load itinerary:', err);
@@ -93,11 +122,11 @@ export const ItineraryView: React.FC = () => {
   };
 
   useEffect(() => {
-    if (activeTab === 'budget' && id) {
+    if (id) {
       loadExpenses();
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [activeTab, id]);
+  }, [id]);
 
   const handleDeleteExpense = async (expenseId: number) => {
     if (!id) return;
@@ -142,6 +171,35 @@ export const ItineraryView: React.FC = () => {
     }
   };
 
+  const handleItineraryExpenseSaved = async () => {
+    await reloadItinerary();
+    await loadExpenses();
+  };
+
+  const openItineraryExpense = (
+    type: 'stay' | 'travel',
+    options?: { stopId?: number; scope?: 'city' | 'trip' }
+  ) => {
+    setEditingItinerarySection(null);
+    setItineraryExpenseType(type);
+    setItineraryExpenseScope(options?.scope ?? (options?.stopId ? 'city' : 'trip'));
+    setItineraryExpenseStopId(options?.stopId);
+    setItineraryExpenseOpen(true);
+  };
+
+  const openEditItineraryExpense = (section: TripSection) => {
+    setEditingItinerarySection(section);
+    setItineraryExpenseType(section.type === 'travel' ? 'travel' : 'stay');
+    setItineraryExpenseScope(section.budget_allocation === 'trip_total' ? 'trip' : 'city');
+    setItineraryExpenseStopId(section.stop_id);
+    setItineraryExpenseOpen(true);
+  };
+
+  const closeItineraryExpenseModal = () => {
+    setItineraryExpenseOpen(false);
+    setEditingItinerarySection(null);
+  };
+
   const handleAddExpense = () => {
     setExpenseModalOpen(true);
   };
@@ -175,6 +233,10 @@ export const ItineraryView: React.FC = () => {
 
   const { trip, days, budget } = itinerary;
   const durationLabel = formatTripDuration(trip.start_date, trip.end_date);
+  const totalTripDays = tripDurationDays(trip.start_date, trip.end_date);
+
+  const resolveCityId = (day: (typeof days)[number]) =>
+    day.city_id ?? (day.city_name ? cityIdByName[day.city_name.toLowerCase()] : undefined);
 
   return (
     <div className="space-y-8 pb-28 sm:pb-16">
@@ -183,12 +245,17 @@ export const ItineraryView: React.FC = () => {
         isOpen={editTripOpen}
         onClose={() => setEditTripOpen(false)}
         onSaved={async (updated) => {
-          setItinerary((prev) =>
-            prev ? { ...prev, trip: { ...prev.trip, ...updated } } : prev
-          );
-          showToast('success', 'Trip details updated.');
-          const res = await itineraryApi.getItinerary(id || trip.id);
+          showToast('success', 'Trip updated — stops and expenses rearranged to fit new dates.');
+          const tripId = id || trip.id;
+          const res = await itineraryApi.getItinerary(tripId);
           setItinerary(res);
+          try {
+            const stopsList = await stopsApi.getStops(tripId);
+            setStops(stopsList);
+          } catch {
+            /* optional */
+          }
+          await loadExpenses();
         }}
       />
       {/* Hero Header for Itinerary (Screen 9 wireframe) */}
@@ -274,15 +341,38 @@ export const ItineraryView: React.FC = () => {
               <span className="text-brand-300">({durationLabel})</span>
             </span>
             <span className="flex items-center gap-1.5">
-              Budget: <Price amount={budget.total_budget} /> (
-              <Price amount={budget.total_spent} /> spent)
+              Total:{' '}
+              <Price amount={budget.grand_total ?? budget.total_budget} zeroAsFree={false} /> (
+              <Price amount={budget.general_spent ?? budget.total_spent} zeroAsFree={false} /> general)
             </span>
-            <span>{days.length} Itinerary Days</span>
+            <span>{totalTripDays} Itinerary Days</span>
           </div>
         </div>
       </div>
 
       <TripRouteMap tripId={trip.id} />
+
+      <TripSpendingTracker
+        budget={budget}
+        expenses={expenses}
+        loading={expensesLoading}
+        onLogExpense={handleAddExpense}
+        onDeleteExpense={handleDeleteExpense}
+        onViewAll={() => setActiveTab('budget')}
+      />
+
+      <ItineraryExpensePanel
+        days={days}
+        stops={stops}
+        cities={cities}
+        tripStart={trip.start_date}
+        tripEnd={trip.end_date}
+        onAddStayTrip={() => openItineraryExpense('stay', { scope: 'trip' })}
+        onAddTransportTrip={() => openItineraryExpense('travel', { scope: 'trip' })}
+        onAddStayCity={(stopId) => openItineraryExpense('stay', { stopId, scope: 'city' })}
+        onAddTransportCity={(stopId) => openItineraryExpense('travel', { stopId, scope: 'city' })}
+        onEditSection={openEditItineraryExpense}
+      />
 
       {/* Navigation Tabs (Timeline vs Budget) */}
       <div className="flex items-center justify-between bg-white p-2 rounded-2xl border border-slate-200/80 shadow-soft">
@@ -324,114 +414,16 @@ export const ItineraryView: React.FC = () => {
         )}
       </div>
 
-      {/* TAB 1: Day-by-Day Timeline View (Screen 9 wireframe) */}
+      {/* TAB 1: City-grouped timeline with images */}
       {activeTab === 'timeline' && (
-        <div className="space-y-6">
-          {days.map((day) => {
-            const isExpanded = expandedDays.includes(day.day_number);
-
-            return (
-              <div
-                key={day.day_number}
-                className="rounded-3xl bg-white border border-slate-200/80 shadow-soft overflow-hidden transition-all"
-              >
-                {/* Day Header Accordion */}
-                <button
-                  type="button"
-                  onClick={() => toggleDayExpansion(day.day_number)}
-                  className="w-full flex items-center justify-between p-5 sm:p-6 text-left hover:bg-slate-50/70 transition-colors"
-                >
-                  <div className="flex items-center gap-4">
-                    <div className="h-10 w-10 rounded-2xl bg-brand-50 border border-brand-100 flex items-center justify-center text-sm font-extrabold text-brand-700">
-                      D{day.day_number}
-                    </div>
-                    <div>
-                      <h3 className="text-base sm:text-lg font-bold text-slate-900">
-                        Day {day.day_number}: {new Date(day.date + 'T00:00:00').toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' })}
-                      </h3>
-                      {day.city_name && (
-                        <p className="text-xs text-slate-500 flex items-center gap-1 mt-0.5 font-medium">
-                          <MapPin className="h-3 w-3 text-brand-500" />
-                          {day.city_name}
-                        </p>
-                      )}
-                    </div>
-                  </div>
-
-                  <div className="flex items-center gap-4">
-                    <span className="text-xs font-bold text-emerald-600 bg-emerald-50 px-2.5 py-1 rounded-full">
-                      <Price amount={day.total_cost} />
-                    </span>
-                    {isExpanded ? (
-                      <ChevronUp className="h-5 w-5 text-slate-400" />
-                    ) : (
-                      <ChevronDown className="h-5 w-5 text-slate-400" />
-                    )}
-                  </div>
-                </button>
-
-                {/* Day Activities / Sections List */}
-                {isExpanded && (
-                  <div className="p-5 sm:p-6 pt-0 border-t border-slate-100 space-y-4 animate-fade-in">
-                    {day.sections.map((section, idx) => (
-                      <div
-                        key={section.id || idx}
-                        className="rounded-2xl bg-slate-50/80 border border-slate-200/60 p-4 sm:p-5 space-y-3"
-                      >
-                        <div className="flex items-start justify-between gap-2">
-                          <div className="flex items-center gap-2">
-                            {section.type === 'travel' && <Plane className="h-4 w-4 text-blue-500" />}
-                            {section.type === 'stay' && <Home className="h-4 w-4 text-emerald-500" />}
-                            {section.type === 'activity' && <Compass className="h-4 w-4 text-amber-500" />}
-                            <h4 className="text-sm font-bold text-slate-900">{section.title}</h4>
-                          </div>
-                          <span className="text-xs font-bold text-slate-700">
-                            <Price amount={section.budget} />
-                          </span>
-                        </div>
-
-                        {section.notes && (
-                          <p className="text-xs text-slate-600 leading-relaxed bg-white/70 p-3 rounded-xl border border-slate-100">
-                            {section.notes}
-                          </p>
-                        )}
-
-                        {/* Sub-activities timeline */}
-                        {section.activities && section.activities.length > 0 && (
-                          <div className="space-y-2 pt-2 border-t border-slate-200/60">
-                            <span className="text-[11px] font-bold text-slate-400 uppercase tracking-wider">
-                              Scheduled Activities
-                            </span>
-                            {section.activities.map((act) => (
-                              <div
-                                key={act.id}
-                                className="flex items-center justify-between p-2.5 rounded-xl bg-white border border-slate-100 text-xs"
-                              >
-                                <div className="flex items-center gap-2">
-                                  {act.scheduled_time && (
-                                    <span className="font-bold text-brand-600">
-                                      {act.scheduled_time}
-                                    </span>
-                                  )}
-                                  <span className="font-semibold text-slate-800">
-                                    {act.custom_label || act.activity?.name}
-                                  </span>
-                                </div>
-                                <span className="font-medium text-slate-500">
-                                  <Price amount={act.cost_override ?? act.activity?.cost ?? 0} />
-                                </span>
-                              </div>
-                            ))}
-                          </div>
-                        )}
-                      </div>
-                    ))}
-                  </div>
-                )}
-              </div>
-            );
-          })}
-        </div>
+        <ItineraryCityTimeline
+          days={days}
+          cities={cities}
+          variant="interactive"
+          expandedDays={expandedDays}
+          onToggleDay={toggleDayExpansion}
+          resolveExploreCityId={resolveCityId}
+        />
       )}
 
       {/* TAB 2: Budget Breakdown & Overbudget Alerts (Screen 9 wireframe) */}
@@ -439,7 +431,17 @@ export const ItineraryView: React.FC = () => {
         <div className="space-y-6">
           <BudgetOverview budget={budget} />
           <div className="space-y-3">
-            <h3 className="text-sm font-bold text-slate-900">Manual expenses</h3>
+            <div className="flex items-center justify-between gap-2">
+              <h3 className="text-sm font-bold text-slate-900">All logged expenses</h3>
+              <Button
+                size="sm"
+                variant="outline"
+                onClick={handleAddExpense}
+                leftIcon={<Plus className="h-4 w-4" />}
+              >
+                Log Expense
+              </Button>
+            </div>
             <ExpenseList
               expenses={expenses}
               loading={expensesLoading}
@@ -489,6 +491,21 @@ export const ItineraryView: React.FC = () => {
         isOpen={expenseModalOpen}
         onClose={() => setExpenseModalOpen(false)}
         onSaved={handleExpenseSaved}
+      />
+
+      <AddItineraryExpenseModal
+        tripId={trip.id}
+        stops={stops}
+        cities={cities}
+        tripStart={trip.start_date}
+        tripEnd={trip.end_date}
+        isOpen={itineraryExpenseOpen}
+        onClose={closeItineraryExpenseModal}
+        onSaved={handleItineraryExpenseSaved}
+        defaultType={itineraryExpenseType}
+        defaultStopId={itineraryExpenseStopId}
+        defaultScope={itineraryExpenseScope}
+        editSection={editingItinerarySection}
       />
     </div>
   );

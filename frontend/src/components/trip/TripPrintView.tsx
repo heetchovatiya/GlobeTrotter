@@ -1,15 +1,17 @@
 import React from 'react';
-import { ItineraryResponse } from '../../types';
+import { City, ItineraryResponse } from '../../types';
 import { Price } from '../common/Price';
 import { TripTicketCard } from './TripTicketCard';
+import { ItineraryCityTimeline } from './ItineraryCityTimeline';
 import { formatTripDuration } from '../../utils/validation';
 
 interface TripPrintViewProps {
   itinerary: ItineraryResponse;
+  cities: City[];
   shareUrl?: string;
 }
 
-export const TripPrintView: React.FC<TripPrintViewProps> = ({ itinerary, shareUrl }) => {
+export const TripPrintView: React.FC<TripPrintViewProps> = ({ itinerary, cities, shareUrl }) => {
   const { trip, days, budget } = itinerary;
   const duration = formatTripDuration(trip.start_date, trip.end_date);
 
@@ -26,53 +28,9 @@ export const TripPrintView: React.FC<TripPrintViewProps> = ({ itinerary, shareUr
 
       <section>
         <h3 className="text-sm font-bold uppercase tracking-wide text-slate-500 mb-3">
-          Day-by-day plan ({duration})
+          Itinerary by city ({duration})
         </h3>
-        <div className="space-y-4">
-          {days.map((day) => (
-            <div key={day.date} className="break-inside-avoid border border-slate-200 rounded-xl p-4">
-              <div className="flex flex-wrap items-center justify-between gap-2 mb-2">
-                <h4 className="font-bold text-slate-900">
-                  Day {day.day_number} —{' '}
-                  {new Date(day.date + 'T00:00:00').toLocaleDateString('en-US', {
-                    weekday: 'short',
-                    month: 'short',
-                    day: 'numeric',
-                  })}
-                </h4>
-                {day.city_name && (
-                  <span className="text-xs font-semibold text-brand-700">{day.city_name}</span>
-                )}
-              </div>
-              {day.sections.length === 0 ? (
-                <p className="text-xs text-slate-400">No sections scheduled.</p>
-              ) : (
-                <ul className="space-y-2">
-                  {day.sections.map((section) => (
-                    <li
-                      key={`${day.date}-${section.id}-${section.title}`}
-                      className="flex flex-wrap justify-between gap-2 text-sm border-b border-slate-100 pb-2 last:border-0"
-                    >
-                      <div>
-                        <p className="font-semibold text-slate-800">{section.title}</p>
-                        <p className="text-xs text-slate-500 capitalize">{section.type}</p>
-                        {section.notes && (
-                          <p className="text-xs text-slate-500 mt-0.5">{section.notes}</p>
-                        )}
-                      </div>
-                      <span className="text-xs font-bold text-emerald-700 whitespace-nowrap">
-                        <Price amount={section.budget || 0} />
-                      </span>
-                    </li>
-                  ))}
-                </ul>
-              )}
-              <p className="mt-2 text-xs font-semibold text-slate-600">
-                Day total: <Price amount={day.total_cost} />
-              </p>
-            </div>
-          ))}
-        </div>
+        <ItineraryCityTimeline days={days} cities={cities} variant="print" />
       </section>
 
       <section className="break-inside-avoid">

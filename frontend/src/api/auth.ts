@@ -15,6 +15,7 @@ export interface RegisterPayload {
   phone_number?: string;
   city?: string;
   country?: string;
+  home_city_id?: number;
   language_pref?: string;
 }
 
@@ -54,6 +55,7 @@ export const authApi = {
       phone_number: data.phone_number,
       city: data.city,
       country: data.country,
+      home_city_id: data.home_city_id,
       language_pref: data.language_pref,
       profile_photo_url: data.profile_photo_url,
     };

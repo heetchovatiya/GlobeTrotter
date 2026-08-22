@@ -1,5 +1,7 @@
 import React, { useState } from 'react';
-import { TripSection, SectionType } from '../../types';
+import { TripSection, SectionType, BudgetAllocation } from '../../types';
+import { ALLOCATION_LABELS, sectionEffectiveTotal, countDaysInclusive } from '../../utils/budgetAllocation';
+import { Price } from '../common/Price';
 import { Input } from '../common/Input';
 import { Plane, Home, Compass, MoreHorizontal, Trash2, Calendar } from 'lucide-react';
 import { CurrencyIcon } from '../common/CurrencyIcon';
@@ -27,6 +29,15 @@ export const SectionCard: React.FC<SectionCardProps> = ({
 }) => {
   const currency = useCurrencyStore((s) => s.currency);
   const displayBudget = Math.round(convertAmount(Number(section.budget) || 0, currency));
+  const allocation = section.budget_allocation || 'spread_dates';
+  const effectiveBudgetUsd = sectionEffectiveTotal(section, {
+    tripStart,
+    tripEnd,
+  });
+  const dayCount = countDaysInclusive(
+    section.date_range_start || tripStart || '',
+    section.date_range_end || section.date_range_start || tripEnd || ''
+  );
   const [dateError, setDateError] = useState<string | null>(null);
 
   const applyDateUpdate = (updates: Partial<TripSection>) => {
@@ -140,7 +151,7 @@ export const SectionCard: React.FC<SectionCardProps> = ({
         {/* Budget Allocation */}
         <div>
           <Input
-            label={`Budget Allocation (${currencySymbol(currency)})`}
+            label={`Budget (${currencySymbol(currency)})${allocation === 'per_day' ? ' per day' : ''}`}
             type="number"
             min="0"
             step={currency === 'INR' ? '100' : '10'}
@@ -153,11 +164,37 @@ export const SectionCard: React.FC<SectionCardProps> = ({
             }
             placeholder="Budget amount"
           />
+          {allocation === 'per_day' && displayBudget > 0 && (
+            <p className="mt-1.5 text-[11px] text-emerald-700 font-medium">
+              Total: {displayBudget.toLocaleString()} × {dayCount} day{dayCount === 1 ? '' : 's'} ={' '}
+              <Price amount={effectiveBudgetUsd} zeroAsFree={false} />
+            </p>
+          )}
         </div>
 
         {dateError && (
           <p className="sm:col-span-2 lg:col-span-3 text-xs text-rose-600 font-medium">{dateError}</p>
         )}
+
+        {/* Budget Allocation */}
+        <div className="sm:col-span-2 lg:col-span-3">
+          <label className="block text-xs font-semibold text-slate-700 uppercase tracking-wider mb-1.5">
+            Cost allocation
+          </label>
+          <select
+            value={section.budget_allocation || 'spread_dates'}
+            onChange={(e) =>
+              onUpdate(index, { budget_allocation: e.target.value as BudgetAllocation })
+            }
+            className="w-full rounded-xl border border-slate-200 bg-slate-50 px-3 py-2 text-xs font-semibold text-slate-700 focus:border-brand-500 focus:outline-none"
+          >
+            {(Object.keys(ALLOCATION_LABELS) as BudgetAllocation[]).map((key) => (
+              <option key={key} value={key}>
+                {ALLOCATION_LABELS[key]}
+              </option>
+            ))}
+          </select>
+        </div>
 
         {/* Notes & Information */}
         <div className="sm:col-span-2 lg:col-span-2">

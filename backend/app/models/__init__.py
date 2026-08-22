@@ -47,6 +47,15 @@ class SectionType(str, enum.Enum):
     other = "other"
 
 
+class BudgetAllocation(str, enum.Enum):
+    """How section.budget is interpreted and spread across days."""
+    lump_sum = "lump_sum"  # entire amount on start date
+    spread_dates = "spread_dates"  # split evenly across date range
+    per_day = "per_day"  # budget is daily rate × days in range
+    city_total = "city_total"  # split across stop arrival–departure
+    trip_total = "trip_total"  # split across full trip
+
+
 class ExpenseCategory(str, enum.Enum):
     transport = "transport"
     stay = "stay"
@@ -67,6 +76,9 @@ class User(Base):
     phone_number: Mapped[str | None] = mapped_column(String(64), nullable=True)
     city: Mapped[str | None] = mapped_column(String(128), nullable=True)
     country: Mapped[str | None] = mapped_column(String(128), nullable=True)
+    home_city_id: Mapped[int | None] = mapped_column(
+        ForeignKey("cities.id", ondelete="SET NULL"), nullable=True
+    )
     role: Mapped[UserRole] = mapped_column(
         Enum(UserRole, name="user_role"),
         nullable=False,
@@ -175,6 +187,9 @@ class TripSection(Base):
     date_range_start: Mapped[date | None] = mapped_column(Date, nullable=True)
     date_range_end: Mapped[date | None] = mapped_column(Date, nullable=True)
     budget: Mapped[float | None] = mapped_column(Numeric(12, 2), nullable=True)
+    budget_allocation: Mapped[str] = mapped_column(
+        String(32), nullable=False, default=BudgetAllocation.spread_dates.value, server_default="spread_dates"
+    )
     notes: Mapped[str | None] = mapped_column(Text, nullable=True)
     order_index: Mapped[int] = mapped_column(Integer, nullable=False, default=0)
 

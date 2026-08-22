@@ -15,7 +15,7 @@ import {
   Tooltip,
   Legend,
 } from 'recharts';
-import { AlertTriangle, CheckCircle2, TrendingUp, CalendarDays } from 'lucide-react';
+import { AlertTriangle, CalendarDays } from 'lucide-react';
 
 interface BudgetOverviewProps {
   budget: BudgetSummary;
@@ -130,42 +130,36 @@ export const BudgetOverview: React.FC<BudgetOverviewProps> = ({ budget }) => {
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
         <div className="rounded-2xl bg-white border border-slate-200/80 p-4 sm:p-5 shadow-soft">
           <span className="text-xs font-semibold uppercase text-slate-500 tracking-wider">
-            Estimated Total
+            Itinerary Plan
           </span>
           <div className="mt-2 text-2xl sm:text-3xl font-extrabold text-slate-900">
-            {formatPrice(budget.total_budget)}
+            {formatPrice(budget.itinerary_total ?? budget.total_budget)}
           </div>
-          <p className="mt-1 text-xs text-slate-500">Planned across all stops & sections</p>
+          <p className="mt-1 text-xs text-slate-500">
+            Stay {formatPrice(budget.itinerary_stay ?? 0)} · Transport{' '}
+            {formatPrice(budget.itinerary_transport ?? 0)} · Activities{' '}
+            {formatPrice(budget.itinerary_activities ?? 0)}
+          </p>
         </div>
 
         <div className="rounded-2xl bg-white border border-slate-200/80 p-4 sm:p-5 shadow-soft">
           <span className="text-xs font-semibold uppercase text-slate-500 tracking-wider">
-            Total Spent
+            General Expenses
           </span>
           <div className="mt-2 text-2xl sm:text-3xl font-extrabold text-brand-600">
-            {formatPrice(budget.total_spent)}
+            {formatPrice(budget.general_spent ?? budget.total_spent)}
           </div>
-          <div className="mt-1 flex items-center gap-1 text-xs text-brand-700">
-            <TrendingUp className="h-3.5 w-3.5" />
-            <span>{((budget.total_spent / (budget.total_budget || 1)) * 100).toFixed(0)}% of budget</span>
-          </div>
+          <p className="mt-1 text-xs text-slate-500">Ad-hoc spending logged outside itinerary</p>
         </div>
 
         <div className="rounded-2xl bg-white border border-slate-200/80 p-4 sm:p-5 shadow-soft">
           <span className="text-xs font-semibold uppercase text-slate-500 tracking-wider">
-            Remaining
+            Grand Total
           </span>
-          <div
-            className={`mt-2 text-2xl sm:text-3xl font-extrabold ${
-              budget.remaining_budget >= 0 ? 'text-emerald-600' : 'text-rose-600'
-            }`}
-          >
-            {formatPrice(budget.remaining_budget)}
+          <div className="mt-2 text-2xl sm:text-3xl font-extrabold text-slate-900">
+            {formatPrice(budget.grand_total ?? budget.total_budget + (budget.general_spent ?? 0))}
           </div>
-          <div className="mt-1 flex items-center gap-1 text-xs text-emerald-700">
-            <CheckCircle2 className="h-3.5 w-3.5" />
-            <span>{budget.remaining_budget >= 0 ? 'Within budget' : 'Over budget'}</span>
-          </div>
+          <p className="mt-1 text-xs text-slate-500">Itinerary plan + general expenses</p>
         </div>
 
         <div className="rounded-2xl bg-white border border-slate-200/80 p-4 sm:p-5 shadow-soft">
@@ -176,14 +170,14 @@ export const BudgetOverview: React.FC<BudgetOverviewProps> = ({ budget }) => {
             {formatPrice(avgBudgetPerDay)}
           </div>
           <p className="mt-1 text-xs text-slate-500">
-            Spent avg: {formatPrice(avgSpentPerDay)} over {dayCount} day{dayCount === 1 ? '' : 's'}
+            General avg: {formatPrice(avgSpentPerDay)} over {dayCount} day{dayCount === 1 ? '' : 's'}
           </p>
         </div>
       </div>
 
       <div className="rounded-2xl bg-white border border-slate-200/80 p-5 sm:p-6 shadow-soft">
         <h4 className="text-sm font-bold text-slate-900 uppercase tracking-wide mb-4">
-          Cost Breakdown by Category
+          Logged Spending by Category
         </h4>
         <div className="space-y-3">
           {fullCategoryBreakdown.map((item) => (
@@ -303,8 +297,8 @@ export const BudgetOverview: React.FC<BudgetOverviewProps> = ({ budget }) => {
                 contentStyle={{ borderRadius: '12px', border: '1px solid #e2e8f0' }}
               />
               <Legend iconType="circle" wrapperStyle={{ fontSize: '12px', paddingTop: '10px' }} />
-              <Bar dataKey="budget" name="Estimated" fill="#cbd5e1" radius={[6, 6, 0, 0]} />
-              <Bar dataKey="actual" name="Actual" fill="#0d9488" radius={[6, 6, 0, 0]} />
+              <Bar dataKey="budget" name="Planned" fill="#cbd5e1" radius={[6, 6, 0, 0]} />
+              <Bar dataKey="actual" name="Logged spent" fill="#0d9488" radius={[6, 6, 0, 0]} />
             </BarChart>
           </ResponsiveContainer>
         </div>

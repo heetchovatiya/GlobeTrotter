@@ -7,6 +7,7 @@ export interface CreateSectionDTO {
   date_range_start: string;
   date_range_end: string;
   budget: number;
+  budget_allocation?: string;
   notes?: string;
   order_index?: number;
 }

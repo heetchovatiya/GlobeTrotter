@@ -3,13 +3,13 @@ from datetime import date
 from decimal import Decimal
 
 from fastapi import HTTPException, status
-from sqlalchemy import func
 from sqlalchemy.orm import Session, selectinload
 
 from app.crud.itinerary import get_owned_trip_tree, get_trip_tree_by_id
 from app.crud.trips import get_owned_trip
 from app.models import Expense, Trip, User
 from app.schemas.views import BudgetResponse, CategoryTotal, DayBudget
+from app.services.budget_allocation import build_estimated_by_day, summarize_itinerary_costs
 
 
 def get_budget_for_owned_trip(db: Session, trip_id: int, user: User) -> BudgetResponse:
@@ -22,25 +22,9 @@ def get_budget_for_trip(db: Session, trip_id: int) -> BudgetResponse:
     if trip is None:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Trip not found")
 
-    category_rows = (
-        db.query(Expense.category, func.coalesce(func.sum(Expense.amount), 0))
-        .filter(Expense.trip_id == trip.id)
-        .group_by(Expense.category)
-        .all()
-    )
-    by_category = [
-        CategoryTotal(category=category, total=float(total))
-        for category, total in category_rows
-    ]
-
     trip_tree = get_trip_tree_by_id(db, trip.id)
-    estimated_by_day: dict[date, Decimal] = defaultdict(lambda: Decimal("0"))
-    for stop in trip_tree.stops:
-        for section in stop.sections:
-            if section.budget is None:
-                continue
-            day = section.date_range_start or trip.start_date
-            estimated_by_day[day] += Decimal(str(section.budget))
+    estimated_by_day = build_estimated_by_day(trip_tree)
+    itinerary = summarize_itinerary_costs(trip_tree)
 
     expenses = (
         db.query(Expense)
@@ -48,14 +32,19 @@ def get_budget_for_trip(db: Session, trip_id: int) -> BudgetResponse:
         .filter(Expense.trip_id == trip.id)
         .all()
     )
+    manual_expenses = [expense for expense in expenses if expense.section_id is None]
+
+    category_totals: dict = defaultdict(lambda: Decimal("0"))
+    for expense in manual_expenses:
+        category_totals[expense.category] += Decimal(str(expense.amount))
+    by_category = [
+        CategoryTotal(category=category, total=float(total))
+        for category, total in category_totals.items()
+    ]
+
     actual_by_day: dict[date, Decimal] = defaultdict(lambda: Decimal("0"))
-    for expense in expenses:
-        if expense.expense_date:
-            day = expense.expense_date
-        elif expense.section and expense.section.date_range_start:
-            day = expense.section.date_range_start
-        else:
-            day = trip.start_date
+    for expense in manual_expenses:
+        day = expense.expense_date or trip.start_date
         actual_by_day[day] += Decimal(str(expense.amount))
 
     all_days = sorted(set(estimated_by_day) | set(actual_by_day))
@@ -65,12 +54,22 @@ def get_budget_for_trip(db: Session, trip_id: int) -> BudgetResponse:
         estimated = float(estimated_by_day.get(day, Decimal("0")))
         actual = float(actual_by_day.get(day, Decimal("0")))
         by_day.append(DayBudget(date=day, estimated=estimated, actual=actual))
-        if actual > estimated:
+        if actual > estimated and estimated > 0:
             overbudget_days.append(day)
+
+    total_budget = itinerary["itinerary_total"]
+    total_spent = float(sum(category_totals.values()))
+    grand_total = total_budget + total_spent
 
     return BudgetResponse(
         trip_id=trip.id,
         by_category=by_category,
         by_day=by_day,
         overbudget_days=overbudget_days,
+        itinerary_stay=itinerary["itinerary_stay"],
+        itinerary_transport=itinerary["itinerary_transport"],
+        itinerary_activities=itinerary["itinerary_activities"],
+        itinerary_total=itinerary["itinerary_total"],
+        general_spent=total_spent,
+        grand_total=grand_total,
     )

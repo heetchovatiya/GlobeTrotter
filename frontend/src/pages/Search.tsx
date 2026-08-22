@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { Activity, City, ActivityType } from '../types';
 import { activitiesApi } from '../api/activities';
@@ -11,6 +11,7 @@ import { Modal } from '../components/common/Modal';
 import { Skeleton } from '../components/common/Skeleton';
 import { Badge } from '../components/common/Badge';
 import { useUIStore } from '../store/uiStore';
+import { buildSearchParams, parseSearchPageParams } from '../utils/searchRoutes';
 import {
   Search as SearchIcon,
   Compass,
@@ -18,60 +19,96 @@ import {
   Clock,
   Plus,
   Check,
+  X,
 } from 'lucide-react';
 
 export const Search: React.FC = () => {
-  const [searchParams] = useSearchParams();
+  const [searchParams, setSearchParams] = useSearchParams();
   const { showToast } = useUIStore();
   const formatPrice = useFormatPrice();
 
-  const [activeTab, setActiveTab] = useState<'activities' | 'cities'>('activities');
-  const [query, setQuery] = useState(searchParams.get('q') || '');
-  const [selectedType, setSelectedType] = useState<string>(searchParams.get('type') || 'all');
-  const [selectedCityId, setSelectedCityId] = useState<string>(searchParams.get('city_id') || 'all');
+  const { cityId, activeTab, query: urlQuery, type: urlType } = parseSearchPageParams(searchParams);
+
+  const [query, setQuery] = useState(urlQuery);
+  const [selectedType, setSelectedType] = useState<string>(urlType);
   const [maxCost, setMaxCost] = useState<number>(300);
   const [maxDuration, setMaxDuration] = useState<number>(480);
   const [sortBy, setSortBy] = useState<string>('popularity');
 
+  const [allCities, setAllCities] = useState<City[]>([]);
   const [activities, setActivities] = useState<Activity[]>([]);
-  const [cities, setCities] = useState<City[]>([]);
   const [loading, setLoading] = useState(true);
   const [addedActivityIds, setAddedActivityIds] = useState<number[]>([]);
   const [quickViewActivity, setQuickViewActivity] = useState<Activity | null>(null);
 
+  const selectedCity = useMemo(
+    () => (cityId !== 'all' ? allCities.find((c) => String(c.id) === cityId) : undefined),
+    [allCities, cityId]
+  );
+
   useEffect(() => {
-    const fetchData = async () => {
+    setQuery(urlQuery);
+    setSelectedType(urlType);
+  }, [urlQuery, urlType]);
+
+  useEffect(() => {
+    citiesApi.getCities().then(setAllCities).catch(console.error);
+  }, []);
+
+  useEffect(() => {
+    const fetchActivities = async () => {
       setLoading(true);
       try {
-        const [citiesData, activitiesData] = await Promise.all([
-          citiesApi.getCities({
-            q: query || undefined,
-            sort: sortBy === 'popularity' ? 'popularity' : undefined,
-          }),
-          activitiesApi.getActivities({
-            q: query || undefined,
-            city_id: selectedCityId !== 'all' ? Number(selectedCityId) : undefined,
-            type: selectedType !== 'all' ? (selectedType as ActivityType) : undefined,
-            max_cost: maxCost,
-            max_duration_mins: maxDuration,
-            sort: sortBy,
-          }),
-        ]);
-        setCities(citiesData);
+        const activitiesData = await activitiesApi.getActivities({
+          q: query || undefined,
+          city_id: cityId !== 'all' ? Number(cityId) : undefined,
+          type: selectedType !== 'all' ? (selectedType as ActivityType) : undefined,
+          max_cost: maxCost,
+          max_duration_mins: maxDuration,
+          sort: sortBy,
+        });
         setActivities(activitiesData);
       } catch (err) {
-        console.error('Failed to load search results:', err);
+        console.error('Failed to load activities:', err);
       } finally {
         setLoading(false);
       }
     };
 
-    const timer = setTimeout(() => {
-      fetchData();
-    }, 300);
-
+    const timer = setTimeout(fetchActivities, 250);
     return () => clearTimeout(timer);
-  }, [query, selectedType, selectedCityId, maxCost, maxDuration, sortBy]);
+  }, [query, selectedType, cityId, maxCost, maxDuration, sortBy]);
+
+  const updateParams = (next: {
+    tab?: 'activities' | 'cities';
+    cityId?: string;
+    q?: string;
+    type?: string;
+  }) => {
+    const params = buildSearchParams({
+      tab: next.tab ?? activeTab,
+      cityId: next.cityId ?? cityId,
+      q: next.q ?? query,
+      type: next.type ?? selectedType,
+    });
+    setSearchParams(params, { replace: true });
+  };
+
+  const handleTabChange = (tab: 'activities' | 'cities') => {
+    updateParams({ tab });
+  };
+
+  const handleCityChange = (nextCityId: string) => {
+    if (nextCityId === 'all') {
+      updateParams({ cityId: 'all', tab: activeTab });
+    } else {
+      updateParams({ cityId: nextCityId, tab: 'activities' });
+    }
+  };
+
+  const clearCityFilter = () => {
+    updateParams({ cityId: 'all', tab: 'activities' });
+  };
 
   const handleAddActivity = (activity: Activity) => {
     const isRemoving = addedActivityIds.includes(activity.id);
@@ -101,16 +138,43 @@ export const Search: React.FC = () => {
     { label: 'Nightlife', value: 'nightlife' },
   ];
 
+  const filteredCities = useMemo(() => {
+    const q = query.trim().toLowerCase();
+    if (!q) return allCities;
+    return allCities.filter(
+      (c) => c.name.toLowerCase().includes(q) || c.country.toLowerCase().includes(q)
+    );
+  }, [allCities, query]);
+
   return (
     <div className="space-y-8 pb-16">
       <div className="space-y-2">
         <h1 className="text-2xl sm:text-3xl font-extrabold text-slate-900 tracking-tight">
-          Activity Search
+          {selectedCity ? `Activities in ${selectedCity.name}` : 'Activity Search'}
         </h1>
         <p className="text-sm text-slate-500">
-          Browse and select things to do in each stop, filtered by interest, cost, and duration.
+          {selectedCity
+            ? `Browse things to do in ${selectedCity.name}, ${selectedCity.country}.`
+            : 'Browse and select things to do in each stop, filtered by interest, cost, and duration.'}
         </p>
       </div>
+
+      {selectedCity && (
+        <div className="flex flex-wrap items-center justify-between gap-3 rounded-2xl bg-brand-50 border border-brand-100 px-4 py-3">
+          <p className="text-sm font-semibold text-brand-800 flex items-center gap-2">
+            <MapPin className="h-4 w-4" />
+            Showing activities for {selectedCity.name}
+          </p>
+          <button
+            type="button"
+            onClick={clearCityFilter}
+            className="inline-flex items-center gap-1 text-xs font-bold text-brand-700 hover:text-brand-900"
+          >
+            <X className="h-3.5 w-3.5" />
+            Clear city filter
+          </button>
+        </div>
+      )}
 
       <div className="rounded-3xl bg-white border border-slate-200/80 p-5 sm:p-6 shadow-soft space-y-5">
         <div className="flex flex-col md:flex-row gap-3">
@@ -119,7 +183,10 @@ export const Search: React.FC = () => {
             <input
               type="text"
               value={query}
-              onChange={(e) => setQuery(e.target.value)}
+              onChange={(e) => {
+                setQuery(e.target.value);
+                updateParams({ q: e.target.value });
+              }}
               placeholder="Search by keywords: 'Paragliding', 'Temple', 'Tapas', 'Kyoto'..."
               className="w-full pl-11 pr-4 py-2.5 bg-slate-50 border border-slate-200 rounded-2xl text-sm text-slate-900 placeholder:text-slate-400 focus:outline-none focus:border-brand-500"
             />
@@ -127,7 +194,8 @@ export const Search: React.FC = () => {
 
           <div className="flex bg-slate-100 p-1 rounded-2xl self-start md:self-auto">
             <button
-              onClick={() => setActiveTab('activities')}
+              type="button"
+              onClick={() => handleTabChange('activities')}
               className={`px-4 py-2 rounded-xl text-xs font-bold transition-all ${
                 activeTab === 'activities'
                   ? 'bg-white text-slate-900 shadow-xs'
@@ -137,14 +205,15 @@ export const Search: React.FC = () => {
               Activities ({activities.length})
             </button>
             <button
-              onClick={() => setActiveTab('cities')}
+              type="button"
+              onClick={() => handleTabChange('cities')}
               className={`px-4 py-2 rounded-xl text-xs font-bold transition-all ${
                 activeTab === 'cities'
                   ? 'bg-white text-slate-900 shadow-xs'
                   : 'text-slate-600 hover:text-slate-900'
               }`}
             >
-              Destinations ({cities.length})
+              Destinations ({filteredCities.length})
             </button>
           </div>
         </div>
@@ -156,7 +225,10 @@ export const Search: React.FC = () => {
             </label>
             <select
               value={selectedType}
-              onChange={(e) => setSelectedType(e.target.value)}
+              onChange={(e) => {
+                setSelectedType(e.target.value);
+                updateParams({ type: e.target.value });
+              }}
               className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-xs font-medium text-slate-800 focus:outline-none focus:border-brand-500"
             >
               {activityTypes.map((t) => (
@@ -172,12 +244,12 @@ export const Search: React.FC = () => {
               Destination City
             </label>
             <select
-              value={selectedCityId}
-              onChange={(e) => setSelectedCityId(e.target.value)}
+              value={cityId}
+              onChange={(e) => handleCityChange(e.target.value)}
               className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-xs font-medium text-slate-800 focus:outline-none focus:border-brand-500"
             >
               <option value="all">All Destinations</option>
-              {cities.map((c) => (
+              {allCities.map((c) => (
                 <option key={c.id} value={c.id}>
                   {c.name}, {c.country}
                 </option>
@@ -260,13 +332,20 @@ export const Search: React.FC = () => {
             <Compass className="h-10 w-10 text-slate-300 mx-auto mb-2" />
             <h3 className="text-base font-bold text-slate-700">No activities matched your filters</h3>
             <p className="text-xs text-slate-500 mt-1">
-              Try raising the max budget or duration, or clearing search terms.
+              {selectedCity
+                ? `Try raising max budget/duration for ${selectedCity.name}, or clear filters.`
+                : 'Try raising the max budget or duration, or clearing search terms.'}
             </p>
+            {cityId !== 'all' && (
+              <Button variant="outline" size="sm" className="mt-4" onClick={clearCityFilter}>
+                View all destinations
+              </Button>
+            )}
           </div>
         )
-      ) : cities.length > 0 ? (
+      ) : filteredCities.length > 0 ? (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-          {cities.map((city) => (
+          {filteredCities.map((city) => (
             <CityCard key={city.id} city={city} />
           ))}
         </div>

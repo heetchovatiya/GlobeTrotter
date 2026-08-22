@@ -53,6 +53,8 @@ type BackendItinerary = {
   status: TripStatus;
   days: {
     date: string;
+    city_id?: number | null;
+    city_name?: string | null;
     sections: Array<{
       id: number;
       stop_id: number;
@@ -65,6 +67,7 @@ type BackendItinerary = {
       budget?: number | null;
       notes?: string | null;
       order_index: number;
+      budget_allocation?: string | null;
       activities?: TripSection['activities'];
     }>;
   }[];
@@ -75,6 +78,12 @@ type BackendBudget = {
   by_category: { category: ExpenseCategory; total: number }[];
   by_day: { date: string; estimated: number; actual: number }[];
   overbudget_days: string[];
+  itinerary_stay?: number;
+  itinerary_transport?: number;
+  itinerary_activities?: number;
+  itinerary_total?: number;
+  general_spent?: number;
+  grand_total?: number;
 };
 
 type BackendCommunityPost = {
@@ -156,18 +165,23 @@ export function mapUser(raw: Partial<User>): User {
     phone_number: raw.phone_number ?? undefined,
     city: raw.city ?? undefined,
     country: raw.country ?? undefined,
+    home_city_id: raw.home_city_id ?? undefined,
     role: raw.role || 'user',
     created_at: raw.created_at || new Date().toISOString(),
   };
 }
 
 export function mapBudget(raw: BackendBudget): BudgetSummary {
-  const totalSpent = raw.by_category.reduce((sum, row) => sum + row.total, 0);
-  const totalBudget = raw.by_day.reduce((sum, row) => sum + row.estimated, 0);
+  const generalSpent = raw.general_spent ?? raw.by_category.reduce((sum, row) => sum + row.total, 0);
+  const itineraryTotal =
+    raw.itinerary_total ??
+    raw.by_day.reduce((sum, row) => sum + row.estimated, 0);
+  const totalBudget = itineraryTotal;
+  const totalSpent = generalSpent;
   const byCategory: CategoryExpense[] = raw.by_category.map((row) => ({
     category: row.category,
     amount: row.total,
-    percentage: totalSpent > 0 ? Math.round((row.total / totalSpent) * 100) : 0,
+    percentage: generalSpent > 0 ? Math.round((row.total / generalSpent) * 100) : 0,
     color: CATEGORY_COLORS[row.category],
   }));
   const byDay: DayBudget[] = raw.by_day.map((row) => ({
@@ -185,6 +199,12 @@ export function mapBudget(raw: BackendBudget): BudgetSummary {
     total_budget: totalBudget,
     total_spent: totalSpent,
     remaining_budget: Math.max(totalBudget - totalSpent, 0),
+    itinerary_stay: raw.itinerary_stay ?? 0,
+    itinerary_transport: raw.itinerary_transport ?? 0,
+    itinerary_activities: raw.itinerary_activities ?? 0,
+    itinerary_total: itineraryTotal,
+    general_spent: generalSpent,
+    grand_total: raw.grand_total ?? totalBudget + generalSpent,
     by_category: byCategory,
     by_day: byDay,
     overbudget_days: raw.overbudget_days,
@@ -196,11 +216,14 @@ export function mapItineraryDays(raw: BackendItinerary['days']): ItineraryDay[] 
     const sections: TripSection[] = day.sections.map((section) => ({
       id: section.id,
       stop_id: section.stop_id,
+      city_id: section.city_id,
+      city_name: section.city_name ?? undefined,
       title: section.title,
       type: section.type,
       date_range_start: section.date_range_start || day.date,
       date_range_end: section.date_range_end || section.date_range_start || day.date,
       budget: Number(section.budget ?? 0),
+      budget_allocation: (section.budget_allocation as TripSection['budget_allocation']) ?? 'spread_dates',
       notes: section.notes ?? undefined,
       order_index: section.order_index,
       activities: section.activities,
@@ -209,7 +232,8 @@ export function mapItineraryDays(raw: BackendItinerary['days']): ItineraryDay[] 
     return {
       date: day.date,
       day_number: index + 1,
-      city_name: day.sections[0]?.city_name ?? undefined,
+      city_id: day.city_id ?? day.sections[0]?.city_id ?? undefined,
+      city_name: day.city_name ?? day.sections[0]?.city_name ?? undefined,
       sections,
       total_cost: totalCost,
     };

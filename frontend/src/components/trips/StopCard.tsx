@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { CitySelect } from '../common/CitySelect';
 import { validateStopDates, syncEndDateWithStart } from '../../utils/validation';
+import { validateStopSequence } from '../../utils/stopDates';
 import { Stop, City, Activity } from '../../types';
 import { activitiesApi } from '../../api/activities';
 import { ActivityCard } from '../search/ActivityCard';
@@ -11,12 +12,13 @@ interface StopCardProps {
   stop: Stop;
   index: number;
   totalStops: number;
+  allStops: Stop[];
   cities: City[];
   tripStart?: string;
   tripEnd?: string;
   onUpdate: (stopId: number, updates: Partial<Stop>) => void;
   onRemove: (stopId: number) => void;
-  onReorder: (stopId: number, direction: 'up' | 'down') => void;
+  onReorder: (stopId: number, direction: 'up' | 'down') => Promise<string | null>;
   onAssignActivity: (stopId: number, activity: Activity) => void;
 }
 
@@ -24,6 +26,7 @@ export const StopCard: React.FC<StopCardProps> = ({
   stop,
   index,
   totalStops,
+  allStops,
   cities,
   tripStart,
   tripEnd,
@@ -60,11 +63,28 @@ export const StopCard: React.FC<StopCardProps> = ({
   }, [showActivities, stop.city_id]);
 
   const handleDateUpdate = (updates: Partial<Stop>) => {
-    const arrival = updates.arrival_date ?? stop.arrival_date ?? '';
-    const departure = updates.departure_date ?? stop.departure_date ?? '';
+    const merged = { ...stop, ...updates };
+    const arrival = merged.arrival_date ?? '';
+    const departure = merged.departure_date ?? '';
     const err = validateStopDates(arrival, departure, tripStart, tripEnd);
-    setDateError(err);
-    if (!err) onUpdate(stop.id, updates);
+    if (err) {
+      setDateError(err);
+      return;
+    }
+    const nextStops = allStops.map((s) => (s.id === stop.id ? merged : s));
+    const seqErr = validateStopSequence(nextStops, tripStart, tripEnd);
+    if (seqErr) {
+      setDateError(seqErr);
+      return;
+    }
+    setDateError(null);
+    onUpdate(stop.id, updates);
+  };
+
+  const handleReorder = async (direction: 'up' | 'down') => {
+    const err = await onReorder(stop.id, direction);
+    if (err) setDateError(err);
+    else setDateError(null);
   };
 
   return (
@@ -84,7 +104,7 @@ export const StopCard: React.FC<StopCardProps> = ({
           <button
             type="button"
             disabled={index === 0}
-            onClick={() => onReorder(stop.id, 'up')}
+            onClick={() => handleReorder('up')}
             className="p-1.5 rounded-lg text-slate-400 hover:text-slate-700 hover:bg-slate-100 disabled:opacity-30"
             aria-label="Move stop up"
           >
@@ -93,7 +113,7 @@ export const StopCard: React.FC<StopCardProps> = ({
           <button
             type="button"
             disabled={index === totalStops - 1}
-            onClick={() => onReorder(stop.id, 'down')}
+            onClick={() => handleReorder('down')}
             className="p-1.5 rounded-lg text-slate-400 hover:text-slate-700 hover:bg-slate-100 disabled:opacity-30"
             aria-label="Move stop down"
           >

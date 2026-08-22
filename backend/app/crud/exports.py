@@ -30,7 +30,7 @@ def budget_csv(db: Session, trip_id: int, user: User) -> str:
     writer.writerow(["Start", trip.start_date.isoformat()])
     writer.writerow(["End", trip.end_date.isoformat()])
     writer.writerow([])
-    writer.writerow(["Category", "Amount (USD base)"])
+    writer.writerow(["Category", "Amount "])
     for row in budget.by_category:
         writer.writerow([row.category.value, f"{row.total:.2f}"])
     writer.writerow([])

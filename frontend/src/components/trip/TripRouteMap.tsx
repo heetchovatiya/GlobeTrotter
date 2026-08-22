@@ -1,9 +1,11 @@
 import React, { useEffect, useMemo, useState } from 'react';
+import { Link } from 'react-router-dom';
 import { MapContainer, TileLayer, Polyline, Marker, Popup } from 'react-leaflet';
 import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
 import { routeApi } from '../../api/route';
 import { TripRoute } from '../../types';
+import { cityActivitiesUrl } from '../../utils/searchRoutes';
 import { Skeleton } from '../common/Skeleton';
 import { MapPin } from 'lucide-react';
 
@@ -94,6 +96,13 @@ export const TripRouteMap: React.FC<TripRouteMapProps> = ({ tripId, className = 
               </span>
               <br />
               <span className="text-[10px] text-slate-500">{stop.country}</span>
+              <br />
+              <Link
+                to={cityActivitiesUrl(stop.city_id)}
+                className="text-[10px] font-bold text-brand-600 hover:underline"
+              >
+                Explore activities →
+              </Link>
             </Popup>
           </Marker>
         ))}

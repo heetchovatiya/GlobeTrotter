@@ -4,6 +4,7 @@ from sqlalchemy.orm import Session
 from app.core.database import get_db
 from app.core.security import create_access_token
 from app.crud import users as users_crud
+from app.models import City
 from app.schemas.auth import AuthResponse, ForgotPasswordRequest, LoginRequest, MessageResponse, RegisterRequest, UserPublic
 
 router = APIRouter()
@@ -17,6 +18,13 @@ def register(payload: RegisterRequest, db: Session = Depends(get_db)) -> AuthRes
             status_code=status.HTTP_409_CONFLICT,
             detail="Email already registered",
         )
+    if payload.home_city_id is not None:
+        city = db.query(City).filter(City.id == payload.home_city_id).first()
+        if city is None:
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail="Invalid home city",
+            )
     user = users_crud.create_user(db, payload)
     token = create_access_token(
         subject=str(user.id),

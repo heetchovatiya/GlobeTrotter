@@ -6,6 +6,12 @@ import { stopsApi } from '../api/stops';
 import { itineraryApi } from '../api/itinerary';
 import { flattenSections } from '../api/mappers';
 import { validateStopDates } from '../utils/validation';
+import {
+  defaultDatesForNewStop,
+  normalizeStopDatesForSequence,
+  sortedStopsByOrder,
+  validateStopSequence,
+} from '../utils/stopDates';
 
 interface SectionDraft extends TripSection {
   isNew?: boolean;
@@ -25,7 +31,7 @@ interface TripBuilderState {
   addStop: (cityId: number) => Promise<void>;
   updateStop: (stopId: number, updates: Partial<Stop>) => Promise<void>;
   removeStop: (stopId: number) => Promise<void>;
-  reorderStop: (stopId: number, direction: 'up' | 'down') => Promise<void>;
+  reorderStop: (stopId: number, direction: 'up' | 'down') => Promise<string | null>;
   assignActivityToStop: (stopId: number, activity: Activity) => void;
   addSection: (type?: SectionType, stopId?: number) => void;
   updateSection: (index: number, updates: Partial<SectionDraft>) => void;
@@ -82,21 +88,25 @@ export const useTripBuilderStore = create<TripBuilderState>((set, get) => ({
 
     const stops = sortedStops(trip.stops);
     const order_index = stops.length + 1;
-    const defaultStart = trip.start_date;
-    const defaultEnd = trip.end_date;
+    const { arrival_date, departure_date } = defaultDatesForNewStop(
+      stops,
+      trip.start_date,
+      trip.end_date
+    );
 
     set({ saveStatus: 'saving' });
     try {
       const created = await stopsApi.createStop(trip.id, {
         city_id: cityId,
-        arrival_date: defaultStart,
-        departure_date: defaultEnd,
+        arrival_date,
+        departure_date,
         order_index,
       });
       set({
         trip: { ...trip, stops: [...stops, created] },
         saveStatus: 'saved',
         lastSavedAt: new Date().toLocaleTimeString(),
+        error: null,
       });
     } catch (err: unknown) {
       const message = err instanceof Error ? err.message : 'Failed to add stop';
@@ -126,6 +136,12 @@ export const useTripBuilderStore = create<TripBuilderState>((set, get) => ({
     const stops = sortedStops(trip.stops).map((stop) =>
       stop.id === stopId ? merged : stop
     );
+    const sequenceError = validateStopSequence(stops, trip.start_date, trip.end_date);
+    if (sequenceError) {
+      set({ saveStatus: 'error', error: sequenceError });
+      return;
+    }
+
     set({ trip: { ...trip, stops }, saveStatus: 'saving', error: null });
 
     if (stopDebounceTimer) clearTimeout(stopDebounceTimer);
@@ -162,34 +178,54 @@ export const useTripBuilderStore = create<TripBuilderState>((set, get) => ({
 
   reorderStop: async (stopId, direction) => {
     const { trip } = get();
-    if (!trip?.stops?.length) return;
+    if (!trip?.stops?.length) return null;
 
     const stops = sortedStops(trip.stops);
     const currentIndex = stops.findIndex((stop) => stop.id === stopId);
     const targetIndex = direction === 'up' ? currentIndex - 1 : currentIndex + 1;
-    if (currentIndex < 0 || targetIndex < 0 || targetIndex >= stops.length) return;
+    if (currentIndex < 0 || targetIndex < 0 || targetIndex >= stops.length) return null;
 
     const reordered = [...stops];
     [reordered[currentIndex], reordered[targetIndex]] = [
       reordered[targetIndex],
       reordered[currentIndex],
     ];
-    const normalized = reordered.map((stop, idx) => ({ ...stop, order_index: idx + 1 }));
+    const withOrder = reordered.map((stop, idx) => ({ ...stop, order_index: idx + 1 }));
+    const normalized = normalizeStopDatesForSequence(
+      withOrder,
+      trip.start_date,
+      trip.end_date
+    );
+    const sequenceError = validateStopSequence(
+      normalized,
+      trip.start_date,
+      trip.end_date
+    );
+    if (sequenceError) {
+      set({ saveStatus: 'error', error: sequenceError });
+      return sequenceError;
+    }
 
-    set({ trip: { ...trip, stops: normalized }, saveStatus: 'saving' });
+    set({ trip: { ...trip, stops: normalized }, saveStatus: 'saving', error: null });
     try {
       await Promise.all(
         normalized.map((stop) =>
-          stopsApi.updateStop(trip.id, stop.id, { order_index: stop.order_index })
+          stopsApi.updateStop(trip.id, stop.id, {
+            order_index: stop.order_index,
+            arrival_date: stop.arrival_date,
+            departure_date: stop.departure_date,
+          })
         )
       );
       set({
         saveStatus: 'saved',
         lastSavedAt: new Date().toLocaleTimeString(),
       });
+      return null;
     } catch (err: unknown) {
       const message = err instanceof Error ? err.message : 'Failed to reorder stops';
       set({ saveStatus: 'error', error: message });
+      return message;
     }
   },
 
@@ -207,6 +243,7 @@ export const useTripBuilderStore = create<TripBuilderState>((set, get) => ({
       date_range_start: defaultStart,
       date_range_end: defaultStart,
       budget: activity.cost || 50,
+      budget_allocation: 'spread_dates',
       notes: activity.description,
       order_index: sections.length + 1,
       isNew: true,
@@ -238,6 +275,7 @@ export const useTripBuilderStore = create<TripBuilderState>((set, get) => ({
       date_range_start: defaultStart,
       date_range_end: defaultEnd,
       budget: 100,
+      budget_allocation: 'spread_dates',
       notes: '',
       order_index: nextIndex,
       isNew: true,

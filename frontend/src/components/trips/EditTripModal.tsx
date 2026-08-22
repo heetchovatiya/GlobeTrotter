@@ -111,6 +111,14 @@ export const EditTripModal: React.FC<EditTripModalProps> = ({
           </p>
         )}
 
+        {(startDate !== trip.start_date || endDate !== trip.end_date) && (
+          <p className="text-xs text-slate-600 bg-slate-50 border border-slate-200 px-3 py-2 rounded-xl">
+            Changing trip dates will rearrange city stops, itinerary sections, and expenses to
+            fit the new range. Removing early days shifts everything forward; dates outside the
+            trip are clamped to the new start or end.
+          </p>
+        )}
+
         <div>
           <label className="block text-xs font-semibold text-slate-700 uppercase tracking-wider mb-1.5">
             Description

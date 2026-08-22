@@ -33,6 +33,7 @@ export const BuildItinerary: React.FC = () => {
     sections,
     saveStatus,
     lastSavedAt,
+    error: builderError,
     loadTrip,
     addStop,
     updateStop,
@@ -96,9 +97,10 @@ export const BuildItinerary: React.FC = () => {
           trip={trip}
           isOpen={editTripOpen}
           onClose={() => setEditTripOpen(false)}
-          onSaved={(updated) => {
+          onSaved={async (updated) => {
             useTripBuilderStore.setState({ trip: { ...trip, ...updated, stops: trip.stops } });
-            showToast('success', 'Trip details updated.');
+            showToast('success', 'Trip details updated — stops and sections rearranged to fit new dates.');
+            if (id) await loadTrip(id);
           }}
         />
       )}
@@ -167,6 +169,12 @@ export const BuildItinerary: React.FC = () => {
         </Button>
       </div>
 
+      {builderError && (
+        <div className="rounded-xl border border-rose-200 bg-rose-50 px-4 py-3 text-xs font-semibold text-rose-700">
+          {builderError}
+        </div>
+      )}
+
       <section className="space-y-4">
         <div className="flex items-center justify-between">
           <div>
@@ -188,12 +196,21 @@ export const BuildItinerary: React.FC = () => {
                 stop={stop}
                 index={index}
                 totalStops={stops.length}
+                allStops={stops}
                 cities={cities}
                 tripStart={trip?.start_date}
                 tripEnd={trip?.end_date}
                 onUpdate={updateStop}
                 onRemove={removeStop}
-                onReorder={reorderStop}
+                onReorder={async (stopId, direction) => {
+                  const err = await reorderStop(stopId, direction);
+                  if (err) {
+                    showToast('error', err);
+                  } else {
+                    showToast('success', 'Route reordered — stop dates adjusted to match.');
+                  }
+                  return err;
+                }}
                 onAssignActivity={handleAssignActivity}
               />
             ))}
