@@ -2,7 +2,6 @@ import { create } from 'zustand';
 import { User } from '../types';
 import { authApi } from '../api/auth';
 import { getAuthToken, setAuthToken } from '../api/client';
-import { MOCK_CURRENT_USER } from '../api/mockData';
 
 interface AuthState {
   user: User | null;
@@ -12,18 +11,18 @@ interface AuthState {
   isLoading: boolean;
   error: string | null;
   login: (email: string, password: string) => Promise<boolean>;
-  register: (userData: Partial<User> & { password?: string }) => Promise<boolean>;
+  register: (userData: Parameters<typeof authApi.register>[0]) => Promise<boolean>;
   logout: () => void;
   updateProfile: (data: Partial<User>) => Promise<void>;
+  deleteAccount: () => Promise<void>;
   checkAuth: () => Promise<void>;
-  setDemoRole: (role: 'admin' | 'user') => void;
 }
 
-export const useAuthStore = create<AuthState>((set, get) => ({
-  user: MOCK_CURRENT_USER, // Default to demo user for easy evaluation
-  token: getAuthToken() || 'demo_jwt_token',
-  isAuthenticated: true,
-  isAdmin: true,
+export const useAuthStore = create<AuthState>((set) => ({
+  user: null,
+  token: getAuthToken(),
+  isAuthenticated: !!getAuthToken(),
+  isAdmin: false,
   isLoading: false,
   error: null,
 
@@ -39,8 +38,9 @@ export const useAuthStore = create<AuthState>((set, get) => ({
         isLoading: false,
       });
       return true;
-    } catch (err: any) {
-      set({ error: err.message || 'Login failed', isLoading: false });
+    } catch (err: unknown) {
+      const message = err instanceof Error ? err.message : 'Login failed';
+      set({ error: message, isLoading: false });
       return false;
     }
   },
@@ -57,8 +57,9 @@ export const useAuthStore = create<AuthState>((set, get) => ({
         isLoading: false,
       });
       return true;
-    } catch (err: any) {
-      set({ error: err.message || 'Registration failed', isLoading: false });
+    } catch (err: unknown) {
+      const message = err instanceof Error ? err.message : 'Registration failed';
+      set({ error: message, isLoading: false });
       return false;
     }
   },
@@ -78,33 +79,57 @@ export const useAuthStore = create<AuthState>((set, get) => ({
     try {
       const updated = await authApi.updateMe(data);
       set({ user: updated });
-    } catch (err: any) {
-      set({ error: err.message });
+    } catch (err: unknown) {
+      const message = err instanceof Error ? err.message : 'Profile update failed';
+      set({ error: message });
+      throw err;
     }
+  },
+
+  deleteAccount: async () => {
+    await authApi.deleteAccount();
+    authApi.logout();
+    set({
+      user: null,
+      token: null,
+      isAuthenticated: false,
+      isAdmin: false,
+      error: null,
+    });
   },
 
   checkAuth: async () => {
     const token = getAuthToken();
     if (!token) {
-      set({ isAuthenticated: false, user: null, isAdmin: false });
+      set({ isAuthenticated: false, user: null, isAdmin: false, token: null });
       return;
     }
+    set({ isLoading: true });
     try {
       const user = await authApi.getMe();
-      set({ user, isAuthenticated: true, isAdmin: user.role === 'admin' });
+      set({
+        user,
+        token,
+        isAuthenticated: true,
+        isAdmin: user.role === 'admin',
+        isLoading: false,
+      });
+      if (
+        !localStorage.getItem('globetrotter_currency') &&
+        user.country?.toLowerCase() === 'india'
+      ) {
+        const { useCurrencyStore } = await import('./currencyStore');
+        useCurrencyStore.getState().setCurrency('INR');
+      }
     } catch {
-      // If token verification failed, maintain current state in demo mode
+      setAuthToken(null);
+      set({
+        user: null,
+        token: null,
+        isAuthenticated: false,
+        isAdmin: false,
+        isLoading: false,
+      });
     }
   },
-
-  setDemoRole: (role) => {
-    const currentUser = get().user || MOCK_CURRENT_USER;
-    const updatedUser: User = { ...currentUser, role };
-    set({
-      user: updatedUser,
-      isAdmin: role === 'admin',
-      isAuthenticated: true,
-    });
-  },
 }));
-

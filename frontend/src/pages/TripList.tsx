@@ -2,32 +2,60 @@ import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { Trip, TripStatus } from '../types';
 import { tripsApi } from '../api/trips';
+import { stopsApi } from '../api/stops';
 import { TripCard } from '../components/trips/TripCard';
 import { Button } from '../components/common/Button';
 import { Skeleton } from '../components/common/Skeleton';
-import { Plus, Search, Filter, SlidersHorizontal, MapPin } from 'lucide-react';
+import { useUIStore } from '../store/uiStore';
+import { Plus, Search, SlidersHorizontal, MapPin } from 'lucide-react';
+
+type TripWithStops = Trip & { destinationCount: number };
 
 export const TripList: React.FC = () => {
-  const [trips, setTrips] = useState<Trip[]>([]);
+  const { showToast } = useUIStore();
+  const [trips, setTrips] = useState<TripWithStops[]>([]);
   const [activeTab, setActiveTab] = useState<'all' | TripStatus>('all');
   const [searchQuery, setSearchQuery] = useState('');
   const [sortBy, setSortBy] = useState<'start_date' | 'name' | 'budget'>('start_date');
   const [loading, setLoading] = useState(true);
 
+  const loadTrips = async () => {
+    setLoading(true);
+    try {
+      const data = await tripsApi.getTrips();
+      const enriched = await Promise.all(
+        data.map(async (trip) => {
+          try {
+            const stops = await stopsApi.getStops(trip.id);
+            return { ...trip, stops, destinationCount: stops.length };
+          } catch {
+            return { ...trip, destinationCount: 0 };
+          }
+        })
+      );
+      setTrips(enriched);
+    } catch (err) {
+      console.error('Failed to load trips:', err);
+      showToast('error', 'Failed to load your trips.');
+    } finally {
+      setLoading(false);
+    }
+  };
+
   useEffect(() => {
-    const loadTrips = async () => {
-      setLoading(true);
-      try {
-        const data = await tripsApi.getTrips();
-        setTrips(data);
-      } catch (err) {
-        console.error('Failed to load trips:', err);
-      } finally {
-        setLoading(false);
-      }
-    };
     loadTrips();
   }, []);
+
+  const handleDeleteTrip = async (tripId: number) => {
+    try {
+      await tripsApi.deleteTrip(tripId);
+      setTrips((prev) => prev.filter((trip) => trip.id !== tripId));
+      showToast('success', 'Trip deleted successfully.');
+    } catch (err: unknown) {
+      const message = err instanceof Error ? err.message : 'Failed to delete trip.';
+      showToast('error', message);
+    }
+  };
 
   const tabs: { label: string; value: 'all' | TripStatus }[] = [
     { label: 'All Itineraries', value: 'all' },
@@ -56,7 +84,6 @@ export const TripList: React.FC = () => {
 
   return (
     <div className="space-y-8 pb-16">
-      {/* Header with Title & CTA */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
           <h1 className="text-2xl sm:text-3xl font-extrabold text-slate-900 tracking-tight">
@@ -74,9 +101,7 @@ export const TripList: React.FC = () => {
         </Link>
       </div>
 
-      {/* Filter and Search Bar */}
       <div className="flex flex-col md:flex-row items-center justify-between gap-4 bg-white p-4 rounded-2xl border border-slate-200/80 shadow-soft">
-        {/* Tabs */}
         <div className="flex items-center gap-1 overflow-x-auto w-full md:w-auto pb-1 md:pb-0">
           {tabs.map((tab) => {
             const count =
@@ -108,7 +133,6 @@ export const TripList: React.FC = () => {
           })}
         </div>
 
-        {/* Search & Sort Controls */}
         <div className="flex items-center gap-3 w-full md:w-auto">
           <div className="relative flex-1 md:w-60">
             <Search className="absolute left-3 top-2.5 h-4 w-4 text-slate-400" />
@@ -125,7 +149,7 @@ export const TripList: React.FC = () => {
             <SlidersHorizontal className="h-4 w-4" />
             <select
               value={sortBy}
-              onChange={(e) => setSortBy(e.target.value as any)}
+              onChange={(e) => setSortBy(e.target.value as 'start_date' | 'name' | 'budget')}
               className="bg-slate-50 border border-slate-200 rounded-xl px-2.5 py-2 text-xs font-medium text-slate-700 focus:outline-none"
             >
               <option value="start_date">Sort by Date</option>
@@ -136,7 +160,6 @@ export const TripList: React.FC = () => {
         </div>
       </div>
 
-      {/* Trips Listing Grid / Cards */}
       {loading ? (
         <div className="space-y-4">
           {[1, 2, 3].map((i) => (
@@ -146,7 +169,12 @@ export const TripList: React.FC = () => {
       ) : filteredTrips.length > 0 ? (
         <div className="space-y-4">
           {filteredTrips.map((trip) => (
-            <TripCard key={trip.id} trip={trip} />
+            <TripCard
+              key={trip.id}
+              trip={trip}
+              destinationCount={trip.destinationCount}
+              onDelete={handleDeleteTrip}
+            />
           ))}
         </div>
       ) : (
@@ -168,4 +196,3 @@ export const TripList: React.FC = () => {
     </div>
   );
 };
-

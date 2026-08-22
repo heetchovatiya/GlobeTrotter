@@ -4,7 +4,8 @@ import { useAuthStore } from '../store/authStore';
 import { useUIStore } from '../store/uiStore';
 import { Button } from '../components/common/Button';
 import { Input } from '../components/common/Input';
-import { Compass, Mail, Lock, User, Phone, MapPin, Camera, ArrowRight } from 'lucide-react';
+import { validateRegister } from '../utils/validation';
+import { Compass, Mail, Lock, User, Phone, MapPin, ArrowRight } from 'lucide-react';
 
 export const Register: React.FC = () => {
   const navigate = useNavigate();
@@ -12,32 +13,43 @@ export const Register: React.FC = () => {
   const { showToast } = useUIStore();
 
   const [formData, setFormData] = useState({
-    firstName: 'Sara',
-    lastName: 'Connor',
-    email: 'sara.connor@example.com',
-    password: 'securePass123!',
-    phone: '+1 (555) 789-0123',
-    city: 'Seattle',
-    country: 'United States',
-    additionalInfo: 'Love hiking in national parks and architectural photography.',
-    profilePhotoUrl: 'https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=400&auto=format&fit=crop&q=80',
+    firstName: '',
+    lastName: '',
+    email: '',
+    password: '',
+    phone: '',
+    city: '',
+    country: '',
   });
+
+  const [fieldError, setFieldError] = useState<string | null>(null);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
+    if (fieldError) setFieldError(null);
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    const success = await register({
-      name: `${formData.firstName} ${formData.lastName}`,
+    const validationError = validateRegister({
+      firstName: formData.firstName,
+      lastName: formData.lastName,
       email: formData.email,
       password: formData.password,
-      phone_number: formData.phone,
-      city: formData.city,
-      country: formData.country,
-      additional_info: formData.additionalInfo,
-      profile_photo_url: formData.profilePhotoUrl,
+    });
+    if (validationError) {
+      setFieldError(validationError);
+      return;
+    }
+    setFieldError(null);
+
+    const success = await register({
+      name: `${formData.firstName} ${formData.lastName}`.trim(),
+      email: formData.email,
+      password: formData.password,
+      phone_number: formData.phone || undefined,
+      city: formData.city || undefined,
+      country: formData.country || undefined,
     });
 
     if (success) {
@@ -64,21 +76,6 @@ export const Register: React.FC = () => {
 
         {/* Form */}
         <form onSubmit={handleSubmit} className="space-y-4">
-          {/* Avatar upload placeholder */}
-          <div className="flex flex-col items-center justify-center pb-2">
-            <div className="relative group cursor-pointer">
-              <img
-                src={formData.profilePhotoUrl}
-                alt="Profile preview"
-                className="h-20 w-20 rounded-full object-cover ring-4 ring-brand-100 group-hover:opacity-80 transition-opacity"
-              />
-              <div className="absolute inset-0 flex items-center justify-center bg-black/30 rounded-full opacity-0 group-hover:opacity-100 transition-opacity">
-                <Camera className="h-6 w-6 text-white" />
-              </div>
-            </div>
-            <span className="mt-2 text-xs text-slate-400">Profile Photo</span>
-          </div>
-
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <Input
               label="First Name"
@@ -143,21 +140,23 @@ export const Register: React.FC = () => {
             leftIcon={<Lock className="h-4 w-4" />}
             value={formData.password}
             onChange={handleChange}
+            hint="At least 8 characters"
+            error={
+              fieldError && (fieldError.includes('Password') || fieldError.includes('password'))
+                ? fieldError
+                : undefined
+            }
           />
 
-          <div>
-            <label className="block text-xs font-semibold text-slate-700 uppercase tracking-wider mb-1.5">
-              Additional Information / Travel Style
-            </label>
-            <textarea
-              name="additionalInfo"
-              rows={2}
-              value={formData.additionalInfo}
-              onChange={handleChange}
-              placeholder="Tell us about your favorite travel destinations or bucket list..."
-              className="block w-full rounded-xl border border-slate-300 bg-white px-4 py-2 text-sm text-slate-900 placeholder:text-slate-400 focus:border-brand-500 focus:outline-none focus:ring-2 focus:ring-brand-500/20"
-            />
-          </div>
+          {fieldError &&
+            !fieldError.includes('Password') &&
+            !fieldError.includes('password') &&
+            !fieldError.includes('name') &&
+            !fieldError.includes('Email') && (
+              <div className="p-3 rounded-xl bg-rose-50 border border-rose-200 text-xs font-semibold text-rose-700">
+                {fieldError}
+              </div>
+            )}
 
           {error && (
             <div className="p-3 rounded-xl bg-rose-50 border border-rose-200 text-xs font-semibold text-rose-700">

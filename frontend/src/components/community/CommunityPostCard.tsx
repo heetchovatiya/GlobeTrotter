@@ -1,10 +1,12 @@
 import React, { useState } from 'react';
 import { CommunityPost } from '../../types';
-import { Heart, MessageSquare, Send, MapPin, Share2 } from 'lucide-react';
+import { Heart, MessageSquare, Send, MapPin, Share2, Copy, ExternalLink, Calendar, Route } from 'lucide-react';
 import { communityApi } from '../../api/community';
 import { useAuthStore } from '../../store/authStore';
 import { useUIStore } from '../../store/uiStore';
 import { Link } from 'react-router-dom';
+import { Price } from '../common/Price';
+import { Button } from '../common/Button';
 
 interface CommunityPostCardProps {
   post: CommunityPost;
@@ -20,6 +22,10 @@ export const CommunityPostCard: React.FC<CommunityPostCardProps> = ({ post }) =>
   const [showCommentBox, setShowCommentBox] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
+  const publicUrl = post.trip?.public_slug
+    ? `${window.location.origin}/t/${post.trip.public_slug}`
+    : null;
+
   const handleLike = async () => {
     try {
       const res = await communityApi.toggleLike(post.id);
@@ -31,17 +37,27 @@ export const CommunityPostCard: React.FC<CommunityPostCardProps> = ({ post }) =>
     }
   };
 
+  const handleCopyLink = async () => {
+    if (!publicUrl) return;
+    try {
+      await navigator.clipboard.writeText(publicUrl);
+      showToast('success', 'Itinerary link copied!');
+    } catch {
+      showToast('error', 'Could not copy link.');
+    }
+  };
+
   const handleAddComment = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!newComment.trim()) return;
 
     setIsSubmitting(true);
     try {
-      const added = await communityApi.addComment(post.id, newComment);
-      setComments([...comments, added]);
+      const updatedPost = await communityApi.addComment(post.id, newComment);
+      setComments(updatedPost.comments || []);
       setNewComment('');
       showToast('success', 'Comment posted!');
-    } catch (err: any) {
+    } catch {
       showToast('error', 'Failed to add comment');
     } finally {
       setIsSubmitting(false);
@@ -50,7 +66,6 @@ export const CommunityPostCard: React.FC<CommunityPostCardProps> = ({ post }) =>
 
   return (
     <div className="rounded-2xl bg-white border border-slate-200/80 shadow-soft p-5 sm:p-6 transition-all space-y-4">
-      {/* Author Header */}
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-3">
           <img
@@ -69,49 +84,83 @@ export const CommunityPostCard: React.FC<CommunityPostCardProps> = ({ post }) =>
                   <MapPin className="h-3 w-3" /> {post.user.city}, {post.user.country} •
                 </span>
               )}
-              <span>{new Date(post.created_at).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}</span>
+              <span>
+                {new Date(post.created_at).toLocaleDateString('en-US', {
+                  month: 'short',
+                  day: 'numeric',
+                })}
+              </span>
             </div>
           </div>
         </div>
+        {post.trip && (
+          <span className="inline-flex items-center gap-1 text-[10px] font-bold uppercase tracking-wider text-brand-700 bg-brand-50 px-2 py-1 rounded-full">
+            <Route className="h-3 w-3" /> Itinerary
+          </span>
+        )}
       </div>
 
-      {/* Post Text */}
-      <p className="text-sm text-slate-700 leading-relaxed whitespace-pre-line">
-        {post.content}
-      </p>
+      <p className="text-sm text-slate-700 leading-relaxed whitespace-pre-line">{post.content}</p>
 
-      {/* Post Image (if any) */}
       {post.image_url && (
         <div className="rounded-2xl overflow-hidden max-h-96 w-full bg-slate-100">
-          <img
-            src={post.image_url}
-            alt="Trip moment"
-            className="w-full h-full object-cover hover:scale-[1.01] transition-transform duration-300"
-          />
+          <img src={post.image_url} alt="Trip moment" className="w-full h-full object-cover" />
         </div>
       )}
 
-      {/* Attached Trip Preview (if linked) */}
       {post.trip && (
-        <Link
-          to={`/trips/${post.trip.id}`}
-          className="flex items-center gap-3 p-3 rounded-xl bg-slate-50 border border-slate-200/60 hover:bg-brand-50/50 hover:border-brand-200 transition-colors"
-        >
-          {post.trip.cover_photo_url && (
-            <img
-              src={post.trip.cover_photo_url}
-              alt={post.trip.name}
-              className="h-12 w-12 rounded-lg object-cover"
-            />
-          )}
-          <div className="flex-1">
-            <span className="text-[10px] font-bold text-brand-600 uppercase">Attached Itinerary</span>
-            <h5 className="text-xs font-bold text-slate-900 line-clamp-1">{post.trip.name}</h5>
+        <div className="rounded-2xl bg-gradient-to-br from-brand-50 to-slate-50 border border-brand-100 p-4 space-y-3">
+          <div className="flex items-start gap-3">
+            {post.trip.cover_photo_url && (
+              <img
+                src={post.trip.cover_photo_url}
+                alt={post.trip.name}
+                className="h-16 w-16 rounded-xl object-cover shrink-0"
+              />
+            )}
+            <div className="flex-1 min-w-0">
+              <span className="text-[10px] font-bold text-brand-600 uppercase">Shared Itinerary</span>
+              <h5 className="text-sm font-bold text-slate-900 line-clamp-1">{post.trip.name}</h5>
+              <p className="text-xs text-slate-500 flex items-center gap-1 mt-0.5">
+                <Calendar className="h-3 w-3" />
+                {post.trip.start_date} – {post.trip.end_date}
+              </p>
+              {post.trip.total_budget != null && post.trip.total_budget > 0 && (
+                <p className="text-xs font-semibold text-emerald-700 mt-1">
+                  Budget: <Price amount={post.trip.total_budget} />
+                </p>
+              )}
+            </div>
           </div>
-        </Link>
+
+          <div className="flex flex-wrap gap-2">
+            {publicUrl ? (
+              <>
+                <Link to={`/t/${post.trip.public_slug}`}>
+                  <Button size="sm" variant="primary" leftIcon={<ExternalLink className="h-3.5 w-3.5" />}>
+                    View Full Itinerary
+                  </Button>
+                </Link>
+                <Button
+                  size="sm"
+                  variant="outline"
+                  onClick={handleCopyLink}
+                  leftIcon={<Copy className="h-3.5 w-3.5" />}
+                >
+                  Copy Link
+                </Button>
+              </>
+            ) : (
+              <Link to={`/trips/${post.trip.id}`}>
+                <Button size="sm" variant="outline" leftIcon={<ExternalLink className="h-3.5 w-3.5" />}>
+                  View Trip
+                </Button>
+              </Link>
+            )}
+          </div>
+        </div>
       )}
 
-      {/* Action Bar */}
       <div className="flex items-center justify-between pt-3 border-t border-slate-100 text-xs text-slate-600 font-medium">
         <div className="flex items-center gap-4">
           <button
@@ -123,10 +172,9 @@ export const CommunityPostCard: React.FC<CommunityPostCardProps> = ({ post }) =>
             <Heart className={`h-4 w-4 ${isLiked ? 'fill-rose-600 text-rose-600' : ''}`} />
             <span>{likesCount}</span>
           </button>
-
           <button
             onClick={() => setShowCommentBox(!showCommentBox)}
-            className="flex items-center gap-1.5 py-1 px-2.5 rounded-lg hover:bg-slate-100 text-slate-600 transition-colors"
+            className="flex items-center gap-1.5 py-1 px-2.5 rounded-lg hover:bg-slate-100 transition-colors"
           >
             <MessageSquare className="h-4 w-4" />
             <span>{comments.length} Comments</span>
@@ -134,7 +182,6 @@ export const CommunityPostCard: React.FC<CommunityPostCardProps> = ({ post }) =>
         </div>
       </div>
 
-      {/* Comments Thread */}
       {showCommentBox && (
         <div className="pt-2 space-y-3 animate-fade-in border-t border-slate-100">
           {comments.map((comment) => (
@@ -153,20 +200,18 @@ export const CommunityPostCard: React.FC<CommunityPostCardProps> = ({ post }) =>
               </div>
             </div>
           ))}
-
-          {/* Comment Form */}
           <form onSubmit={handleAddComment} className="flex gap-2 pt-1">
             <input
               type="text"
               value={newComment}
               onChange={(e) => setNewComment(e.target.value)}
-              placeholder="Share your thoughts or recommendations..."
-              className="flex-1 rounded-xl border border-slate-300 bg-white px-3.5 py-2 text-xs text-slate-900 placeholder:text-slate-400 focus:border-brand-500 focus:outline-none"
+              placeholder="Share your thoughts..."
+              className="flex-1 rounded-xl border border-slate-300 bg-white px-3.5 py-2 text-xs focus:border-brand-500 focus:outline-none"
             />
             <button
               type="submit"
               disabled={isSubmitting || !newComment.trim()}
-              className="bg-brand-600 text-white px-4 py-2 rounded-xl text-xs font-bold hover:bg-brand-700 disabled:opacity-50 transition-colors"
+              className="bg-brand-600 text-white px-4 py-2 rounded-xl text-xs font-bold hover:bg-brand-700 disabled:opacity-50"
             >
               <Send className="h-3.5 w-3.5" />
             </button>
@@ -176,4 +221,3 @@ export const CommunityPostCard: React.FC<CommunityPostCardProps> = ({ post }) =>
     </div>
   );
 };
-

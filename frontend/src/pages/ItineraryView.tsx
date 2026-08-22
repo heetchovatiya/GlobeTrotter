@@ -1,15 +1,15 @@
 import React, { useEffect, useState } from 'react';
-import { useParams, Link } from 'react-router-dom';
-import { ItineraryResponse, ExpenseCategory } from '../types';
+import { useParams, Link, useNavigate } from 'react-router-dom';
+import { ItineraryResponse } from '../types';
 import { itineraryApi } from '../api/itinerary';
-import { budgetApi } from '../api/budget';
 import { sharingApi } from '../api/sharing';
+import { communityApi } from '../api/community';
 import { BudgetOverview } from '../components/budget/BudgetOverview';
 import { Button } from '../components/common/Button';
 import { Badge } from '../components/common/Badge';
 import { Modal } from '../components/common/Modal';
-import { Input } from '../components/common/Input';
 import { Skeleton } from '../components/common/Skeleton';
+import { Price } from '../components/common/Price';
 import { useUIStore } from '../store/uiStore';
 import {
   Calendar,
@@ -17,19 +17,19 @@ import {
   Edit3,
   MapPin,
   Clock,
-  DollarSign,
   Plus,
   ChevronDown,
   ChevronUp,
   Plane,
   Home,
   Compass,
-  CheckCircle2,
-  Sparkles,
+  Users,
+  IndianRupee,
 } from 'lucide-react';
 
 export const ItineraryView: React.FC = () => {
   const { id } = useParams<{ id: string }>();
+  const navigate = useNavigate();
   const { showToast } = useUIStore();
 
   const [itinerary, setItinerary] = useState<ItineraryResponse | null>(null);
@@ -38,12 +38,6 @@ export const ItineraryView: React.FC = () => {
   const [expandedDays, setExpandedDays] = useState<number[]>([1, 2]); // Expand Day 1 and 2 by default
   const [isShareModalOpen, setIsShareModalOpen] = useState(false);
   const [shareUrl, setShareUrl] = useState('');
-  const [isExpenseModalOpen, setIsExpenseModalOpen] = useState(false);
-  const [expenseForm, setExpenseForm] = useState({
-    category: 'meals' as ExpenseCategory,
-    amount: 45,
-    note: 'Dinner at local Izakaya',
-  });
 
   useEffect(() => {
     const loadData = async () => {
@@ -76,22 +70,18 @@ export const ItineraryView: React.FC = () => {
     }
   };
 
-  const handleAddExpense = async (e: React.FormEvent) => {
-    e.preventDefault();
+  const handleShareToCommunity = async () => {
     try {
-      await budgetApi.addExpense(id || '1', {
-        category: expenseForm.category,
-        amount: Number(expenseForm.amount),
-        note: expenseForm.note,
-      });
-      showToast('success', 'Expense recorded successfully!');
-      setIsExpenseModalOpen(false);
-      // Refresh
-      const updated = await itineraryApi.getItinerary(id || '1');
-      setItinerary(updated);
+      await communityApi.shareItinerary({ trip_id: Number(id) });
+      showToast('success', 'Itinerary published to community!');
+      navigate('/community');
     } catch {
-      showToast('error', 'Failed to log expense.');
+      showToast('error', 'Could not share to community. Are you signed in?');
     }
+  };
+
+  const handleAddExpense = () => {
+    showToast('info', 'Manual expense logging is not available yet. Budget is calculated from itinerary sections.');
   };
 
   if (loading || !itinerary) {
@@ -131,10 +121,18 @@ export const ItineraryView: React.FC = () => {
               <Button
                 variant="glass"
                 size="sm"
+                onClick={handleShareToCommunity}
+                leftIcon={<Users className="h-4 w-4" />}
+              >
+                Share to Community
+              </Button>
+              <Button
+                variant="glass"
+                size="sm"
                 onClick={handleShareTrip}
                 leftIcon={<Share2 className="h-4 w-4" />}
               >
-                Share Trip
+                Copy Link
               </Button>
               <Link to={`/trips/${trip.id}/build`}>
                 <Button
@@ -167,8 +165,8 @@ export const ItineraryView: React.FC = () => {
               {trip.start_date} – {trip.end_date}
             </span>
             <span className="flex items-center gap-1.5">
-              <DollarSign className="h-4 w-4 text-emerald-400" />
-              Budget: ${budget.total_budget.toLocaleString()} (${budget.total_spent} spent)
+              Budget: <Price amount={budget.total_budget} /> (
+              <Price amount={budget.total_spent} /> spent)
             </span>
             <span>{days.length} Itinerary Days</span>
           </div>
@@ -198,7 +196,7 @@ export const ItineraryView: React.FC = () => {
                 : 'text-slate-600 hover:bg-slate-100'
             }`}
           >
-            <DollarSign className="h-4 w-4" />
+            <IndianRupee className="h-4 w-4" />
             <span>Budget & Expense Analytics</span>
           </button>
         </div>
@@ -206,8 +204,8 @@ export const ItineraryView: React.FC = () => {
         {activeTab === 'budget' && (
           <Button
             size="sm"
-            variant="primary"
-            onClick={() => setIsExpenseModalOpen(true)}
+            variant="outline"
+            onClick={handleAddExpense}
             leftIcon={<Plus className="h-4 w-4" />}
           >
             Log Expense
@@ -251,7 +249,7 @@ export const ItineraryView: React.FC = () => {
 
                   <div className="flex items-center gap-4">
                     <span className="text-xs font-bold text-emerald-600 bg-emerald-50 px-2.5 py-1 rounded-full">
-                      ${day.total_cost}
+                      <Price amount={day.total_cost} />
                     </span>
                     {isExpanded ? (
                       <ChevronUp className="h-5 w-5 text-slate-400" />
@@ -277,7 +275,7 @@ export const ItineraryView: React.FC = () => {
                             <h4 className="text-sm font-bold text-slate-900">{section.title}</h4>
                           </div>
                           <span className="text-xs font-bold text-slate-700">
-                            ${section.budget}
+                            <Price amount={section.budget} />
                           </span>
                         </div>
 
@@ -309,7 +307,7 @@ export const ItineraryView: React.FC = () => {
                                   </span>
                                 </div>
                                 <span className="font-medium text-slate-500">
-                                  ${act.cost_override ?? act.activity?.cost ?? 0}
+                                  <Price amount={act.cost_override ?? act.activity?.cost ?? 0} />
                                 </span>
                               </div>
                             ))}
@@ -361,57 +359,6 @@ export const ItineraryView: React.FC = () => {
             </Button>
           </div>
         </div>
-      </Modal>
-
-      {/* Log Expense Modal */}
-      <Modal
-        isOpen={isExpenseModalOpen}
-        onClose={() => setIsExpenseModalOpen(false)}
-        title="Record Trip Expense"
-      >
-        <form onSubmit={handleAddExpense} className="space-y-4">
-          <div>
-            <label className="block text-xs font-semibold text-slate-700 uppercase tracking-wider mb-1.5">
-              Category
-            </label>
-            <select
-              value={expenseForm.category}
-              onChange={(e) => setExpenseForm({ ...expenseForm, category: e.target.value as any })}
-              className="w-full bg-slate-50 border border-slate-300 rounded-xl px-3 py-2 text-sm text-slate-900 focus:outline-none"
-            >
-              <option value="stay">🏨 Accommodation / Stay</option>
-              <option value="transport">✈️ Transport / Flights / Trains</option>
-              <option value="activities">🎯 Sightseeing & Tours</option>
-              <option value="meals">🍽️ Meals & Dining</option>
-              <option value="other">📦 Other Misc</option>
-            </select>
-          </div>
-
-          <Input
-            label="Amount ($)"
-            type="number"
-            min="1"
-            required
-            value={expenseForm.amount}
-            onChange={(e) => setExpenseForm({ ...expenseForm, amount: parseFloat(e.target.value) || 0 })}
-          />
-
-          <Input
-            label="Note / Item"
-            value={expenseForm.note}
-            onChange={(e) => setExpenseForm({ ...expenseForm, note: e.target.value })}
-            placeholder="e.g. Kyoto Ryokan Booking"
-          />
-
-          <div className="flex justify-end gap-2 pt-2">
-            <Button type="button" variant="ghost" onClick={() => setIsExpenseModalOpen(false)}>
-              Cancel
-            </Button>
-            <Button type="submit" variant="primary">
-              Save Expense
-            </Button>
-          </div>
-        </form>
       </Modal>
     </div>
   );
