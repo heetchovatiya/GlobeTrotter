@@ -6,9 +6,12 @@ import { tripsApi } from '../api/trips';
 import { budgetApi } from '../api/budget';
 import { CityCard } from '../components/search/CityCard';
 import { TripCard } from '../components/trips/TripCard';
+import { LongWeekendPanel } from '../components/holidays/LongWeekendPanel';
+import { PlanTripPromptModal } from '../components/holidays/PlanTripPromptModal';
 import { Button } from '../components/common/Button';
 import { Price } from '../components/common/Price';
 import { Skeleton } from '../components/common/Skeleton';
+import { LongWeekend } from '../utils/holidays';
 import {
   Search,
   Plus,
@@ -19,6 +22,7 @@ import {
   Wallet,
   TrendingUp,
   PiggyBank,
+  CalendarDays,
 } from 'lucide-react';
 import { useAuthStore } from '../store/authStore';
 
@@ -36,6 +40,8 @@ export const Dashboard: React.FC = () => {
   const [budgetHighlights, setBudgetHighlights] = useState<TripBudgetHighlight[]>([]);
   const [searchQuery, setSearchQuery] = useState('');
   const [loading, setLoading] = useState(true);
+  const [planModalOpen, setPlanModalOpen] = useState(false);
+  const [selectedWeekend, setSelectedWeekend] = useState<LongWeekend | null>(null);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -176,6 +182,35 @@ export const Dashboard: React.FC = () => {
             Plan New Trip
           </Button>
         </Link>
+      </section>
+
+      <section className="rounded-3xl bg-white border border-slate-200/80 p-6 shadow-soft space-y-4">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+          <div className="flex items-center gap-3">
+            <div className="h-10 w-10 rounded-xl bg-teal-50 text-teal-600 flex items-center justify-center">
+              <CalendarDays className="h-5 w-5" />
+            </div>
+            <div>
+              <h2 className="text-lg font-bold text-slate-900">Plan around holidays</h2>
+              <p className="text-xs text-slate-500">
+                Upcoming long weekends based on Indian public holidays
+              </p>
+            </div>
+          </div>
+          <Link to="/calendar">
+            <Button variant="outline" size="sm" rightIcon={<ArrowRight className="h-3.5 w-3.5" />}>
+              Full calendar
+            </Button>
+          </Link>
+        </div>
+        <LongWeekendPanel
+          compact
+          limit={4}
+          onSelect={(lw) => {
+            setSelectedWeekend(lw);
+            setPlanModalOpen(true);
+          }}
+        />
       </section>
 
       {isAuthenticated && budgetHighlights.length > 0 && (
@@ -352,6 +387,12 @@ export const Dashboard: React.FC = () => {
           )}
         </section>
       )}
+
+      <PlanTripPromptModal
+        isOpen={planModalOpen}
+        onClose={() => setPlanModalOpen(false)}
+        longWeekend={selectedWeekend}
+      />
     </div>
   );
 };

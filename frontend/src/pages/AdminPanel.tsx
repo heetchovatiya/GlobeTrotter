@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { AdminAnalytics, AdminUser } from '../types';
+import { AdminAnalytics } from '../types';
 import { adminApi } from '../api/admin';
 import { Button } from '../components/common/Button';
 import { Badge } from '../components/common/Badge';
@@ -7,6 +7,11 @@ import { useFormatPrice } from '../components/common/Price';
 import { CurrencyIcon } from '../components/common/CurrencyIcon';
 import { Skeleton } from '../components/common/Skeleton';
 import { useUIStore } from '../store/uiStore';
+import { AdminUsersSection } from '../components/admin/AdminUsersSection';
+import { AdminCitiesSection } from '../components/admin/AdminCitiesSection';
+import { AdminActivitiesSection } from '../components/admin/AdminActivitiesSection';
+import { AdminCommunitySection } from '../components/admin/AdminCommunitySection';
+import { AdminTemplatesSection } from '../components/admin/AdminTemplatesSection';
 import {
   ResponsiveContainer,
   AreaChart,
@@ -19,426 +24,252 @@ import {
   Bar,
 } from 'recharts';
 import {
-  ShieldCheck,
   Users,
   MapPin,
   Compass,
-  TrendingUp,
-  Activity,
-  CheckCircle,
-  XCircle,
+  LayoutDashboard,
+  Building2,
+  Sparkles,
+  MessageSquare,
+  Route,
 } from 'lucide-react';
+
+type AdminTab = 'overview' | 'users' | 'cities' | 'activities' | 'community' | 'templates';
+
+const TABS: { id: AdminTab; label: string; icon: React.ReactNode }[] = [
+  { id: 'overview', label: 'Overview', icon: <LayoutDashboard className="h-4 w-4" /> },
+  { id: 'users', label: 'Manage Users', icon: <Users className="h-4 w-4" /> },
+  { id: 'cities', label: 'Manage Cities', icon: <Building2 className="h-4 w-4" /> },
+  { id: 'activities', label: 'Manage Activities', icon: <Sparkles className="h-4 w-4" /> },
+  { id: 'community', label: 'Community', icon: <MessageSquare className="h-4 w-4" /> },
+  { id: 'templates', label: 'Tour Templates', icon: <Route className="h-4 w-4" /> },
+];
 
 export const AdminPanel: React.FC = () => {
   const { showToast } = useUIStore();
   const formatPrice = useFormatPrice();
-
+  const [tab, setTab] = useState<AdminTab>('users');
   const [analytics, setAnalytics] = useState<AdminAnalytics | null>(null);
-  const [users, setUsers] = useState<AdminUser[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const loadAdminData = async () => {
+    if (tab !== 'overview') return;
+    const load = async () => {
       setLoading(true);
       try {
-        const [stats, userList] = await Promise.all([
-          adminApi.getAnalytics(),
-          adminApi.getUsers(),
-        ]);
-        setAnalytics(stats);
-        setUsers(userList);
-      } catch (err) {
-        console.error('Failed to load admin console data:', err);
+        setAnalytics(await adminApi.getAnalytics());
+      } catch {
+        showToast('error', 'Failed to load analytics.');
       } finally {
         setLoading(false);
       }
     };
-    loadAdminData();
-  }, []);
-
-  const handleToggleUserStatus = async (userId: number) => {
-    const current = users.find((u) => u.id === userId);
-    if (!current) return;
-    try {
-      const updated = await adminApi.toggleUserStatus(userId, current.is_active);
-      setUsers((prev) => prev.map((u) => (u.id === userId ? updated : u)));
-      showToast(
-        'success',
-        `User ${updated.name} is now ${updated.is_active ? 'Active' : 'Suspended'}`
-      );
-    } catch {
-      showToast('error', 'Failed to update user status.');
-    }
-  };
-
-  if (loading || !analytics) {
-    return (
-      <div className="space-y-6 pb-16">
-        <Skeleton className="h-40 w-full rounded-3xl" />
-        <div className="grid grid-cols-1 sm:grid-cols-4 gap-4">
-          <Skeleton className="h-28" />
-          <Skeleton className="h-28" />
-          <Skeleton className="h-28" />
-          <Skeleton className="h-28" />
-        </div>
-      </div>
-    );
-  }
+    load();
+  }, [tab, showToast]);
 
   return (
-    <div className="space-y-8 pb-16">
-      {/* Admin Header (Screen 12 wireframe) */}
+    <div className="space-y-6 pb-16">
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 p-6 sm:p-8 rounded-3xl bg-slate-900 text-white shadow-elevated">
         <div className="space-y-1">
-          <div className="inline-flex items-center gap-1.5 text-xs font-bold text-purple-300 bg-purple-950/80 px-2.5 py-0.5 rounded-full uppercase tracking-wider border border-purple-800">
-            <ShieldCheck className="h-3.5 w-3.5 text-purple-400" /> Screen 12 Admin Console
-          </div>
           <h1 className="text-2xl sm:text-3xl font-extrabold tracking-tight text-white">
-            System Analytics & Management
+            System Management
           </h1>
           <p className="text-xs sm:text-sm text-slate-400">
-            Role-gated dashboard monitoring user activity, destination popularity, and itinerary trends.
+            Manage users, cities, activities, community posts, tour templates, analytics, and bulk uploads.
           </p>
         </div>
-
         <Badge variant="purple" size="md" className="self-start sm:self-auto font-bold">
-          ADMIN PRIVILEGES VERIFIED
+          ADMIN
         </Badge>
-        <div className="flex flex-wrap gap-2 self-start sm:self-auto">
-          <Button
-            variant="outline"
-            size="sm"
-            className="border-purple-700 text-purple-100 hover:bg-purple-900"
-            onClick={async () => {
-              try {
-                const { exportsApi } = await import('../api/exports');
-                await exportsApi.downloadAdminTripsCsv();
-                showToast('success', 'Trips CSV downloaded.');
-              } catch {
-                showToast('error', 'Export failed.');
-              }
-            }}
+      </div>
+
+      <div className="flex flex-wrap gap-2 bg-white p-2 rounded-2xl border border-slate-200/80 shadow-soft">
+        {TABS.map((t) => (
+          <button
+            key={t.id}
+            type="button"
+            onClick={() => setTab(t.id)}
+            className={`flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-bold transition-all ${
+              tab === t.id ? 'bg-slate-900 text-white shadow-xs' : 'text-slate-600 hover:bg-slate-100'
+            }`}
           >
-            Export all trips
-          </Button>
-          <Button
-            variant="outline"
-            size="sm"
-            className="border-purple-700 text-purple-100 hover:bg-purple-900"
-            onClick={async () => {
-              try {
-                const { exportsApi } = await import('../api/exports');
-                await exportsApi.downloadAdminUsersCsv();
-                showToast('success', 'Users CSV downloaded.');
-              } catch {
-                showToast('error', 'Export failed.');
-              }
-            }}
-          >
-            Export all users
-          </Button>
-        </div>
+            {t.icon}
+            {t.label}
+          </button>
+        ))}
       </div>
 
-      {/* KPI Cards */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-        <div className="rounded-2xl bg-white border border-slate-200/80 p-5 shadow-soft">
-          <div className="flex items-center justify-between">
-            <span className="text-xs font-bold uppercase text-slate-400 tracking-wider">Total Explorers</span>
-            <div className="p-2 rounded-xl bg-purple-50 text-purple-600">
-              <Users className="h-5 w-5" />
+      {tab === 'overview' && (
+        <>
+          {loading || !analytics ? (
+            <div className="space-y-4">
+              <Skeleton className="h-28 w-full" />
+              <Skeleton className="h-72 w-full" />
             </div>
-          </div>
-          <div className="mt-3">
-            <span className="text-2xl sm:text-3xl font-extrabold text-slate-900">
-              {analytics.total_users.toLocaleString()}
-            </span>
-            <p className="text-xs text-emerald-600 font-semibold mt-1">
-              +{analytics.active_users} active this week
-            </p>
-          </div>
-        </div>
+          ) : (
+            <>
+              <div className="flex flex-wrap gap-2 justify-end">
+                <Button
+                  variant="secondary"
+                  size="sm"
+                  className="text-white"
+                  onClick={async () => {
+                    try {
+                      const { exportsApi } = await import('../api/exports');
+                      await exportsApi.downloadAdminTripsCsv();
+                      showToast('success', 'Trips CSV downloaded.');
+                    } catch {
+                      showToast('error', 'Export failed.');
+                    }
+                  }}
+                >
+                  Export all trips
+                </Button>
+                <Button
+                  variant="secondary"
+                  size="sm"
+                  className="text-white"
+                  onClick={async () => {
+                    try {
+                      const { exportsApi } = await import('../api/exports');
+                      await exportsApi.downloadAdminUsersCsv();
+                      showToast('success', 'Users CSV downloaded.');
+                    } catch {
+                      showToast('error', 'Export failed.');
+                    }
+                  }}
+                >
+                  Export all users
+                </Button>
+              </div>
 
-        <div className="rounded-2xl bg-white border border-slate-200/80 p-5 shadow-soft">
-          <div className="flex items-center justify-between">
-            <span className="text-xs font-bold uppercase text-slate-400 tracking-wider">Itineraries Created</span>
-            <div className="p-2 rounded-xl bg-teal-50 text-teal-600">
-              <Compass className="h-5 w-5" />
-            </div>
-          </div>
-          <div className="mt-3">
-            <span className="text-2xl sm:text-3xl font-extrabold text-slate-900">
-              {analytics.total_trips.toLocaleString()}
-            </span>
-            <p className="text-xs text-teal-600 font-semibold mt-1">
-              {analytics.active_users} users with trips
-            </p>
-          </div>
-        </div>
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                <KpiCard label="Total Users" value={analytics.total_users} icon={<Users className="h-5 w-5" />} sub={`+${analytics.active_users} active`} />
+                <KpiCard label="Trips" value={analytics.total_trips} icon={<Compass className="h-5 w-5" />} />
+                <KpiCard label="Destinations" value={analytics.total_destinations} icon={<MapPin className="h-5 w-5" />} />
+                <KpiCard label="Planned Spend" value={formatPrice(analytics.total_spend)} icon={<CurrencyIcon className="h-5 w-5" />} isText />
+              </div>
 
-        <div className="rounded-2xl bg-white border border-slate-200/80 p-5 shadow-soft">
-          <div className="flex items-center justify-between">
-            <span className="text-xs font-bold uppercase text-slate-400 tracking-wider">Active Destinations</span>
-            <div className="p-2 rounded-xl bg-blue-50 text-blue-600">
-              <MapPin className="h-5 w-5" />
-            </div>
-          </div>
-          <div className="mt-3">
-            <span className="text-2xl sm:text-3xl font-extrabold text-slate-900">
-              {analytics.total_destinations}
-            </span>
-            <p className="text-xs text-slate-500 font-medium mt-1">
-              {analytics.total_destinations} cities in catalog
-            </p>
-          </div>
-        </div>
-
-        <div className="rounded-2xl bg-white border border-slate-200/80 p-5 shadow-soft">
-          <div className="flex items-center justify-between">
-            <span className="text-xs font-bold uppercase text-slate-400 tracking-wider">Total Planned Spend</span>
-            <div className="p-2 rounded-xl bg-amber-50 text-amber-600">
-              <CurrencyIcon className="h-5 w-5" />
-            </div>
-          </div>
-          <div className="mt-3">
-            <span className="text-2xl sm:text-3xl font-extrabold text-slate-900">
-              {formatPrice(analytics.total_spend)}
-            </span>
-            <p className="text-xs text-amber-600 font-semibold mt-1">
-              Avg {formatPrice(analytics.total_trips ? analytics.total_spend / analytics.total_trips : 0)} per trip
-            </p>
-          </div>
-        </div>
-      </div>
-
-      {/* Chart: Growth Trends */}
-      <div className="rounded-3xl bg-white border border-slate-200/80 p-6 sm:p-8 shadow-soft space-y-4">
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
-          <div>
-            <h3 className="text-base sm:text-lg font-bold text-slate-900">
-              Platform Activity & Itinerary Creation Trends
-            </h3>
-            <p className="text-xs text-slate-500">
-              Monthly distribution of created trip itineraries and newly registered travelers.
-            </p>
-          </div>
-          <div className="flex items-center gap-3 text-xs font-semibold">
-            <span className="flex items-center gap-1 text-brand-600">
-              <span className="h-2.5 w-2.5 rounded-full bg-brand-500" /> Trips Created
-            </span>
-            <span className="flex items-center gap-1 text-purple-600">
-              <span className="h-2.5 w-2.5 rounded-full bg-purple-500" /> Active Users
-            </span>
-          </div>
-        </div>
-
-        <div className="h-72 w-full pt-4">
-          <ResponsiveContainer width="100%" height="100%">
-            <AreaChart data={analytics.trip_trends} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
-              <defs>
-                <linearGradient id="colorTrips" x1="0" y1="0" x2="0" y2="1">
-                  <stop offset="5%" stopColor="#0d9488" stopOpacity={0.4} />
-                  <stop offset="95%" stopColor="#0d9488" stopOpacity={0} />
-                </linearGradient>
-                <linearGradient id="colorUsers" x1="0" y1="0" x2="0" y2="1">
-                  <stop offset="5%" stopColor="#8b5cf6" stopOpacity={0.4} />
-                  <stop offset="95%" stopColor="#8b5cf6" stopOpacity={0} />
-                </linearGradient>
-              </defs>
-              <CartesianGrid strokeDasharray="3 3" stroke="#f1f5f9" />
-              <XAxis dataKey="month" tick={{ fontSize: 12 }} />
-              <YAxis tick={{ fontSize: 12 }} />
-              <Tooltip
-                contentStyle={{ borderRadius: '12px', border: '1px solid #e2e8f0' }}
-              />
-              <Area
-                type="monotone"
-                dataKey="trips"
-                name="Trips"
-                stroke="#0d9488"
-                strokeWidth={2.5}
-                fillOpacity={1}
-                fill="url(#colorTrips)"
-              />
-              <Area
-                type="monotone"
-                dataKey="users"
-                name="Users"
-                stroke="#8b5cf6"
-                strokeWidth={2.5}
-                fillOpacity={1}
-                fill="url(#colorUsers)"
-              />
-            </AreaChart>
-          </ResponsiveContainer>
-        </div>
-      </div>
-
-      <div className="rounded-3xl bg-white border border-slate-200/80 p-6 shadow-soft space-y-4">
-        <h3 className="text-base font-bold text-slate-900">Trips Created Over Time</h3>
-        <div className="h-56 w-full">
-          <ResponsiveContainer width="100%" height="100%">
-            <BarChart data={analytics.trip_trends}>
-              <CartesianGrid strokeDasharray="3 3" stroke="#f1f5f9" />
-              <XAxis dataKey="month" tick={{ fontSize: 11 }} />
-              <YAxis tick={{ fontSize: 11 }} />
-              <Tooltip />
-              <Bar dataKey="trips" name="Trips Created" fill="#0d9488" radius={[6, 6, 0, 0]} />
-            </BarChart>
-          </ResponsiveContainer>
-        </div>
-      </div>
-
-      {/* Analytics Ranking Grids */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        {/* Popular Cities */}
-        <div className="rounded-3xl bg-white border border-slate-200/80 p-6 shadow-soft space-y-4">
-          <div className="flex items-center justify-between pb-2 border-b border-slate-100">
-            <h4 className="text-sm font-bold text-slate-900 uppercase tracking-wide">
-              Top Destination Cities
-            </h4>
-            <span className="text-xs text-slate-400 font-medium">Ranked by Trips</span>
-          </div>
-
-          <div className="space-y-3">
-            {analytics.popular_cities.map((city, idx) => (
-              <div
-                key={city.id}
-                className="flex items-center justify-between p-3 rounded-2xl bg-slate-50 border border-slate-200/60 hover:bg-slate-100/80 transition-colors"
-              >
-                <div className="flex items-center gap-3">
-                  <div className="h-7 w-7 rounded-lg bg-brand-100 text-brand-700 flex items-center justify-center text-xs font-bold">
-                    #{idx + 1}
-                  </div>
-                  <img
-                    src={city.image_url}
-                    alt={city.name}
-                    className="h-10 w-10 rounded-xl object-cover"
-                  />
-                  <div>
-                    <h5 className="text-xs font-bold text-slate-900">{city.name}</h5>
-                    <p className="text-[11px] text-slate-500">{city.country}</p>
-                  </div>
-                </div>
-
-                <div className="text-right">
-                  <span className="text-xs font-bold text-slate-900">{city.trips_count} trips</span>
-                  <p className="text-[10px] text-amber-600 font-bold">★ {city.popularity_score}/100</p>
+              <div className="rounded-3xl bg-white border border-slate-200/80 p-6 shadow-soft">
+                <h3 className="text-base font-bold text-slate-900 mb-4">Trip creation trends</h3>
+                <div className="h-64">
+                  <ResponsiveContainer width="100%" height="100%">
+                    <AreaChart data={analytics.trip_trends}>
+                      <CartesianGrid strokeDasharray="3 3" stroke="#f1f5f9" />
+                      <XAxis dataKey="month" tick={{ fontSize: 11 }} />
+                      <YAxis tick={{ fontSize: 11 }} />
+                      <Tooltip />
+                      <Area type="monotone" dataKey="trips" stroke="#0d9488" fill="#0d948833" />
+                    </AreaChart>
+                  </ResponsiveContainer>
                 </div>
               </div>
-            ))}
-          </div>
-        </div>
 
-        {/* Popular Activities */}
-        <div className="rounded-3xl bg-white border border-slate-200/80 p-6 shadow-soft space-y-4">
-          <div className="flex items-center justify-between pb-2 border-b border-slate-100">
-            <h4 className="text-sm font-bold text-slate-900 uppercase tracking-wide">
-              Top Booked Activities
-            </h4>
-            <span className="text-xs text-slate-400 font-medium">Ranked by Inclusions</span>
-          </div>
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                <RankingList title="Top cities" items={analytics.popular_cities.map((c) => ({ id: c.id, primary: c.name, secondary: c.country, metric: `${c.trips_count} trips` }))} />
+                <RankingList title="Top activities" items={analytics.popular_activities.map((a) => ({ id: a.id, primary: a.name, secondary: a.city_name, metric: `${a.bookings_count} bookings` }))} />
+              </div>
 
-          <div className="space-y-3">
-            {analytics.popular_activities.map((act, idx) => (
-              <div
-                key={act.id}
-                className="flex items-center justify-between p-3 rounded-2xl bg-slate-50 border border-slate-200/60 hover:bg-slate-100/80 transition-colors"
-              >
-                <div className="flex items-center gap-3">
-                  <div className="h-7 w-7 rounded-lg bg-amber-100 text-amber-800 flex items-center justify-center text-xs font-bold">
-                    #{idx + 1}
-                  </div>
-                  <div>
-                    <h5 className="text-xs font-bold text-slate-900">{act.name}</h5>
-                    <p className="text-[11px] text-slate-500">{act.city_name} • {act.type}</p>
-                  </div>
-                </div>
-
-                <div className="text-right">
-                  <span className="text-xs font-bold text-emerald-600">{act.bookings_count} bookings</span>
+              <div className="rounded-3xl bg-white border border-slate-200/80 p-6 shadow-soft">
+                <div className="h-56">
+                  <ResponsiveContainer width="100%" height="100%">
+                    <BarChart data={analytics.trip_trends}>
+                      <CartesianGrid strokeDasharray="3 3" />
+                      <XAxis dataKey="month" />
+                      <YAxis />
+                      <Tooltip />
+                      <Bar dataKey="trips" fill="#0d9488" radius={[6, 6, 0, 0]} />
+                    </BarChart>
+                  </ResponsiveContainer>
                 </div>
               </div>
-            ))}
-          </div>
-        </div>
-      </div>
+            </>
+          )}
+        </>
+      )}
 
-      {/* User Management Table */}
-      <div className="rounded-3xl bg-white border border-slate-200/80 p-6 sm:p-8 shadow-soft space-y-4">
-        <div className="flex items-center justify-between pb-2 border-b border-slate-100">
-          <div>
-            <h3 className="text-base font-bold text-slate-900">Registered Travelers</h3>
-            <p className="text-xs text-slate-500">Manage user status, roles, and itinerary counts</p>
-          </div>
-          <span className="text-xs font-bold text-slate-400">{users.length} Users</span>
+      {tab === 'users' && (
+        <div className="rounded-3xl bg-white border border-slate-200/80 p-6 shadow-soft">
+          <AdminUsersSection />
         </div>
+      )}
 
-        <div className="overflow-x-auto">
-          <table className="w-full text-left text-xs text-slate-600">
-            <thead className="bg-slate-50 text-slate-500 uppercase tracking-wider text-[10px] font-bold">
-              <tr>
-                <th className="px-4 py-3 rounded-l-xl">User</th>
-                <th className="px-4 py-3">Location</th>
-                <th className="px-4 py-3">Role</th>
-                <th className="px-4 py-3">Trips</th>
-                <th className="px-4 py-3">Status</th>
-                <th className="px-4 py-3 rounded-r-xl text-right">Actions</th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-slate-100 font-medium">
-              {users.map((user) => (
-                <tr key={user.id} className="hover:bg-slate-50/60 transition-colors">
-                  <td className="px-4 py-3.5 flex items-center gap-3">
-                    <img
-                      src={user.profile_photo_url || 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=100&auto=format&fit=crop&q=80'}
-                      alt={user.name}
-                      className="h-8 w-8 rounded-full object-cover"
-                    />
-                    <div>
-                      <p className="font-bold text-slate-900">{user.name}</p>
-                      <p className="text-[11px] text-slate-400">{user.email}</p>
-                    </div>
-                  </td>
-                  <td className="px-4 py-3.5">
-                    {user.city ? `${user.city}, ${user.country}` : '—'}
-                  </td>
-                  <td className="px-4 py-3.5">
-                    <Badge variant={user.role === 'admin' ? 'purple' : 'default'} size="sm">
-                      {user.role}
-                    </Badge>
-                  </td>
-                  <td className="px-4 py-3.5 font-bold text-slate-800">
-                    {user.trips_count}
-                  </td>
-                  <td className="px-4 py-3.5">
-                    {user.is_active ? (
-                      <span className="inline-flex items-center gap-1 text-emerald-700 font-semibold text-[11px]">
-                        <CheckCircle className="h-3.5 w-3.5" /> Active
-                      </span>
-                    ) : (
-                      <span className="inline-flex items-center gap-1 text-rose-700 font-semibold text-[11px]">
-                        <XCircle className="h-3.5 w-3.5" /> Suspended
-                      </span>
-                    )}
-                  </td>
-                  <td className="px-4 py-3.5 text-right">
-                    <Button
-                      size="sm"
-                      variant={user.is_active ? 'outline' : 'primary'}
-                      onClick={() => handleToggleUserStatus(user.id)}
-                      className="text-[11px] py-1"
-                    >
-                      {user.is_active ? 'Suspend' : 'Activate'}
-                    </Button>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
+      {tab === 'cities' && (
+        <div className="rounded-3xl bg-white border border-slate-200/80 p-6 shadow-soft">
+          <AdminCitiesSection />
         </div>
-      </div>
+      )}
+
+      {tab === 'activities' && (
+        <div className="rounded-3xl bg-white border border-slate-200/80 p-6 shadow-soft">
+          <AdminActivitiesSection />
+        </div>
+      )}
+
+      {tab === 'community' && (
+        <div className="rounded-3xl bg-white border border-slate-200/80 p-6 shadow-soft">
+          <AdminCommunitySection />
+        </div>
+      )}
+
+      {tab === 'templates' && (
+        <div className="rounded-3xl bg-white border border-slate-200/80 p-6 shadow-soft">
+          <AdminTemplatesSection />
+        </div>
+      )}
     </div>
   );
 };
 
+function KpiCard({
+  label,
+  value,
+  icon,
+  sub,
+  isText,
+}: {
+  label: string;
+  value: number | string;
+  icon: React.ReactNode;
+  sub?: string;
+  isText?: boolean;
+}) {
+  return (
+    <div className="rounded-2xl bg-white border border-slate-200/80 p-5 shadow-soft">
+      <div className="flex items-center justify-between">
+        <span className="text-xs font-bold uppercase text-slate-400">{label}</span>
+        <div className="p-2 rounded-xl bg-purple-50 text-purple-600">{icon}</div>
+      </div>
+      <div className="mt-3 text-2xl font-extrabold text-slate-900">
+        {isText ? value : typeof value === 'number' ? value.toLocaleString() : value}
+      </div>
+      {sub && <p className="text-xs text-slate-500 mt-1">{sub}</p>}
+    </div>
+  );
+}
+
+function RankingList({
+  title,
+  items,
+}: {
+  title: string;
+  items: { id: number; primary: string; secondary: string; metric: string }[];
+}) {
+  return (
+    <div className="rounded-3xl bg-white border border-slate-200/80 p-6 shadow-soft space-y-3">
+      <h4 className="text-sm font-bold text-slate-900 uppercase">{title}</h4>
+      {items.map((item, idx) => (
+        <div key={item.id} className="flex items-center justify-between p-3 rounded-xl bg-slate-50 border border-slate-100">
+          <div className="flex items-center gap-2">
+            <span className="text-xs font-bold text-brand-700">#{idx + 1}</span>
+            <div>
+              <p className="text-xs font-bold text-slate-900">{item.primary}</p>
+              <p className="text-[10px] text-slate-500">{item.secondary}</p>
+            </div>
+          </div>
+          <span className="text-xs font-bold text-slate-700">{item.metric}</span>
+        </div>
+      ))}
+    </div>
+  );
+}

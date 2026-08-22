@@ -70,7 +70,7 @@ def _to_public(post: CommunityPost, include_comments: bool = True) -> CommunityP
 
 
 def list_posts(db: Session, sort: str = "recent", limit: int = 50) -> list[CommunityPostPublic]:
-    posts = _post_query(db).all()
+    posts = _post_query(db).filter(CommunityPost.is_hidden.is_(False)).all()
     if sort == "popular":
         posts.sort(key=lambda p: (len(p.comments), p.created_at), reverse=True)
     else:

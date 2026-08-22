@@ -8,6 +8,7 @@ from sqlalchemy import (
     Enum,
     ForeignKey,
     Integer,
+    JSON,
     Numeric,
     String,
     Text,
@@ -263,6 +264,9 @@ class CommunityPost(Base):
     )
     content: Mapped[str] = mapped_column(Text, nullable=False)
     image_url: Mapped[str | None] = mapped_column(String(512), nullable=True)
+    is_hidden: Mapped[bool] = mapped_column(
+        Boolean, nullable=False, default=False, server_default="false"
+    )
     created_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True), server_default=func.now(), nullable=False
     )
@@ -289,3 +293,22 @@ class CommunityComment(Base):
 
     post: Mapped["CommunityPost"] = relationship(back_populates="comments")
     user: Mapped["User"] = relationship(back_populates="community_comments")
+
+
+class TripTemplate(Base):
+    __tablename__ = "trip_templates"
+
+    id: Mapped[str] = mapped_column(String(64), primary_key=True)
+    name: Mapped[str] = mapped_column(String(255), nullable=False)
+    description: Mapped[str] = mapped_column(Text, nullable=False, default="")
+    duration_days: Mapped[int] = mapped_column(Integer, nullable=False)
+    city_names: Mapped[list] = mapped_column(JSON, nullable=False)
+    sections: Mapped[list] = mapped_column(JSON, nullable=False)
+    source_trip_id: Mapped[int | None] = mapped_column(Integer, nullable=True)
+    source_post_id: Mapped[int | None] = mapped_column(Integer, nullable=True)
+    is_active: Mapped[bool] = mapped_column(
+        Boolean, nullable=False, default=True, server_default="true"
+    )
+    created_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), server_default=func.now(), nullable=False
+    )

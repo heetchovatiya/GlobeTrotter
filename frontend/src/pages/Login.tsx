@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { useAuthStore } from '../store/authStore';
 import { useUIStore } from '../store/uiStore';
@@ -10,7 +10,7 @@ import { Compass, Lock, Mail, ArrowRight, Sparkles } from 'lucide-react';
 export const Login: React.FC = () => {
   const navigate = useNavigate();
   const location = useLocation();
-  const { login, isLoading, error } = useAuthStore();
+  const { login, isLoading, error, isAuthenticated, user } = useAuthStore();
   const { showToast } = useUIStore();
 
   const [email, setEmail] = useState('');
@@ -18,6 +18,12 @@ export const Login: React.FC = () => {
   const [fieldError, setFieldError] = useState<string | null>(null);
 
   const from = (location.state as { from?: { pathname: string } })?.from?.pathname || '/';
+
+  useEffect(() => {
+    if (isAuthenticated && user?.role === 'admin') {
+      navigate('/admin', { replace: true });
+    }
+  }, [isAuthenticated, user, navigate]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -30,8 +36,10 @@ export const Login: React.FC = () => {
 
     const success = await login(email.trim(), password);
     if (success) {
+      const loggedInUser = useAuthStore.getState().user;
+      const destination = loggedInUser?.role === 'admin' ? '/admin' : from;
       showToast('success', 'Welcome back to GlobeTrotter!');
-      navigate(from, { replace: true });
+      navigate(destination, { replace: true });
     }
   };
 

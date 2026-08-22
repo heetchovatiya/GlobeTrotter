@@ -15,7 +15,13 @@ import {
   Edit3,
   List,
   LayoutGrid,
+  Sparkles,
 } from 'lucide-react';
+import {
+  getHolidayOnDate,
+  isLongWeekendDate,
+  LongWeekend,
+} from '../../utils/holidays';
 
 interface CalendarGridProps {
   tripId?: number | string;
@@ -23,6 +29,8 @@ interface CalendarGridProps {
   itineraryDays?: ItineraryDay[];
   onSelectDay?: (date: string) => void;
   onReorderSections?: (date: string, sections: TripSection[]) => Promise<void>;
+  showHolidays?: boolean;
+  onPlanHoliday?: (startDate: string, endDate: string, longWeekend?: LongWeekend) => void;
 }
 
 export const CalendarGrid: React.FC<CalendarGridProps> = ({
@@ -31,6 +39,8 @@ export const CalendarGrid: React.FC<CalendarGridProps> = ({
   itineraryDays = [],
   onSelectDay,
   onReorderSections,
+  showHolidays = false,
+  onPlanHoliday,
 }) => {
   const primaryTrip = tripId ? trips.find((t) => String(t.id) === String(tripId)) : trips[0];
   const initialDate = primaryTrip?.start_date
@@ -97,6 +107,9 @@ export const CalendarGrid: React.FC<CalendarGridProps> = ({
 
   const activeItinerary = getDayItinerary(selectedDate);
   const activeTrip = getTripForDay(selectedDate) || primaryTrip;
+  const selectedHoliday = showHolidays && selectedDate ? getHolidayOnDate(selectedDate) : undefined;
+  const selectedLongWeekend =
+    showHolidays && selectedDate ? isLongWeekendDate(selectedDate, year) : undefined;
 
   const toggleDayExpansion = (dayNumber: number) => {
     setExpandedDays((prev) =>
@@ -306,6 +319,20 @@ export const CalendarGrid: React.FC<CalendarGridProps> = ({
               </div>
             </div>
 
+            {showHolidays && (
+              <div className="flex flex-wrap gap-3 mb-4 text-[10px] font-semibold text-slate-500">
+                <span className="flex items-center gap-1.5">
+                  <span className="h-2.5 w-2.5 rounded bg-violet-200 border border-violet-500" /> Planned trip
+                </span>
+                <span className="flex items-center gap-1.5">
+                  <span className="h-2.5 w-2.5 rounded-full bg-amber-400" /> Holiday
+                </span>
+                <span className="flex items-center gap-1.5">
+                  <span className="h-2.5 w-2.5 rounded bg-teal-200 border border-teal-400" /> Long weekend
+                </span>
+              </div>
+            )}
+
             <div className="grid grid-cols-7 gap-1 text-center text-xs font-bold text-slate-400 uppercase tracking-wider mb-2">
               {['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'].map((d) => (
                 <span key={d}>{d}</span>
@@ -322,6 +349,8 @@ export const CalendarGrid: React.FC<CalendarGridProps> = ({
                 const trip = getTripForDay(dateStr);
                 const hasItinerary = getDayItinerary(dateStr);
                 const isSelected = selectedDate === dateStr;
+                const holiday = showHolidays ? getHolidayOnDate(dateStr) : undefined;
+                const longWeekend = showHolidays ? isLongWeekendDate(dateStr, year) : undefined;
 
                 return (
                   <button
@@ -335,8 +364,12 @@ export const CalendarGrid: React.FC<CalendarGridProps> = ({
                       isSelected
                         ? 'border-brand-600 bg-brand-50/80 ring-2 ring-brand-500/20 shadow-xs'
                         : trip
-                          ? 'border-teal-200 bg-teal-50/50 hover:border-brand-400'
-                          : 'border-slate-100 bg-white hover:bg-slate-50'
+                          ? 'border-violet-300 bg-violet-50/80 hover:border-violet-400'
+                          : holiday
+                            ? 'border-amber-300 bg-amber-50/70 hover:border-amber-400'
+                            : longWeekend
+                              ? 'border-teal-200/80 bg-teal-50/40 hover:border-teal-400'
+                              : 'border-slate-100 bg-white hover:bg-slate-50'
                     }`}
                   >
                     <div className="flex items-center justify-between w-full">
@@ -347,13 +380,23 @@ export const CalendarGrid: React.FC<CalendarGridProps> = ({
                       >
                         {day}
                       </span>
-                      {hasItinerary && (
-                        <span className="h-1.5 w-1.5 rounded-full bg-brand-500" />
-                      )}
+                      <div className="flex items-center gap-0.5">
+                        {holiday && (
+                          <span className="h-1.5 w-1.5 rounded-full bg-amber-500" title={holiday.name} />
+                        )}
+                        {hasItinerary && (
+                          <span className="h-1.5 w-1.5 rounded-full bg-violet-500" />
+                        )}
+                      </div>
                     </div>
                     {trip && (
-                      <div className="w-full truncate text-[10px] font-semibold text-brand-800 bg-brand-200/60 px-1 py-0.5 rounded-md line-clamp-1">
+                      <div className="w-full truncate text-[10px] font-semibold text-violet-900 bg-violet-200/70 px-1 py-0.5 rounded-md line-clamp-1">
                         {trip.name}
+                      </div>
+                    )}
+                    {!trip && holiday && (
+                      <div className="w-full truncate text-[9px] font-semibold text-amber-900 bg-amber-200/60 px-1 py-0.5 rounded-md line-clamp-1">
+                        {holiday.name}
                       </div>
                     )}
                   </button>
@@ -399,8 +442,27 @@ export const CalendarGrid: React.FC<CalendarGridProps> = ({
                   {renderSectionList(selectedDate, activeItinerary.sections)}
                 </div>
               ) : (
-                <div className="py-8 text-center text-slate-400 text-xs">
-                  No scheduled activities for this date.
+                <div className="py-6 text-center space-y-3">
+                  <p className="text-slate-400 text-xs">No scheduled activities for this date.</p>
+                  {showHolidays && selectedHoliday && (
+                    <p className="text-xs font-semibold text-amber-800">{selectedHoliday.name}</p>
+                  )}
+                  {showHolidays && onPlanHoliday && (selectedHoliday || selectedLongWeekend) && (
+                    <button
+                      type="button"
+                      onClick={() =>
+                        onPlanHoliday(
+                          selectedLongWeekend?.startDate ?? selectedDate,
+                          selectedLongWeekend?.endDate ?? selectedDate,
+                          selectedLongWeekend ?? undefined
+                        )
+                      }
+                      className="inline-flex items-center gap-1.5 text-xs font-bold text-white bg-brand-600 hover:bg-brand-700 px-3 py-2 rounded-xl"
+                    >
+                      <Sparkles className="h-3.5 w-3.5" />
+                      Plan your trip
+                    </button>
+                  )}
                 </div>
               )}
             </div>

@@ -15,8 +15,8 @@ router = APIRouter()
 
 
 @router.get("/templates", response_model=list[TemplatePublic])
-def list_trip_templates() -> list[TemplatePublic]:
-    return templates_crud.list_templates()
+def list_trip_templates(db: Session = Depends(get_db)) -> list[TemplatePublic]:
+    return templates_crud.list_templates(db)
 
 
 @router.post(

@@ -1,8 +1,10 @@
+from sqlalchemy import func, or_
 from sqlalchemy.orm import Session
 
 from app.core.security import hash_password, verify_password
 from app.models import City, User, UserRole
 from app.schemas.auth import RegisterRequest, UserUpdate
+from app.schemas.user_admin import AdminUserCreate, AdminUserUpdate
 
 
 def _resolve_home_city(db: Session, home_city_id: int | None) -> City | None:
@@ -73,8 +75,53 @@ def update_user(db: Session, user: User, data: UserUpdate) -> User:
     return user
 
 
-def list_users(db: Session) -> list[User]:
-    return db.query(User).order_by(User.created_at.desc()).all()
+def list_users(db: Session, q: str | None = None) -> list[User]:
+    query = db.query(User)
+    if q:
+        term = f"%{q.strip().lower()}%"
+        query = query.filter(
+            or_(
+                func.lower(User.name).like(term),
+                func.lower(User.email).like(term),
+                func.lower(User.city).like(term),
+            )
+        )
+    return query.order_by(User.created_at.desc()).all()
+
+
+def admin_create_user(db: Session, data: AdminUserCreate) -> User:
+    if get_user_by_email(db, str(data.email)):
+        raise ValueError("Email already registered")
+    user = User(
+        name=data.name.strip(),
+        email=str(data.email).lower(),
+        password_hash=hash_password(data.password),
+        phone_number=data.phone_number,
+        city=data.city,
+        country=data.country,
+        role=data.role,
+        is_suspended=False,
+    )
+    db.add(user)
+    db.commit()
+    db.refresh(user)
+    return user
+
+
+def admin_update_user(db: Session, user: User, data: AdminUserUpdate) -> User:
+    payload = data.model_dump(exclude_unset=True)
+    if "email" in payload and payload["email"]:
+        payload["email"] = str(payload["email"]).lower()
+        existing = get_user_by_email(db, payload["email"])
+        if existing and existing.id != user.id:
+            raise ValueError("Email already in use")
+    for key, value in payload.items():
+        if key == "name" and isinstance(value, str):
+            value = value.strip()
+        setattr(user, key, value)
+    db.commit()
+    db.refresh(user)
+    return user
 
 
 def set_user_suspended(db: Session, user: User, suspended: bool) -> User:

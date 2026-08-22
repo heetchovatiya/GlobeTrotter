@@ -8,6 +8,9 @@ import { BottomNav } from './components/layout/BottomNav';
 import { Footer } from './components/layout/Footer';
 import { ProtectedRoute } from './components/layout/ProtectedRoute';
 import { AdminRoute } from './components/layout/AdminRoute';
+import { UserOnlyRoute } from './components/layout/UserOnlyRoute';
+import { AdminRedirect } from './components/layout/AdminRedirect';
+import { AdminNavbar } from './components/layout/AdminNavbar';
 import { ToastContainer } from './components/common/Toast';
 
 // Pages
@@ -30,7 +33,7 @@ import { TripPrint } from './pages/TripPrint';
 import { TravelLedger } from './pages/TravelLedger';
 
 export function App() {
-  const { checkAuth } = useAuthStore();
+  const { checkAuth, isAuthenticated, isAdmin, user } = useAuthStore();
   const location = useLocation();
 
   useEffect(() => {
@@ -44,58 +47,87 @@ export function App() {
     location.pathname === '/forgot-password';
 
   const isPrintPage = /\/trips\/\d+\/print$/.test(location.pathname);
+  const isAdminUser = isAuthenticated && (isAdmin || user?.role === 'admin');
+  const showTravelerChrome = !isAuthPage && !isPrintPage && !isAdminUser;
 
   return (
     <div className="min-h-screen flex flex-col bg-slate-50 text-slate-900 font-sans selection:bg-brand-500 selection:text-white">
       {/* Toast notifications portal */}
       <ToastContainer />
 
-      {/* Top Navbar (hidden on dedicated auth pages for cleaner focus) */}
-      {!isAuthPage && !isPrintPage && <Navbar />}
+      {/* Top Navbar */}
+      {isAuthPage || isPrintPage ? null : isAdminUser ? <AdminNavbar /> : <Navbar />}
 
       {/* Main Content Area */}
       <main
         className={`flex-1 w-full mx-auto ${isPrintPage ? 'max-w-none px-0 pt-0' : 'max-w-7xl px-4 sm:px-6 lg:px-8 pt-6'}`}
       >
         <Routes>
-          {/* Public Unauthenticated Routes */}
-          <Route path="/" element={<Dashboard />} />
+          {/* Public traveler routes — admins are redirected to /admin */}
+          <Route
+            path="/"
+            element={
+              <AdminRedirect>
+                <Dashboard />
+              </AdminRedirect>
+            }
+          />
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
           <Route path="/forgot-password" element={<ForgotPassword />} />
-          <Route path="/search" element={<Search />} />
-          <Route path="/community" element={<Community />} />
-          <Route path="/calendar" element={<CalendarView />} />
+          <Route
+            path="/search"
+            element={
+              <AdminRedirect>
+                <Search />
+              </AdminRedirect>
+            }
+          />
+          <Route
+            path="/community"
+            element={
+              <AdminRedirect>
+                <Community />
+              </AdminRedirect>
+            }
+          />
+          <Route
+            path="/calendar"
+            element={
+              <AdminRedirect>
+                <CalendarView />
+              </AdminRedirect>
+            }
+          />
           <Route path="/t/:slug" element={<PublicTrip />} />
 
-          {/* Protected User Routes */}
+          {/* Traveler-only protected routes */}
           <Route element={<ProtectedRoute />}>
-            <Route path="/trips" element={<TripList />} />
-            <Route path="/trips/new" element={<CreateTrip />} />
-            <Route path="/trips/:id/confirmed" element={<TripConfirmed />} />
-            <Route path="/trips/:id/print" element={<TripPrint />} />
-            <Route path="/trips/:id/build" element={<BuildItinerary />} />
-            <Route path="/trips/:id" element={<ItineraryView />} />
-            <Route path="/trips/:id/calendar" element={<CalendarView />} />
-            <Route path="/profile" element={<Profile />} />
-            <Route path="/profile/ledger" element={<TravelLedger />} />
+            <Route element={<UserOnlyRoute />}>
+              <Route path="/trips" element={<TripList />} />
+              <Route path="/trips/new" element={<CreateTrip />} />
+              <Route path="/trips/:id/confirmed" element={<TripConfirmed />} />
+              <Route path="/trips/:id/print" element={<TripPrint />} />
+              <Route path="/trips/:id/build" element={<BuildItinerary />} />
+              <Route path="/trips/:id" element={<ItineraryView />} />
+              <Route path="/trips/:id/calendar" element={<CalendarView />} />
+              <Route path="/profile" element={<Profile />} />
+              <Route path="/profile/ledger" element={<TravelLedger />} />
+            </Route>
           </Route>
 
-          {/* Role-Gated Admin Route */}
+          {/* Admin-only */}
           <Route element={<AdminRoute />}>
             <Route path="/admin" element={<AdminPanel />} />
           </Route>
 
           {/* Catch-all */}
-          <Route path="*" element={<Navigate to="/" replace />} />
+          <Route path="*" element={<Navigate to={isAdminUser ? '/admin' : '/'} replace />} />
         </Routes>
       </main>
 
-      {/* Footer */}
-      {!isAuthPage && !isPrintPage && <Footer />}
-
-      {/* Mobile Bottom Navigation Bar (< 640px) */}
-      {!isAuthPage && !isPrintPage && <BottomNav />}
+      {showTravelerChrome && <Footer />}
+      {showTravelerChrome && <BottomNav />}
     </div>
   );
 }

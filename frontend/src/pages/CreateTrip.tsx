@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useMemo, useCallback } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import { X } from 'lucide-react';
 import { citiesApi } from '../api/cities';
 import { activitiesApi } from '../api/activities';
@@ -30,6 +30,7 @@ import { TripTemplatePicker } from '../components/wizard/TripTemplatePicker';
 
 export const CreateTrip: React.FC = () => {
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
   const { showToast } = useUIStore();
   const { user } = useAuthStore();
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -37,7 +38,9 @@ export const CreateTrip: React.FC = () => {
   const [activitiesLoading, setActivitiesLoading] = React.useState(false);
   const [isSubmitting, setIsSubmitting] = React.useState(false);
   const [isSavingDraft, setIsSavingDraft] = React.useState(false);
-  const [mode, setMode] = React.useState<'templates' | 'wizard'>('templates');
+  const [mode, setMode] = React.useState<'templates' | 'wizard'>(() =>
+    searchParams.get('start') || searchParams.get('end') ? 'wizard' : 'templates'
+  );
 
   const {
     step,
@@ -78,6 +81,8 @@ export const CreateTrip: React.FC = () => {
 
   useEffect(() => {
     if (mode !== 'wizard') return;
+    const urlStart = searchParams.get('start');
+    const urlEnd = searchParams.get('end');
     reset();
     const load = async () => {
       try {
@@ -93,6 +98,11 @@ export const CreateTrip: React.FC = () => {
         setPickerCityId(defaultDestinationPickerId(cityList, [startCity.id]));
         setCoverPhotoUrl(startCity.image_url);
         setCoverPreview(startCity.image_url);
+
+        if (urlStart) setStartDate(urlStart);
+        if (urlEnd) setEndDate(urlEnd);
+        else if (urlStart) setEndDate(urlStart);
+        if (urlStart || urlEnd) setStep(2);
       } catch (err) {
         console.error(err);
         showToast('error', 'Could not load cities.');

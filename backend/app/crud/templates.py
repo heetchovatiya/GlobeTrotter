@@ -8,7 +8,7 @@ from fastapi import HTTPException, status
 from sqlalchemy.orm import Session
 
 from app.crud.trips import _upsert_section_expense, derive_trip_status
-from app.models import City, SectionType, Stop, Trip, TripSection, User
+from app.models import City, SectionType, Stop, Trip, TripSection, TripTemplate, User
 from app.schemas.templates import TemplateInstantiate, TemplatePublic, TemplateSectionSpec
 from app.utils.trip_dates import split_trip_dates_for_stops
 
@@ -96,7 +96,42 @@ TEMPLATES: list[TripTemplateDef] = [
 ]
 
 
-def list_templates() -> list[TemplatePublic]:
+def _builtin_templates() -> list[TripTemplateDef]:
+    return TEMPLATES
+
+
+def _db_template_to_def(row: TripTemplate) -> TripTemplateDef:
+    sections = [
+        TemplateSectionSpec.model_validate(s) for s in (row.sections or [])
+    ]
+    return TripTemplateDef(
+        id=row.id,
+        name=row.name,
+        description=row.description or "",
+        duration_days=row.duration_days,
+        city_names=list(row.city_names or []),
+        sections=sections,
+    )
+
+
+def _all_template_defs(db: Session | None = None) -> list[TripTemplateDef]:
+    defs = list(_builtin_templates())
+    if db is None:
+        return defs
+    rows = (
+        db.query(TripTemplate)
+        .filter(TripTemplate.is_active.is_(True))
+        .order_by(TripTemplate.created_at.desc())
+        .all()
+    )
+    builtin_ids = {t.id for t in defs}
+    for row in rows:
+        if row.id not in builtin_ids:
+            defs.append(_db_template_to_def(row))
+    return defs
+
+
+def list_templates(db: Session | None = None) -> list[TemplatePublic]:
     return [
         TemplatePublic(
             id=t.id,
@@ -107,11 +142,15 @@ def list_templates() -> list[TemplatePublic]:
             stop_count=len(t.city_names),
             section_count=len(t.sections),
         )
-        for t in TEMPLATES
+        for t in _all_template_defs(db)
     ]
 
 
-def get_template(template_id: str) -> TripTemplateDef:
+def get_template(template_id: str, db: Session | None = None) -> TripTemplateDef:
+    if db is not None:
+        row = db.query(TripTemplate).filter(TripTemplate.id == template_id).first()
+        if row and row.is_active:
+            return _db_template_to_def(row)
     for t in TEMPLATES:
         if t.id == template_id:
             return t
@@ -139,7 +178,7 @@ def _stop_for_day(stops: list[Stop], day_offset: int, total_days: int) -> Stop:
 
 
 def instantiate_template(db: Session, user: User, template_id: str, payload: TemplateInstantiate) -> Trip:
-    tmpl = get_template(template_id)
+    tmpl = get_template(template_id, db)
     cities = _resolve_cities(db, tmpl.city_names)
     start = payload.start_date
     end = start + timedelta(days=tmpl.duration_days - 1)
