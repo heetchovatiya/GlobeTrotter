@@ -178,6 +178,8 @@ export interface CommunityPost {
     end_date: string;
     cover_photo_url?: string;
     status: TripStatus;
+    public_slug?: string;
+    total_budget?: number;
   };
   likes_count: number;
   is_liked?: boolean;

@@ -1,5 +1,5 @@
 import { create } from 'zustand';
-import { Trip, TripSection, SectionType, City } from '../types';
+import { Trip, TripSection, SectionType, City, Activity, Stop } from '../types';
 import { tripsApi } from '../api/trips';
 import { sectionsApi } from '../api/sections';
 import { stopsApi } from '../api/stops';
@@ -21,7 +21,12 @@ interface TripBuilderState {
 
   loadTrip: (tripId: number | string) => Promise<void>;
   setSelectedCity: (city: City | null) => void;
-  addSection: (type?: SectionType) => void;
+  addStop: (cityId: number) => Promise<void>;
+  updateStop: (stopId: number, updates: Partial<Stop>) => Promise<void>;
+  removeStop: (stopId: number) => Promise<void>;
+  reorderStop: (stopId: number, direction: 'up' | 'down') => Promise<void>;
+  assignActivityToStop: (stopId: number, activity: Activity) => void;
+  addSection: (type?: SectionType, stopId?: number) => void;
   updateSection: (index: number, updates: Partial<SectionDraft>) => void;
   removeSection: (index: number) => Promise<void>;
   saveSectionImmediate: (index: number) => Promise<void>;
@@ -30,6 +35,11 @@ interface TripBuilderState {
 }
 
 let debounceTimer: ReturnType<typeof setTimeout> | null = null;
+let stopDebounceTimer: ReturnType<typeof setTimeout> | null = null;
+
+function sortedStops(stops: Stop[] = []): Stop[] {
+  return [...stops].sort((a, b) => a.order_index - b.order_index);
+}
 
 export const useTripBuilderStore = create<TripBuilderState>((set, get) => ({
   trip: null,
@@ -50,7 +60,7 @@ export const useTripBuilderStore = create<TripBuilderState>((set, get) => ({
       ]);
       const sections = flattenSections(itinerary.days);
       set({
-        trip: { ...trip, stops },
+        trip: { ...trip, stops: sortedStops(stops) },
         sections,
         isLoading: false,
         saveStatus: sections.length > 0 ? 'saved' : 'idle',
@@ -65,21 +75,148 @@ export const useTripBuilderStore = create<TripBuilderState>((set, get) => ({
     set({ selectedCity: city });
   },
 
-  addSection: (type = 'activity') => {
+  addStop: async (cityId) => {
+    const { trip } = get();
+    if (!trip) return;
+
+    const stops = sortedStops(trip.stops);
+    const order_index = stops.length + 1;
+    const defaultStart = trip.start_date;
+    const defaultEnd = trip.end_date;
+
+    set({ saveStatus: 'saving' });
+    try {
+      const created = await stopsApi.createStop(trip.id, {
+        city_id: cityId,
+        arrival_date: defaultStart,
+        departure_date: defaultEnd,
+        order_index,
+      });
+      set({
+        trip: { ...trip, stops: [...stops, created] },
+        saveStatus: 'saved',
+        lastSavedAt: new Date().toLocaleTimeString(),
+      });
+    } catch (err: unknown) {
+      const message = err instanceof Error ? err.message : 'Failed to add stop';
+      set({ saveStatus: 'error', error: message });
+    }
+  },
+
+  updateStop: async (stopId, updates) => {
+    const { trip } = get();
+    if (!trip) return;
+
+    const stops = sortedStops(trip.stops).map((stop) =>
+      stop.id === stopId ? { ...stop, ...updates } : stop
+    );
+    set({ trip: { ...trip, stops }, saveStatus: 'saving' });
+
+    if (stopDebounceTimer) clearTimeout(stopDebounceTimer);
+    stopDebounceTimer = setTimeout(async () => {
+      try {
+        await stopsApi.updateStop(trip.id, stopId, updates);
+        set({
+          saveStatus: 'saved',
+          lastSavedAt: new Date().toLocaleTimeString(),
+        });
+      } catch (err: unknown) {
+        const message = err instanceof Error ? err.message : 'Failed to update stop';
+        set({ saveStatus: 'error', error: message });
+      }
+    }, 800);
+  },
+
+  removeStop: async (stopId) => {
+    const { trip, sections } = get();
+    if (!trip) return;
+
+    const stops = sortedStops(trip.stops).filter((stop) => stop.id !== stopId);
+    set({
+      trip: { ...trip, stops },
+      sections: sections.filter((section) => section.stop_id !== stopId),
+    });
+
+    try {
+      await stopsApi.deleteStop(trip.id, stopId);
+    } catch (err) {
+      console.warn('Failed to delete stop from backend:', err);
+    }
+  },
+
+  reorderStop: async (stopId, direction) => {
+    const { trip } = get();
+    if (!trip?.stops?.length) return;
+
+    const stops = sortedStops(trip.stops);
+    const currentIndex = stops.findIndex((stop) => stop.id === stopId);
+    const targetIndex = direction === 'up' ? currentIndex - 1 : currentIndex + 1;
+    if (currentIndex < 0 || targetIndex < 0 || targetIndex >= stops.length) return;
+
+    const reordered = [...stops];
+    [reordered[currentIndex], reordered[targetIndex]] = [
+      reordered[targetIndex],
+      reordered[currentIndex],
+    ];
+    const normalized = reordered.map((stop, idx) => ({ ...stop, order_index: idx + 1 }));
+
+    set({ trip: { ...trip, stops: normalized }, saveStatus: 'saving' });
+    try {
+      await Promise.all(
+        normalized.map((stop) =>
+          stopsApi.updateStop(trip.id, stop.id, { order_index: stop.order_index })
+        )
+      );
+      set({
+        saveStatus: 'saved',
+        lastSavedAt: new Date().toLocaleTimeString(),
+      });
+    } catch (err: unknown) {
+      const message = err instanceof Error ? err.message : 'Failed to reorder stops';
+      set({ saveStatus: 'error', error: message });
+    }
+  },
+
+  assignActivityToStop: (stopId, activity) => {
     const { sections, trip } = get();
+    const stopSections = sections.filter((section) => section.stop_id === stopId);
+    const nextIndex = stopSections.length + 1;
+    const defaultStart = trip?.start_date || new Date().toISOString().split('T')[0];
+
+    const newSection: SectionDraft = {
+      id: Date.now(),
+      stop_id: stopId,
+      title: `Section ${nextIndex}: ${activity.name}`,
+      type: 'activity',
+      date_range_start: defaultStart,
+      date_range_end: defaultStart,
+      budget: activity.cost || 50,
+      notes: activity.description,
+      order_index: sections.length + 1,
+      isNew: true,
+    };
+
+    set({
+      sections: [...sections, newSection],
+      saveStatus: 'idle',
+    });
+  },
+
+  addSection: (type = 'activity', stopId) => {
+    const { sections, trip } = get();
+    const resolvedStopId = stopId ?? sortedStops(trip?.stops)[0]?.id;
     const nextIndex = sections.length + 1;
     const defaultStart = trip?.start_date || new Date().toISOString().split('T')[0];
     const defaultEnd = trip?.end_date || defaultStart;
-    const stopId = trip?.stops?.[0]?.id;
 
-    if (!trip || !stopId) {
+    if (!trip || !resolvedStopId) {
       set({ error: 'Add a destination stop before creating sections.' });
       return;
     }
 
     const newSection: SectionDraft = {
       id: Date.now(),
-      stop_id: stopId,
+      stop_id: resolvedStopId,
       title: `Section ${nextIndex}: New ${type.charAt(0).toUpperCase() + type.slice(1)} Block`,
       type,
       date_range_start: defaultStart,

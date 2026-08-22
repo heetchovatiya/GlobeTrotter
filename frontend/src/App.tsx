@@ -14,6 +14,7 @@ import { ToastContainer } from './components/common/Toast';
 import { Dashboard } from './pages/Dashboard';
 import { Login } from './pages/Login';
 import { Register } from './pages/Register';
+import { ForgotPassword } from './pages/ForgotPassword';
 import { CreateTrip } from './pages/CreateTrip';
 import { BuildItinerary } from './pages/BuildItinerary';
 import { TripList } from './pages/TripList';
@@ -34,7 +35,10 @@ export function App() {
     window.scrollTo(0, 0);
   }, [location.pathname]);
 
-  const isAuthPage = location.pathname === '/login' || location.pathname === '/register';
+  const isAuthPage =
+    location.pathname === '/login' ||
+    location.pathname === '/register' ||
+    location.pathname === '/forgot-password';
 
   return (
     <div className="min-h-screen flex flex-col bg-slate-50 text-slate-900 font-sans selection:bg-brand-500 selection:text-white">
@@ -51,6 +55,7 @@ export function App() {
           <Route path="/" element={<Dashboard />} />
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
+          <Route path="/forgot-password" element={<ForgotPassword />} />
           <Route path="/search" element={<Search />} />
           <Route path="/community" element={<Community />} />
           <Route path="/calendar" element={<CalendarView />} />

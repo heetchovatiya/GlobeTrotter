@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { useAuthStore } from '../../store/authStore';
 import { Button } from '../common/Button';
+import { CurrencySelector } from '../common/CurrencySelector';
 import {
   Compass,
   MapPin,
@@ -99,6 +100,7 @@ export const Navbar: React.FC = () => {
 
           {/* Right Action buttons */}
           <div className="hidden sm:flex items-center gap-3">
+            <CurrencySelector />
             {isAuthenticated ? (
               <>
                 <Link to="/trips/new">
@@ -255,6 +257,9 @@ export const Navbar: React.FC = () => {
           </div>
 
           <div className="border-t border-slate-100 pt-3 flex flex-col gap-2">
+            <div className="px-3 py-1">
+              <CurrencySelector />
+            </div>
             {isAuthenticated ? (
               <>
                 <Link

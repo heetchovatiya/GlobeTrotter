@@ -94,6 +94,16 @@ type BackendCommunityPost = {
     content: string;
     created_at: string;
   }[];
+  trip?: {
+    id: number;
+    name: string;
+    start_date: string;
+    end_date: string;
+    cover_photo_url?: string | null;
+    status: TripStatus;
+    public_slug?: string | null;
+    total_budget?: number | null;
+  } | null;
 };
 
 export function mapCity(raw: Partial<City>): City {
@@ -287,15 +297,20 @@ export function mapCommunityPost(
     created_at: comment.created_at,
     user: displayUser(comment.user_id, knownUsers),
   }));
-  return {
-    id: raw.id,
-    user_id: raw.user_id,
-    trip_id: raw.trip_id ?? undefined,
-    content: raw.content,
-    image_url: raw.image_url ?? undefined,
-    created_at: raw.created_at,
-    user: displayUser(raw.user_id, knownUsers),
-    trip: linkedTrip
+
+  const tripFromApi = raw.trip;
+  const tripSummary = tripFromApi
+    ? {
+        id: tripFromApi.id,
+        name: tripFromApi.name,
+        start_date: tripFromApi.start_date,
+        end_date: tripFromApi.end_date,
+        cover_photo_url: tripFromApi.cover_photo_url ?? undefined,
+        status: tripFromApi.status,
+        public_slug: tripFromApi.public_slug ?? undefined,
+        total_budget: tripFromApi.total_budget != null ? Number(tripFromApi.total_budget) : undefined,
+      }
+    : linkedTrip
       ? {
           id: linkedTrip.id,
           name: linkedTrip.name,
@@ -304,17 +319,27 @@ export function mapCommunityPost(
           cover_photo_url: linkedTrip.cover_photo_url,
           status: linkedTrip.status,
         }
-      : undefined,
+      : undefined;
+
+  return {
+    id: raw.id,
+    user_id: raw.user_id,
+    trip_id: raw.trip_id ?? undefined,
+    content: raw.content,
+    image_url: raw.image_url ?? undefined,
+    created_at: raw.created_at,
+    user: displayUser(raw.user_id, knownUsers),
+    trip: tripSummary,
     likes_count: raw.comment_count ?? comments.length,
     is_liked: false,
     comments,
   };
 }
 
-export function mapAdminUser(raw: User & { is_suspended?: boolean }): AdminUser {
+export function mapAdminUser(raw: User & { is_suspended?: boolean; trips_count?: number }): AdminUser {
   return {
     ...mapUser(raw),
-    trips_count: 0,
+    trips_count: raw.trips_count ?? 0,
     is_active: !raw.is_suspended,
   };
 }
@@ -325,6 +350,8 @@ export function mapAdminAnalytics(
     active_users: number;
     total_trips: number;
     total_users: number;
+    total_spend?: number;
+    total_destinations?: number;
   },
   cities: { city_id: number; name: string; country: string; trip_count: number }[],
   activities: { activity_id: number; name: string; city_id: number; booking_count: number }[]
@@ -333,8 +360,8 @@ export function mapAdminAnalytics(
     total_users: trends.total_users,
     active_users: trends.active_users,
     total_trips: trends.total_trips,
-    total_destinations: cities.length,
-    total_spend: 0,
+    total_destinations: trends.total_destinations ?? cities.length,
+    total_spend: trends.total_spend ?? 0,
     popular_cities: cities.map((city) => ({
       id: city.city_id,
       name: city.name,

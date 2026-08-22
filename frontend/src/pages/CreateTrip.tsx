@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { City, Activity } from '../types';
 import { citiesApi } from '../api/cities';
@@ -6,26 +6,27 @@ import { activitiesApi } from '../api/activities';
 import { tripsApi } from '../api/trips';
 import { stopsApi } from '../api/stops';
 import { sectionsApi } from '../api/sections';
+import { uploadsApi } from '../api/uploads';
 import { Button } from '../components/common/Button';
 import { Input } from '../components/common/Input';
 import { ActivityCard } from '../components/search/ActivityCard';
 import { useUIStore } from '../store/uiStore';
-import { Calendar, MapPin, Sparkles, ArrowRight, Image as ImageIcon } from 'lucide-react';
+import { validateTripDates, isValidHttpUrl } from '../utils/validation';
+import { Calendar, MapPin, Sparkles, ArrowRight, Image as ImageIcon, Upload, X } from 'lucide-react';
 
 export const CreateTrip: React.FC = () => {
   const navigate = useNavigate();
   const { showToast } = useUIStore();
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
-  const [name, setName] = useState('Autumn Japanese Splendor & Alps');
-  const [selectedCityId, setSelectedCityId] = useState<number>(1);
-  const [startDate, setStartDate] = useState('2026-09-10');
-  const [endDate, setEndDate] = useState('2026-09-22');
-  const [description, setDescription] = useState(
-    'A multi-country adventure exploring historic Kyoto shrines and Swiss mountain summits.'
-  );
-  const [coverPhotoUrl, setCoverPhotoUrl] = useState(
-    'https://images.unsplash.com/photo-1493976040374-85c8e12f0c0e?w=1200&auto=format&fit=crop&q=80'
-  );
+  const [name, setName] = useState('');
+  const [selectedCityId, setSelectedCityId] = useState<number>(0);
+  const [startDate, setStartDate] = useState('');
+  const [endDate, setEndDate] = useState('');
+  const [description, setDescription] = useState('');
+  const [coverPhotoUrl, setCoverPhotoUrl] = useState('');
+  const [coverPreview, setCoverPreview] = useState<string | null>(null);
+  const [coverFile, setCoverFile] = useState<File | null>(null);
 
   const [cities, setCities] = useState<City[]>([]);
   const [suggestedActivities, setSuggestedActivities] = useState<Activity[]>([]);
@@ -33,33 +34,70 @@ export const CreateTrip: React.FC = () => {
   const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
-    const loadCitiesAndSuggestions = async () => {
+    const loadCities = async () => {
       try {
         const cityList = await citiesApi.getCities();
         setCities(cityList);
         if (cityList.length > 0) {
-          const acts = await activitiesApi.getActivities({ city_id: selectedCityId });
+          const initialCityId = selectedCityId || cityList[0].id;
+          setSelectedCityId(initialCityId);
+          const acts = await activitiesApi.getActivities({ city_id: initialCityId });
           setSuggestedActivities(acts);
         }
       } catch (err) {
         console.error('Failed to load initial cities:', err);
       }
     };
-    loadCitiesAndSuggestions();
+    loadCities();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  useEffect(() => {
+    if (!selectedCityId) return;
+    const loadActivities = async () => {
+      try {
+        const acts = await activitiesApi.getActivities({ city_id: selectedCityId });
+        setSuggestedActivities(acts);
+      } catch (err) {
+        console.error('Failed to load city activities:', err);
+      }
+    };
+    loadActivities();
   }, [selectedCityId]);
 
-  const handleCityChange = async (cityId: number) => {
+  const handleCityChange = (cityId: number) => {
     setSelectedCityId(cityId);
     const chosenCity = cities.find((c) => c.id === cityId);
-    if (chosenCity) {
+    if (chosenCity && !coverFile) {
       setCoverPhotoUrl(chosenCity.image_url);
+      setCoverPreview(chosenCity.image_url);
     }
-    try {
-      const acts = await activitiesApi.getActivities({ city_id: cityId });
-      setSuggestedActivities(acts);
-    } catch (err) {
-      console.error('Failed to load city activities:', err);
+    setSelectedActivityIds([]);
+  };
+
+  const handleCoverFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    if (!file.type.startsWith('image/')) {
+      showToast('error', 'Please choose an image file.');
+      return;
     }
+    if (file.size > 5 * 1024 * 1024) {
+      showToast('error', 'Cover photo must be 5 MB or smaller.');
+      return;
+    }
+
+    setCoverFile(file);
+    setCoverPhotoUrl('');
+    setCoverPreview(URL.createObjectURL(file));
+  };
+
+  const clearCoverPhoto = () => {
+    setCoverFile(null);
+    setCoverPhotoUrl('');
+    setCoverPreview(null);
+    if (fileInputRef.current) fileInputRef.current.value = '';
   };
 
   const toggleActivitySelection = (activity: Activity) => {
@@ -71,23 +109,41 @@ export const CreateTrip: React.FC = () => {
   const handleCreateTrip = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!name.trim()) {
-      showToast('error', 'Please provide a trip title.');
+      showToast('error', 'Please provide a trip name.');
+      return;
+    }
+
+    const dateError = validateTripDates(startDate, endDate);
+    if (dateError) {
+      showToast('error', dateError);
+      return;
+    }
+
+    if (coverPhotoUrl && !coverFile && !isValidHttpUrl(coverPhotoUrl)) {
+      showToast('error', 'Cover photo URL must be a valid http or https link.');
+      return;
+    }
+
+    if (!selectedCityId) {
+      showToast('error', 'Please select a destination city.');
       return;
     }
 
     setIsLoading(true);
     try {
-      // 1. Create Trip
+      let resolvedCoverUrl = coverPhotoUrl.trim() || undefined;
+      if (coverFile) {
+        resolvedCoverUrl = await uploadsApi.uploadCoverPhoto(coverFile);
+      }
+
       const createdTrip = await tripsApi.createTrip({
-        name,
+        name: name.trim(),
         start_date: startDate,
         end_date: endDate,
-        description,
-        cover_photo_url: coverPhotoUrl,
-        is_public: true,
+        description: description.trim() || undefined,
+        cover_photo_url: resolvedCoverUrl,
       });
 
-      // 2. Create Stop for initial destination city
       const stop = await stopsApi.createStop(createdTrip.id, {
         city_id: selectedCityId,
         arrival_date: startDate,
@@ -95,14 +151,13 @@ export const CreateTrip: React.FC = () => {
         order_index: 1,
       });
 
-      // 3. Create initial itinerary sections based on selected activities
       if (selectedActivityIds.length > 0) {
         const selectedActs = suggestedActivities.filter((a) => selectedActivityIds.includes(a.id));
         for (let i = 0; i < selectedActs.length; i++) {
           const act = selectedActs[i];
           await sectionsApi.createSection(createdTrip.id, stop.id, {
             title: `Section ${i + 1}: ${act.name}`,
-            type: act.type === 'adventure' ? 'activity' : act.type === 'food' ? 'activity' : 'activity',
+            type: 'activity',
             date_range_start: startDate,
             date_range_end: startDate,
             budget: act.cost || 50,
@@ -111,7 +166,6 @@ export const CreateTrip: React.FC = () => {
           });
         }
       } else {
-        // Default seed section
         await sectionsApi.createSection(createdTrip.id, stop.id, {
           title: 'Section 1: Inbound Arrival & Welcome Tour',
           type: 'travel',
@@ -123,11 +177,11 @@ export const CreateTrip: React.FC = () => {
         });
       }
 
-      showToast('success', 'Trip created! Proceeding to build itinerary sections.');
-      // Flow 1: Redirect immediately to /trips/:id/build
+      showToast('success', 'Trip saved! Opening itinerary builder.');
       navigate(`/trips/${createdTrip.id}/build`);
-    } catch (err: any) {
-      showToast('error', err.message || 'Failed to create trip.');
+    } catch (err: unknown) {
+      const message = err instanceof Error ? err.message : 'Failed to create trip.';
+      showToast('error', message);
     } finally {
       setIsLoading(false);
     }
@@ -135,30 +189,27 @@ export const CreateTrip: React.FC = () => {
 
   return (
     <div className="max-w-5xl mx-auto space-y-8 pb-16">
-      {/* Header */}
       <div>
         <h1 className="text-2xl sm:text-3xl font-extrabold text-slate-900 tracking-tight">
           Create a New Trip
         </h1>
         <p className="text-sm text-slate-500 mt-1">
-          Specify your destination, trip duration, and pre-select must-see activities to seed your itinerary sections.
+          Provide trip details to begin building your personalized travel plan.
         </p>
       </div>
 
       <form onSubmit={handleCreateTrip} className="space-y-8">
-        {/* Main Details Card */}
         <div className="rounded-3xl bg-white border border-slate-200/80 p-6 sm:p-8 shadow-soft space-y-6">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div className="space-y-4">
               <Input
-                label="Trip Title"
+                label="Trip Name"
                 required
                 value={name}
                 onChange={(e) => setName(e.target.value)}
-                placeholder="e.g. Summer in Southern Italy, Tokyo to Kyoto"
+                placeholder="e.g. Summer in Southern Italy"
               />
 
-              {/* Destination selector */}
               <div className="space-y-1.5">
                 <label className="block text-xs font-semibold text-slate-700 uppercase tracking-wider">
                   Primary Destination / City
@@ -179,7 +230,6 @@ export const CreateTrip: React.FC = () => {
                 </div>
               </div>
 
-              {/* Dates */}
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <Input
                   label="Start Date"
@@ -195,16 +245,16 @@ export const CreateTrip: React.FC = () => {
                   required
                   leftIcon={<Calendar className="h-4 w-4" />}
                   value={endDate}
+                  min={startDate || undefined}
                   onChange={(e) => setEndDate(e.target.value)}
                 />
               </div>
             </div>
 
-            {/* Description & Cover */}
-            <div className="space-y-4 flex flex-col justify-between">
+            <div className="space-y-4 flex flex-col">
               <div>
                 <label className="block text-xs font-semibold text-slate-700 uppercase tracking-wider mb-1.5">
-                  Trip Description / Objectives
+                  Trip Description
                 </label>
                 <textarea
                   rows={3}
@@ -215,20 +265,60 @@ export const CreateTrip: React.FC = () => {
                 />
               </div>
 
-              <div className="space-y-1.5">
-                <Input
-                  label="Cover Photo URL"
-                  leftIcon={<ImageIcon className="h-4 w-4" />}
-                  value={coverPhotoUrl}
-                  onChange={(e) => setCoverPhotoUrl(e.target.value)}
-                  placeholder="https://..."
+              <div className="space-y-2">
+                <label className="block text-xs font-semibold text-slate-700 uppercase tracking-wider">
+                  Cover Photo <span className="font-normal normal-case text-slate-400">(optional)</span>
+                </label>
+
+                {coverPreview ? (
+                  <div className="relative rounded-xl overflow-hidden border border-slate-200">
+                    <img src={coverPreview} alt="Cover preview" className="h-36 w-full object-cover" />
+                    <button
+                      type="button"
+                      onClick={clearCoverPhoto}
+                      className="absolute top-2 right-2 p-1.5 rounded-lg bg-white/90 text-slate-600 hover:text-rose-600 shadow-sm"
+                      aria-label="Remove cover photo"
+                    >
+                      <X className="h-4 w-4" />
+                    </button>
+                  </div>
+                ) : (
+                  <button
+                    type="button"
+                    onClick={() => fileInputRef.current?.click()}
+                    className="flex w-full flex-col items-center justify-center gap-2 rounded-xl border-2 border-dashed border-slate-300 bg-slate-50 px-4 py-8 text-sm text-slate-500 hover:border-brand-400 hover:bg-brand-50/40 transition-colors"
+                  >
+                    <Upload className="h-6 w-6 text-slate-400" />
+                    <span className="font-semibold">Upload cover photo</span>
+                    <span className="text-xs">JPEG, PNG, WebP, or GIF up to 5 MB</span>
+                  </button>
+                )}
+
+                <input
+                  ref={fileInputRef}
+                  type="file"
+                  accept="image/jpeg,image/png,image/webp,image/gif"
+                  className="hidden"
+                  onChange={handleCoverFileChange}
                 />
+
+                {!coverFile && (
+                  <Input
+                    label="Or paste image URL"
+                    leftIcon={<ImageIcon className="h-4 w-4" />}
+                    value={coverPhotoUrl}
+                    onChange={(e) => {
+                      setCoverPhotoUrl(e.target.value);
+                      setCoverPreview(e.target.value || null);
+                    }}
+                    placeholder="https://..."
+                  />
+                )}
               </div>
             </div>
           </div>
         </div>
 
-        {/* Suggested Activities Pattern Grid (from Wireframe Screen 4) */}
         <div className="space-y-4">
           <div className="flex items-center justify-between">
             <div>
@@ -257,13 +347,8 @@ export const CreateTrip: React.FC = () => {
           </div>
         </div>
 
-        {/* Continue Action */}
         <div className="flex items-center justify-end gap-4 pt-4 border-t border-slate-200">
-          <Button
-            type="button"
-            variant="ghost"
-            onClick={() => navigate('/trips')}
-          >
+          <Button type="button" variant="ghost" onClick={() => navigate('/trips')}>
             Cancel
           </Button>
 
@@ -275,11 +360,10 @@ export const CreateTrip: React.FC = () => {
             rightIcon={<ArrowRight className="h-4 w-4" />}
             className="shadow-md shadow-brand-500/25"
           >
-            Save & Build Itinerary
+            Save
           </Button>
         </div>
       </form>
     </div>
   );
 };
-

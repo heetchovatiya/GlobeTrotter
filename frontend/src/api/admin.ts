@@ -10,6 +10,8 @@ export const adminApi = {
         active_users: number;
         total_trips: number;
         total_users: number;
+        total_spend: number;
+        total_destinations: number;
       }>('/admin/analytics/trends', { method: 'GET' }),
       apiClient<
         { city_id: number; name: string; country: string; trip_count: number }[]
@@ -22,9 +24,10 @@ export const adminApi = {
   },
 
   async getUsers(): Promise<AdminUser[]> {
-    const users = await apiClient<(User & { is_suspended?: boolean })[]>('/admin/users', {
-      method: 'GET',
-    });
+    const users = await apiClient<(User & { is_suspended?: boolean; trips_count?: number })[]>(
+      '/admin/users',
+      { method: 'GET' }
+    );
     return users.map(mapAdminUser);
   },
 

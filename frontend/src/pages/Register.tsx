@@ -4,6 +4,7 @@ import { useAuthStore } from '../store/authStore';
 import { useUIStore } from '../store/uiStore';
 import { Button } from '../components/common/Button';
 import { Input } from '../components/common/Input';
+import { validateRegister } from '../utils/validation';
 import { Compass, Mail, Lock, User, Phone, MapPin, ArrowRight } from 'lucide-react';
 
 export const Register: React.FC = () => {
@@ -21,12 +22,27 @@ export const Register: React.FC = () => {
     country: '',
   });
 
+  const [fieldError, setFieldError] = useState<string | null>(null);
+
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
+    if (fieldError) setFieldError(null);
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    const validationError = validateRegister({
+      firstName: formData.firstName,
+      lastName: formData.lastName,
+      email: formData.email,
+      password: formData.password,
+    });
+    if (validationError) {
+      setFieldError(validationError);
+      return;
+    }
+    setFieldError(null);
+
     const success = await register({
       name: `${formData.firstName} ${formData.lastName}`.trim(),
       email: formData.email,
@@ -124,7 +140,23 @@ export const Register: React.FC = () => {
             leftIcon={<Lock className="h-4 w-4" />}
             value={formData.password}
             onChange={handleChange}
+            hint="At least 8 characters"
+            error={
+              fieldError && (fieldError.includes('Password') || fieldError.includes('password'))
+                ? fieldError
+                : undefined
+            }
           />
+
+          {fieldError &&
+            !fieldError.includes('Password') &&
+            !fieldError.includes('password') &&
+            !fieldError.includes('name') &&
+            !fieldError.includes('Email') && (
+              <div className="p-3 rounded-xl bg-rose-50 border border-rose-200 text-xs font-semibold text-rose-700">
+                {fieldError}
+              </div>
+            )}
 
           {error && (
             <div className="p-3 rounded-xl bg-rose-50 border border-rose-200 text-xs font-semibold text-rose-700">

@@ -5,7 +5,12 @@ from app.core.database import get_db
 from app.core.deps import get_current_user
 from app.crud import community as community_crud
 from app.models import User
-from app.schemas.community import CommunityCommentCreate, CommunityPostCreate, CommunityPostPublic
+from app.schemas.community import (
+    CommunityCommentCreate,
+    CommunityPostCreate,
+    CommunityPostPublic,
+    ShareItineraryRequest,
+)
 
 router = APIRouter()
 
@@ -26,6 +31,19 @@ def create_post(
     current_user: User = Depends(get_current_user),
 ) -> CommunityPostPublic:
     return community_crud.create_post(db, current_user, payload)
+
+
+@router.post(
+    "/share-itinerary",
+    response_model=CommunityPostPublic,
+    status_code=status.HTTP_201_CREATED,
+)
+def share_itinerary(
+    payload: ShareItineraryRequest,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user),
+) -> CommunityPostPublic:
+    return community_crud.share_itinerary(db, current_user, payload)
 
 
 @router.post(

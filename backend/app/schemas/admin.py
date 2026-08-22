@@ -8,6 +8,8 @@ from app.schemas.auth import UserPublic
 class AdminUserPublic(UserPublic):
     model_config = ConfigDict(from_attributes=True)
 
+    trips_count: int = 0
+
 
 class SuspendRequest(BaseModel):
     suspended: bool = True
@@ -37,3 +39,5 @@ class TrendsResponse(BaseModel):
     active_users: int
     total_trips: int
     total_users: int
+    total_spend: float = 0
+    total_destinations: int = 0

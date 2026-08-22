@@ -4,7 +4,7 @@ from sqlalchemy.orm import Session
 from app.core.database import get_db
 from app.core.security import create_access_token
 from app.crud import users as users_crud
-from app.schemas.auth import AuthResponse, LoginRequest, RegisterRequest, UserPublic
+from app.schemas.auth import AuthResponse, ForgotPasswordRequest, LoginRequest, MessageResponse, RegisterRequest, UserPublic
 
 router = APIRouter()
 
@@ -38,3 +38,12 @@ def login(payload: LoginRequest, db: Session = Depends(get_db)) -> AuthResponse:
         extra_claims={"role": user.role.value},
     )
     return AuthResponse(access_token=token, user=UserPublic.model_validate(user))
+
+
+@router.post("/forgot-password", response_model=MessageResponse)
+def forgot_password(payload: ForgotPasswordRequest, db: Session = Depends(get_db)) -> MessageResponse:
+    # Stub: always return success to avoid email enumeration.
+    _ = users_crud.get_user_by_email(db, str(payload.email).lower())
+    return MessageResponse(
+        message="If an account exists for this email, password reset instructions have been sent."
+    )

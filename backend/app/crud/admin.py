@@ -3,7 +3,7 @@ from datetime import date
 from sqlalchemy import cast, Date, func
 from sqlalchemy.orm import Session
 
-from app.models import Activity, City, Stop, Trip, TripActivity, User
+from app.models import Activity, City, Expense, Stop, Trip, TripActivity, User
 from app.schemas.admin import (
     ActivityAnalyticsItem,
     CityAnalyticsItem,
@@ -79,9 +79,13 @@ def analytics_trends(db: Session) -> TrendsResponse:
     active_users = db.query(func.count(func.distinct(Trip.user_id))).scalar() or 0
     total_trips = db.query(func.count(Trip.id)).scalar() or 0
     total_users = db.query(func.count(User.id)).scalar() or 0
+    total_spend = float(db.query(func.coalesce(func.sum(Expense.amount), 0)).scalar() or 0)
+    total_destinations = db.query(func.count(City.id)).scalar() or 0
     return TrendsResponse(
         trips_over_time=trips_over_time,
         active_users=int(active_users),
         total_trips=int(total_trips),
         total_users=int(total_users),
+        total_spend=total_spend,
+        total_destinations=int(total_destinations),
     )

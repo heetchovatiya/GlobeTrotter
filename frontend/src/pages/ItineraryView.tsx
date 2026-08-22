@@ -1,13 +1,15 @@
 import React, { useEffect, useState } from 'react';
-import { useParams, Link } from 'react-router-dom';
+import { useParams, Link, useNavigate } from 'react-router-dom';
 import { ItineraryResponse } from '../types';
 import { itineraryApi } from '../api/itinerary';
 import { sharingApi } from '../api/sharing';
+import { communityApi } from '../api/community';
 import { BudgetOverview } from '../components/budget/BudgetOverview';
 import { Button } from '../components/common/Button';
 import { Badge } from '../components/common/Badge';
 import { Modal } from '../components/common/Modal';
 import { Skeleton } from '../components/common/Skeleton';
+import { Price } from '../components/common/Price';
 import { useUIStore } from '../store/uiStore';
 import {
   Calendar,
@@ -15,19 +17,19 @@ import {
   Edit3,
   MapPin,
   Clock,
-  DollarSign,
   Plus,
   ChevronDown,
   ChevronUp,
   Plane,
   Home,
   Compass,
-  CheckCircle2,
-  Sparkles,
+  Users,
+  IndianRupee,
 } from 'lucide-react';
 
 export const ItineraryView: React.FC = () => {
   const { id } = useParams<{ id: string }>();
+  const navigate = useNavigate();
   const { showToast } = useUIStore();
 
   const [itinerary, setItinerary] = useState<ItineraryResponse | null>(null);
@@ -65,6 +67,16 @@ export const ItineraryView: React.FC = () => {
       setIsShareModalOpen(true);
     } catch {
       showToast('error', 'Could not generate share link.');
+    }
+  };
+
+  const handleShareToCommunity = async () => {
+    try {
+      await communityApi.shareItinerary({ trip_id: Number(id) });
+      showToast('success', 'Itinerary published to community!');
+      navigate('/community');
+    } catch {
+      showToast('error', 'Could not share to community. Are you signed in?');
     }
   };
 
@@ -109,10 +121,18 @@ export const ItineraryView: React.FC = () => {
               <Button
                 variant="glass"
                 size="sm"
+                onClick={handleShareToCommunity}
+                leftIcon={<Users className="h-4 w-4" />}
+              >
+                Share to Community
+              </Button>
+              <Button
+                variant="glass"
+                size="sm"
                 onClick={handleShareTrip}
                 leftIcon={<Share2 className="h-4 w-4" />}
               >
-                Share Trip
+                Copy Link
               </Button>
               <Link to={`/trips/${trip.id}/build`}>
                 <Button
@@ -145,8 +165,8 @@ export const ItineraryView: React.FC = () => {
               {trip.start_date} – {trip.end_date}
             </span>
             <span className="flex items-center gap-1.5">
-              <DollarSign className="h-4 w-4 text-emerald-400" />
-              Budget: ${budget.total_budget.toLocaleString()} (${budget.total_spent} spent)
+              Budget: <Price amount={budget.total_budget} /> (
+              <Price amount={budget.total_spent} /> spent)
             </span>
             <span>{days.length} Itinerary Days</span>
           </div>
@@ -176,7 +196,7 @@ export const ItineraryView: React.FC = () => {
                 : 'text-slate-600 hover:bg-slate-100'
             }`}
           >
-            <DollarSign className="h-4 w-4" />
+            <IndianRupee className="h-4 w-4" />
             <span>Budget & Expense Analytics</span>
           </button>
         </div>
@@ -229,7 +249,7 @@ export const ItineraryView: React.FC = () => {
 
                   <div className="flex items-center gap-4">
                     <span className="text-xs font-bold text-emerald-600 bg-emerald-50 px-2.5 py-1 rounded-full">
-                      ${day.total_cost}
+                      <Price amount={day.total_cost} />
                     </span>
                     {isExpanded ? (
                       <ChevronUp className="h-5 w-5 text-slate-400" />
@@ -255,7 +275,7 @@ export const ItineraryView: React.FC = () => {
                             <h4 className="text-sm font-bold text-slate-900">{section.title}</h4>
                           </div>
                           <span className="text-xs font-bold text-slate-700">
-                            ${section.budget}
+                            <Price amount={section.budget} />
                           </span>
                         </div>
 
@@ -287,7 +307,7 @@ export const ItineraryView: React.FC = () => {
                                   </span>
                                 </div>
                                 <span className="font-medium text-slate-500">
-                                  ${act.cost_override ?? act.activity?.cost ?? 0}
+                                  <Price amount={act.cost_override ?? act.activity?.cost ?? 0} />
                                 </span>
                               </div>
                             ))}

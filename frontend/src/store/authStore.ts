@@ -14,6 +14,7 @@ interface AuthState {
   register: (userData: Parameters<typeof authApi.register>[0]) => Promise<boolean>;
   logout: () => void;
   updateProfile: (data: Partial<User>) => Promise<void>;
+  deleteAccount: () => Promise<void>;
   checkAuth: () => Promise<void>;
 }
 
@@ -81,7 +82,20 @@ export const useAuthStore = create<AuthState>((set) => ({
     } catch (err: unknown) {
       const message = err instanceof Error ? err.message : 'Profile update failed';
       set({ error: message });
+      throw err;
     }
+  },
+
+  deleteAccount: async () => {
+    await authApi.deleteAccount();
+    authApi.logout();
+    set({
+      user: null,
+      token: null,
+      isAuthenticated: false,
+      isAdmin: false,
+      error: null,
+    });
   },
 
   checkAuth: async () => {
@@ -100,6 +114,13 @@ export const useAuthStore = create<AuthState>((set) => ({
         isAdmin: user.role === 'admin',
         isLoading: false,
       });
+      if (
+        !localStorage.getItem('globetrotter_currency') &&
+        user.country?.toLowerCase() === 'india'
+      ) {
+        const { useCurrencyStore } = await import('./currencyStore');
+        useCurrencyStore.getState().setCurrency('INR');
+      }
     } catch {
       setAuthToken(null);
       set({

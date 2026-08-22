@@ -5,7 +5,7 @@ from app.core.database import get_db
 from app.core.deps import require_role
 from app.crud import admin as admin_crud
 from app.crud import users as users_crud
-from app.models import User
+from app.models import User, Trip
 from app.schemas.admin import (
     ActivityAnalyticsItem,
     AdminUserPublic,
@@ -19,7 +19,14 @@ router = APIRouter(dependencies=[Depends(require_role("admin"))])
 
 @router.get("/users", response_model=list[AdminUserPublic])
 def list_users(db: Session = Depends(get_db)) -> list[AdminUserPublic]:
-    return [AdminUserPublic.model_validate(user) for user in users_crud.list_users(db)]
+    users = users_crud.list_users(db)
+    result: list[AdminUserPublic] = []
+    for user in users:
+        trips_count = db.query(Trip).filter(Trip.user_id == user.id).count()
+        result.append(
+            AdminUserPublic.model_validate(user).model_copy(update={"trips_count": trips_count})
+        )
+    return result
 
 
 @router.post("/users/{user_id}/suspend", response_model=AdminUserPublic)

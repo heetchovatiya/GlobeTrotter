@@ -2,17 +2,25 @@ from collections import defaultdict
 from datetime import date
 from decimal import Decimal
 
+from fastapi import HTTPException, status
 from sqlalchemy import func
 from sqlalchemy.orm import Session, selectinload
 
-from app.crud.itinerary import get_owned_trip_tree
+from app.crud.itinerary import get_owned_trip_tree, get_trip_tree_by_id
 from app.crud.trips import get_owned_trip
-from app.models import Expense, User
+from app.models import Expense, Trip, User
 from app.schemas.views import BudgetResponse, CategoryTotal, DayBudget
 
 
 def get_budget_for_owned_trip(db: Session, trip_id: int, user: User) -> BudgetResponse:
     trip = get_owned_trip(db, trip_id, user)
+    return get_budget_for_trip(db, trip.id)
+
+
+def get_budget_for_trip(db: Session, trip_id: int) -> BudgetResponse:
+    trip = db.query(Trip).filter(Trip.id == trip_id).first()
+    if trip is None:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Trip not found")
 
     category_rows = (
         db.query(Expense.category, func.coalesce(func.sum(Expense.amount), 0))
@@ -25,7 +33,7 @@ def get_budget_for_owned_trip(db: Session, trip_id: int, user: User) -> BudgetRe
         for category, total in category_rows
     ]
 
-    trip_tree = get_owned_trip_tree(db, trip.id, user)
+    trip_tree = get_trip_tree_by_id(db, trip.id)
     estimated_by_day: dict[date, Decimal] = defaultdict(lambda: Decimal("0"))
     for stop in trip_tree.stops:
         for section in stop.sections:

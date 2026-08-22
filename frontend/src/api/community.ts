@@ -1,21 +1,33 @@
 import { apiClient } from './client';
 import { mapCommunityPost } from './mappers';
-import { CommunityComment, CommunityPost, User } from '../types';
+import { CommunityComment, CommunityPost, TripStatus, User } from '../types';
+
+type BackendPost = {
+  id: number;
+  user_id: number;
+  trip_id?: number | null;
+  content: string;
+  image_url?: string | null;
+  created_at: string;
+  comment_count?: number;
+  comments?: CommunityComment[];
+  trip?: {
+    id: number;
+    name: string;
+    start_date: string;
+    end_date: string;
+    cover_photo_url?: string | null;
+    status: TripStatus;
+    public_slug?: string | null;
+    total_budget?: number | null;
+  } | null;
+};
 
 export const communityApi = {
   async getPosts(sort: 'recent' | 'popular' = 'recent'): Promise<CommunityPost[]> {
-    const posts = await apiClient<
-      {
-        id: number;
-        user_id: number;
-        trip_id?: number | null;
-        content: string;
-        image_url?: string | null;
-        created_at: string;
-        comment_count?: number;
-        comments?: CommunityComment[];
-      }[]
-    >(`/community/posts?sort=${sort}`, { method: 'GET' });
+    const posts = await apiClient<BackendPost[]>(`/community/posts?sort=${sort}`, {
+      method: 'GET',
+    });
     return posts.map((post) => mapCommunityPost(post));
   },
 
@@ -24,16 +36,19 @@ export const communityApi = {
     image_url?: string;
     trip_id?: number;
   }): Promise<CommunityPost> {
-    const post = await apiClient<{
-      id: number;
-      user_id: number;
-      trip_id?: number | null;
-      content: string;
-      image_url?: string | null;
-      created_at: string;
-      comment_count?: number;
-      comments?: CommunityComment[];
-    }>('/community/posts', {
+    const post = await apiClient<BackendPost>('/community/posts', {
+      method: 'POST',
+      body: JSON.stringify(data),
+    });
+    return mapCommunityPost(post);
+  },
+
+  async shareItinerary(data: {
+    trip_id: number;
+    content?: string;
+    image_url?: string;
+  }): Promise<CommunityPost> {
+    const post = await apiClient<BackendPost>('/community/share-itinerary', {
       method: 'POST',
       body: JSON.stringify(data),
     });
@@ -41,16 +56,7 @@ export const communityApi = {
   },
 
   async addComment(postId: number, content: string): Promise<CommunityPost> {
-    const post = await apiClient<{
-      id: number;
-      user_id: number;
-      trip_id?: number | null;
-      content: string;
-      image_url?: string | null;
-      created_at: string;
-      comment_count?: number;
-      comments?: CommunityComment[];
-    }>(`/community/posts/${postId}/comments`, {
+    const post = await apiClient<BackendPost>(`/community/posts/${postId}/comments`, {
       method: 'POST',
       body: JSON.stringify({ content }),
     });

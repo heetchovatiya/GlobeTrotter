@@ -8,6 +8,7 @@ export const activitiesApi = {
     city_id?: number;
     type?: ActivityType;
     max_cost?: number;
+    max_duration_mins?: number;
     sort?: string;
     limit?: number;
   }): Promise<Activity[]> {
@@ -16,6 +17,9 @@ export const activitiesApi = {
     if (params?.city_id) query.append('city_id', String(params.city_id));
     if (params?.type) query.append('type', params.type);
     if (params?.max_cost !== undefined) query.append('max_cost', String(params.max_cost));
+    if (params?.max_duration_mins !== undefined) {
+      query.append('max_duration_mins', String(params.max_duration_mins));
+    }
     if (params?.sort) query.append('sort', params.sort);
     if (params?.limit) query.append('limit', String(params.limit));
     const queryString = query.toString() ? `?${query.toString()}` : '';

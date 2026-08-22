@@ -4,6 +4,7 @@ import { useAuthStore } from '../store/authStore';
 import { useUIStore } from '../store/uiStore';
 import { Button } from '../components/common/Button';
 import { Input } from '../components/common/Input';
+import { validateLogin } from '../utils/validation';
 import { Compass, Lock, Mail, ArrowRight, Sparkles } from 'lucide-react';
 
 export const Login: React.FC = () => {
@@ -14,12 +15,20 @@ export const Login: React.FC = () => {
 
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [fieldError, setFieldError] = useState<string | null>(null);
 
-  const from = (location.state as any)?.from?.pathname || '/';
+  const from = (location.state as { from?: { pathname: string } })?.from?.pathname || '/';
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    const success = await login(email, password);
+    const validationError = validateLogin(email, password);
+    if (validationError) {
+      setFieldError(validationError);
+      return;
+    }
+    setFieldError(null);
+
+    const success = await login(email.trim(), password);
     if (success) {
       showToast('success', 'Welcome back to GlobeTrotter!');
       navigate(from, { replace: true });
@@ -34,12 +43,12 @@ export const Login: React.FC = () => {
       setEmail('');
       setPassword('');
     }
+    setFieldError(null);
   };
 
   return (
     <div className="min-h-[calc(100vh-5rem)] flex items-center justify-center px-4 py-12 bg-gradient-to-b from-brand-50/50 via-slate-50 to-slate-100">
       <div className="max-w-md w-full space-y-8 bg-white p-8 sm:p-10 rounded-3xl shadow-card border border-slate-100 animate-fade-in">
-        {/* Header */}
         <div className="text-center space-y-2">
           <div className="inline-flex h-14 w-14 rounded-2xl bg-gradient-to-tr from-brand-700 to-brand-500 items-center justify-center text-white shadow-lg shadow-brand-500/30">
             <Compass className="h-8 w-8" />
@@ -52,7 +61,6 @@ export const Login: React.FC = () => {
           </p>
         </div>
 
-        {/* Demo Fast Logins */}
         <div className="rounded-2xl bg-slate-50 p-3 border border-slate-200/60 flex items-center justify-between text-xs">
           <span className="font-semibold text-slate-600 flex items-center gap-1">
             <Sparkles className="h-3.5 w-3.5 text-amber-500" /> Quick Demo Fill:
@@ -75,27 +83,50 @@ export const Login: React.FC = () => {
           </div>
         </div>
 
-        {/* Form */}
         <form onSubmit={handleSubmit} className="space-y-4">
           <Input
-            label="Email or Username"
+            label="Email"
             type="email"
             required
             leftIcon={<Mail className="h-4 w-4" />}
             value={email}
-            onChange={(e) => setEmail(e.target.value)}
+            onChange={(e) => {
+              setEmail(e.target.value);
+              if (fieldError) setFieldError(null);
+            }}
             placeholder="you@example.com"
+            error={fieldError && fieldError.includes('Email') ? fieldError : undefined}
           />
 
-          <Input
-            label="Password"
-            type="password"
-            required
-            leftIcon={<Lock className="h-4 w-4" />}
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            placeholder="••••••••"
-          />
+          <div className="space-y-1.5">
+            <Input
+              label="Password"
+              type="password"
+              required
+              leftIcon={<Lock className="h-4 w-4" />}
+              value={password}
+              onChange={(e) => {
+                setPassword(e.target.value);
+                if (fieldError) setFieldError(null);
+              }}
+              placeholder="••••••••"
+              error={fieldError && fieldError.includes('Password') ? fieldError : undefined}
+            />
+            <div className="flex justify-end">
+              <Link
+                to="/forgot-password"
+                className="text-xs font-semibold text-brand-600 hover:text-brand-700"
+              >
+                Forgot Password?
+              </Link>
+            </div>
+          </div>
+
+          {fieldError && !fieldError.includes('Email') && !fieldError.includes('Password') && (
+            <div className="p-3 rounded-xl bg-rose-50 border border-rose-200 text-xs font-semibold text-rose-700">
+              {fieldError}
+            </div>
+          )}
 
           {error && (
             <div className="p-3 rounded-xl bg-rose-50 border border-rose-200 text-xs font-semibold text-rose-700">
@@ -114,7 +145,6 @@ export const Login: React.FC = () => {
           </Button>
         </form>
 
-        {/* Footer */}
         <div className="text-center pt-2 border-t border-slate-100 text-xs text-slate-500">
           Don't have an account yet?{' '}
           <Link to="/register" className="font-bold text-brand-600 hover:text-brand-700 underline">
@@ -125,4 +155,3 @@ export const Login: React.FC = () => {
     </div>
   );
 };
-

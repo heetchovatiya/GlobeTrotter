@@ -5,7 +5,7 @@ from app.core.database import get_db
 from app.core.deps import get_current_user
 from app.crud import sharing as sharing_crud
 from app.models import User
-from app.schemas.views import CopyTripResponse, ItineraryResponse, ShareResponse
+from app.schemas.views import BudgetResponse, CopyTripResponse, ItineraryResponse, ShareResponse
 
 router = APIRouter()
 
@@ -22,6 +22,11 @@ def share_trip(
 @router.get("/public/{slug}", response_model=ItineraryResponse)
 def get_public_trip(slug: str, db: Session = Depends(get_db)) -> ItineraryResponse:
     return sharing_crud.get_shared_itinerary(db, slug)
+
+
+@router.get("/public/{slug}/budget", response_model=BudgetResponse)
+def get_public_budget(slug: str, db: Session = Depends(get_db)) -> BudgetResponse:
+    return sharing_crud.get_shared_budget(db, slug)
 
 
 @router.post("/public/{slug}/copy", response_model=CopyTripResponse, status_code=status.HTTP_201_CREATED)

@@ -5,6 +5,7 @@ from sqlalchemy.orm import Session, selectinload
 
 from app.crud.itinerary import build_itinerary_response, get_trip_tree_by_id
 from app.crud.trips import derive_trip_status, get_owned_trip
+from app.crud import budget as budget_crud
 from app.models import (
     Expense,
     SharedTrip,
@@ -14,7 +15,7 @@ from app.models import (
     TripSection,
     User,
 )
-from app.schemas.views import CopyTripResponse, ItineraryResponse, ShareResponse
+from app.schemas.views import BudgetResponse, CopyTripResponse, ItineraryResponse, ShareResponse
 
 
 def _unique_slug(db: Session) -> str:
@@ -49,6 +50,13 @@ def get_shared_itinerary(db: Session, slug: str) -> ItineraryResponse:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Shared trip not found")
     trip = get_trip_tree_by_id(db, shared.trip_id)
     return build_itinerary_response(trip)
+
+
+def get_shared_budget(db: Session, slug: str) -> BudgetResponse:
+    shared = db.query(SharedTrip).filter(SharedTrip.public_slug == slug).first()
+    if shared is None:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Shared trip not found")
+    return budget_crud.get_budget_for_trip(db, shared.trip_id)
 
 
 def copy_shared_trip(db: Session, slug: str, user: User) -> CopyTripResponse:

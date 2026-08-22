@@ -67,4 +67,15 @@ export const authApi = {
   logout() {
     setAuthToken(null);
   },
+
+  async deleteAccount(): Promise<void> {
+    return apiClient<void>('/users/me', { method: 'DELETE' });
+  },
+
+  async forgotPassword(email: string): Promise<{ message: string }> {
+    return apiClient<{ message: string }>('/auth/forgot-password', {
+      method: 'POST',
+      body: JSON.stringify({ email }),
+    });
+  },
 };

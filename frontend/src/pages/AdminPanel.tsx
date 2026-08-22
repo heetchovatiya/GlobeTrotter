@@ -3,6 +3,7 @@ import { AdminAnalytics, AdminUser } from '../types';
 import { adminApi } from '../api/admin';
 import { Button } from '../components/common/Button';
 import { Badge } from '../components/common/Badge';
+import { useFormatPrice } from '../components/common/Price';
 import { Skeleton } from '../components/common/Skeleton';
 import { useUIStore } from '../store/uiStore';
 import {
@@ -13,6 +14,8 @@ import {
   YAxis,
   Tooltip,
   CartesianGrid,
+  BarChart,
+  Bar,
 } from 'recharts';
 import {
   ShieldCheck,
@@ -28,6 +31,7 @@ import {
 
 export const AdminPanel: React.FC = () => {
   const { showToast } = useUIStore();
+  const formatPrice = useFormatPrice();
 
   const [analytics, setAnalytics] = useState<AdminAnalytics | null>(null);
   const [users, setUsers] = useState<AdminUser[]>([]);
@@ -133,7 +137,7 @@ export const AdminPanel: React.FC = () => {
               {analytics.total_trips.toLocaleString()}
             </span>
             <p className="text-xs text-teal-600 font-semibold mt-1">
-              +14% growth month over month
+              {analytics.active_users} users with trips
             </p>
           </div>
         </div>
@@ -150,7 +154,7 @@ export const AdminPanel: React.FC = () => {
               {analytics.total_destinations}
             </span>
             <p className="text-xs text-slate-500 font-medium mt-1">
-              Across 22 countries worldwide
+              {analytics.total_destinations} cities in catalog
             </p>
           </div>
         </div>
@@ -164,10 +168,10 @@ export const AdminPanel: React.FC = () => {
           </div>
           <div className="mt-3">
             <span className="text-2xl sm:text-3xl font-extrabold text-slate-900">
-              ${(analytics.total_spend / 1000000).toFixed(2)}M
+              {formatPrice(analytics.total_spend)}
             </span>
             <p className="text-xs text-amber-600 font-semibold mt-1">
-              Average $1,850 per itinerary
+              Avg {formatPrice(analytics.total_trips ? analytics.total_spend / analytics.total_trips : 0)} per trip
             </p>
           </div>
         </div>
@@ -232,6 +236,21 @@ export const AdminPanel: React.FC = () => {
                 fill="url(#colorUsers)"
               />
             </AreaChart>
+          </ResponsiveContainer>
+        </div>
+      </div>
+
+      <div className="rounded-3xl bg-white border border-slate-200/80 p-6 shadow-soft space-y-4">
+        <h3 className="text-base font-bold text-slate-900">Trips Created Over Time</h3>
+        <div className="h-56 w-full">
+          <ResponsiveContainer width="100%" height="100%">
+            <BarChart data={analytics.trip_trends}>
+              <CartesianGrid strokeDasharray="3 3" stroke="#f1f5f9" />
+              <XAxis dataKey="month" tick={{ fontSize: 11 }} />
+              <YAxis tick={{ fontSize: 11 }} />
+              <Tooltip />
+              <Bar dataKey="trips" name="Trips Created" fill="#0d9488" radius={[6, 6, 0, 0]} />
+            </BarChart>
           </ResponsiveContainer>
         </div>
       </div>

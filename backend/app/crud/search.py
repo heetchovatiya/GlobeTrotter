@@ -39,6 +39,7 @@ def list_activities(
     city_id: int | None = None,
     type: ActivityType | None = None,
     max_cost: float | None = None,
+    max_duration_mins: int | None = None,
     sort: str | None = None,
     limit: int | None = None,
 ) -> list[Activity]:
@@ -52,11 +53,21 @@ def list_activities(
         query = query.filter(Activity.type == type)
     if max_cost is not None:
         query = query.filter(Activity.cost <= max_cost)
+    if max_duration_mins is not None:
+        query = query.filter(Activity.duration_mins <= max_duration_mins)
 
     if sort == "cost":
         query = query.order_by(Activity.cost.asc(), Activity.name.asc())
+    elif sort == "cost_asc":
+        query = query.order_by(Activity.cost.asc(), Activity.name.asc())
+    elif sort == "cost_desc":
+        query = query.order_by(Activity.cost.desc(), Activity.name.asc())
     elif sort == "duration":
         query = query.order_by(Activity.duration_mins.asc(), Activity.name.asc())
+    elif sort == "duration_desc":
+        query = query.order_by(Activity.duration_mins.desc(), Activity.name.asc())
+    elif sort == "popularity":
+        query = query.order_by(Activity.name.asc())
     elif sort == "name":
         query = query.order_by(Activity.name.asc())
     else:

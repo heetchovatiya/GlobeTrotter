@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, Depends, status
 from sqlalchemy.orm import Session
 
 from app.core.database import get_db
@@ -23,3 +23,11 @@ def patch_me(
 ) -> UserPublic:
     user = users_crud.update_user(db, current_user, payload)
     return UserPublic.model_validate(user)
+
+
+@router.delete("/me", status_code=status.HTTP_204_NO_CONTENT)
+def delete_me(
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user),
+) -> None:
+    users_crud.delete_user(db, current_user)
