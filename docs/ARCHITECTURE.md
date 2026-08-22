@@ -17,8 +17,8 @@ Reference docs: `GlobeTrotter_MVP_Plan.md` (screen-by-screen breakdown, already 
                                   |  REST, JSON, JWT in Authorization header
                                   v
                         +-------------------+
-                        |  Express API      |
-                        |  (Node.js)        |
+                        |  FastAPI           |
+                        |  (Python, async)   |
                         +---------+---------+
                                   |
                     +-------------+-------------+
@@ -26,7 +26,7 @@ Reference docs: `GlobeTrotter_MVP_Plan.md` (screen-by-screen breakdown, already 
                     v                           v
           +------------------+         +------------------+
           |  PostgreSQL       |         |  Object storage   |
-          |  (Prisma ORM)     |         |  (S3-compatible,  |
+          |  (SQLAlchemy ORM) |         |  (S3-compatible,  |
           |                    |         |   photos/covers)  |
           +------------------+         +------------------+
 ```
@@ -40,15 +40,15 @@ One backend, one frontend, one database. No microservices for the MVP. Splitting
 ```
 globetrotter/
   backend/
-    src/
-      config/       # db connection, env loading
-      models/       # Prisma schema and generated client
-      routes/       # route definitions, one file per resource
-      controllers/  # request handling, calls into services
-      middleware/   # auth, role guard, validation, error handler
-    prisma/
-      schema.prisma
-      seed.ts
+    app/
+      core/         # config, security (JWT, password hashing), db session
+      models/       # SQLAlchemy models, one file per table group
+      schemas/      # Pydantic request/response schemas
+      routers/      # route definitions, one file per resource
+      crud/         # DB query functions, called by routers
+      main.py       # app entrypoint, router registration
+    alembic/        # migrations
+    requirements.txt
   frontend/
     src/
       pages/        # one folder per route, matches the route table below
@@ -74,10 +74,10 @@ This is how the screens from the MVP plan map to backend and frontend modules, s
 
 | Module | Backend routes | Frontend pages | Suggested owner |
 |---|---|---|---|
-| Auth | `/auth/*` | `/login`, `/register` | Person A |
-| Trips core | `/trips/*`, `/stops/*`, `/sections/*` | `/trips`, `/trips/new`, `/trips/:id/build` | Person B |
-| Itinerary and budget | `/trips/:id/itinerary`, `/trips/:id/budget` | `/trips/:id`, `/trips/:id/calendar` | Person C |
-| Search | `/cities`, `/activities` | `/search` | Person D |
+| Auth | `/auth/*` (`auth.py`) | `/login`, `/register` | Person A |
+| Trips core | `/trips/*`, `/stops/*`, `/sections/*` (`trips.py`, `stops.py`, `sections.py`) | `/trips`, `/trips/new`, `/trips/:id/build` | Person B |
+| Itinerary and budget | `/trips/:id/itinerary`, `/trips/:id/budget` (`itinerary.py`, `budget.py`) | `/trips/:id`, `/trips/:id/calendar` | Person C |
+| Search | `/cities`, `/activities` (`cities.py`, `activities.py`) | `/search` | Person D |
 | Sharing | `/trips/:id/share`, `/public/:slug` | `/t/:slug` | whoever finishes their slice first |
 | Community | `/community/*` | `/community` | whoever finishes their slice first |
 | Admin | `/admin/*` | `/admin` | last priority, pick up after everything else is stable |
@@ -91,10 +91,10 @@ Each row is a vertical slice on purpose. Claim a row, build the route and the pa
 Every authenticated request follows the same path. Know this cold, it is the same for all 13 screens.
 
 1. Frontend page calls a function in `frontend/src/api/*.ts`, which wraps `fetch` and attaches the JWT from the auth store.
-2. Request hits Express, passes through `middleware/auth.ts` (verifies JWT, attaches `req.user`).
-3. Admin-only routes additionally pass through `middleware/requireRole('admin')`.
-4. Route hands off to a controller, controller calls Prisma, Prisma talks to Postgres.
-5. Controller shapes the response, never returns raw Prisma rows for joined data (see the itinerary endpoint note below).
+2. Request hits FastAPI, passes through a dependency (`Depends(get_current_user)`) that verifies the JWT and injects the user.
+3. Admin-only routes additionally depend on `Depends(require_role('admin'))`.
+4. Router function calls into `crud/`, which builds the SQLAlchemy query and talks to Postgres.
+5. The router returns a Pydantic response schema, never raw SQLAlchemy model instances for joined data (see the itinerary endpoint note below).
 6. Frontend receives JSON, updates the relevant store or local component state.
 
 For the two heaviest reads (`GET /trips/:id/itinerary` and `GET /trips/:id/budget`), do the grouping and aggregation in the controller or a SQL view, not in the React component. If a frontend page is doing `.reduce()` over raw rows to build a day-by-day structure, that logic is in the wrong layer, move it server-side.
@@ -103,8 +103,9 @@ For the two heaviest reads (`GET /trips/:id/itinerary` and `GET /trips/:id/budge
 
 ## 5. Auth and roles
 
-- JWT issued on login/register, stored in memory plus a refresh mechanism if time allows (for MVP, a long-lived token in memory is acceptable, do not overbuild refresh token rotation before the core product works).
-- `users.role` is either `user` or `admin`. Role is read from the JWT claim server-side on every `/admin/*` route. Never trust a role flag sent from the client.
+- JWT issued on login/register via `python-jose`, stored in memory on the frontend plus a refresh mechanism if time allows (for MVP, a long-lived token in memory is acceptable, do not overbuild refresh token rotation before the core product works).
+- Passwords hashed with `passlib[bcrypt]`, never stored or logged in plain text.
+- `users.role` is either `user` or `admin`. Role is read from the JWT claim server-side on every `/admin/*` route via a FastAPI dependency. Never trust a role flag sent from the client.
 - Public routes (`GET /public/:slug`) skip auth entirely. `POST /public/:slug/copy` requires auth, since it writes into a specific user's account.
 
 ---
@@ -113,14 +114,15 @@ For the two heaviest reads (`GET /trips/:id/itinerary` and `GET /trips/:id/budge
 
 - Postgres runs locally via `docker-compose.yml` (see repo root).
 - Copy `.env.example` to `.env` in both `backend/` and `frontend/` before running anything.
-- `backend`: `npm install`, `npx prisma migrate dev`, `npx prisma db seed`, `npm run dev`.
+- `backend`: create a virtualenv, `pip install -r requirements.txt`, `alembic upgrade head`, `python -m app.seed`, `uvicorn app.main:app --reload`.
 - `frontend`: `npm install`, `npm run dev`.
+- Interactive API docs are available at `http://localhost:8000/docs` once the backend is running, useful for anyone building a frontend page against a route someone else owns.
 
 ---
 
 ## 7. Non-negotiables (things that will break other people's work if skipped)
 
-- Do not change `prisma/schema.prisma` without posting in the team channel first. Every field in it is referenced by someone else's module.
+- Do not change files under `backend/app/models/` without posting in the team channel first, and always pair a model change with an Alembic migration (`alembic revision --autogenerate -m "..."`). Every field is referenced by someone else's module.
 - Do not commit `.env` files. `.gitignore` already excludes them, keep it that way.
 - Every new backend route needs a corresponding entry in `docs/SYSTEM_DESIGN.md` if it introduces a new data flow (a new join, a new external call). One paragraph is enough, this is for the next person reading the codebase, not a full spec.
 - Branch naming: `feature/<module>-<short-description>`, for example `feature/auth-jwt-middleware`. Matches the module names in the ownership table above.

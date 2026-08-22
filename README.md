@@ -7,6 +7,7 @@ Personalized, collaborative travel planning app. Multi-city itineraries, budget 
 1. Read `docs/ARCHITECTURE.md` first. It has the module ownership map, claim a row before you write code.
 2. Read `docs/SYSTEM_DESIGN.md` for the data flow of the four core features.
 3. Read `docs/GlobeTrotter_MVP_Plan.md` for the full screen-by-screen breakdown and API surface.
+4. If you are using Cursor, Claude Code, or another AI coding assistant, read `docs/AI_RULES.md` before generating anything. `.cursorrules` and `CLAUDE.md` at the repo root point to it automatically, but read it yourself too, an assistant skipping a rule is still your code once you commit it.
 
 ## Local setup
 
@@ -17,10 +18,12 @@ docker compose up -d
 # 2. Backend
 cd backend
 cp ../.env.example .env
-npm install
-npx prisma migrate dev
-npx prisma db seed
-npm run dev
+python -m venv venv
+source venv/bin/activate   # on Windows: venv\Scripts\activate
+pip install -r requirements.txt
+alembic upgrade head
+python -m app.seed
+uvicorn app.main:app --reload
 
 # 3. Frontend (new terminal)
 cd frontend
@@ -29,11 +32,15 @@ npm install
 npm run dev
 ```
 
+Backend runs at `http://localhost:8000`, interactive API docs at `http://localhost:8000/docs`. Frontend runs at `http://localhost:5173`.
+
 ## Branching
 
 `feature/<module>-<short-description>`, matching the module names in the ownership table in `docs/ARCHITECTURE.md`. One pull request per vertical slice (backend route plus its frontend page), not one giant PR at the end.
 
 ## Tech stack
 
-Backend: Node.js, Express, Prisma, PostgreSQL, JWT auth.
+Backend: Python, FastAPI, SQLAlchemy, Alembic, PostgreSQL, JWT auth (python-jose), passlib for password hashing.
 Frontend: React, Vite, Tailwind, React Router, Zustand, Recharts.
+
+Python was chosen over a Node backend specifically because AI-powered features (itinerary suggestions, budget prediction, activity recommendations) are on the roadmap, and keeping the API and any future ML/AI code in the same language avoids a second service and a network hop between them.

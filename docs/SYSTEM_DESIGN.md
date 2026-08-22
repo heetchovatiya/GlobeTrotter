@@ -57,7 +57,7 @@ Frontend                          Backend                              DB
    | <-- { days: [ {date, sections:[]} ] } |                              |
 ```
 
-Do not let this become N+1 queries (one query per section to fetch its activities). Use Prisma's `include` to fetch the full tree in one round trip, then group by date in application code. If this page feels slow in testing, that is the first place to look.
+Do not let this become N+1 queries (one query per section to fetch its activities). Use SQLAlchemy's `selectinload` or `joinedload` to fetch the full tree in one round trip, then group by date in application code. If this page feels slow in testing, that is the first place to look.
 
 ---
 

@@ -1,0 +1,38 @@
+---
+description: GlobeTrotter AI assistant rules — verify before inventing, stay in scope, security non-negotiable
+alwaysApply: true
+---
+
+# AI Assistant Rules, GlobeTrotter
+
+Full source of truth: `docs/AI_RULES.md`. Read that file before generating or editing any code.
+
+Also read: `docs/ARCHITECTURE.md`, `docs/SYSTEM_DESIGN.md`, `docs/GlobeTrotter_MVP_Plan.md`.
+
+## 1. Do not hallucinate
+
+- Verify libraries against `requirements.txt` / `package.json`.
+- Verify model fields against `backend/app/models/`.
+- Verify routes against `backend/app/routers/` (source of truth).
+- Never invent env vars, APIs, or claim unobserved success.
+- Re-read files before editing.
+
+## 2. Stay within scope
+
+- Model changes require a matching Alembic migration in the same change.
+- Do not touch routers outside the assigned module (see ownership table).
+- Prefer the smallest change; follow existing patterns.
+- If ambiguous, ask.
+
+## 3. Security
+
+- No hardcoded secrets; use `backend/app/core/config.py`.
+- Ownership checks on user data; `require_role("admin")` for `/admin/*`.
+- Only `GET /public/:slug` may skip auth.
+- SQLAlchemy only (no string-built SQL); Pydantic for request bodies.
+- CORS only `FRONTEND_URL`, never `*` with credentials.
+- Pin dependency versions.
+
+## 4. When unsure
+
+Say so. Honest uncertainty beats a confident wrong answer.

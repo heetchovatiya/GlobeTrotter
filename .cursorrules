@@ -1,0 +1,10 @@
+# Cursor rules for GlobeTrotter
+
+Full rules live in `docs/AI_RULES.md`, read that file in full before generating code in this repo. This file is a pointer, not a substitute, do not skip reading the real document.
+
+Summary, the full doc has the detail behind each of these:
+
+1. Do not hallucinate. Verify libraries against `requirements.txt`/`package.json`, verify model fields against `backend/app/models/`, verify route signatures against `backend/app/routers/`, never invent an env var or API method.
+2. Stay in scope. Check `docs/ARCHITECTURE.md`'s ownership table before editing a router outside your assigned module. Model changes require a matching Alembic migration in the same change.
+3. Security is non-negotiable. No hardcoded secrets. Every user-data route checks resource ownership. Every admin route is server-side role-gated. No raw SQL string interpolation. No `allow_origins=["*"]` with credentials enabled.
+4. If unsure, say so, do not produce a confident guess.
