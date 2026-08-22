@@ -17,10 +17,12 @@ docker compose up -d
 # 2. Backend
 cd backend
 cp ../.env.example .env
-npm install
-npx prisma migrate dev
-npx prisma db seed
-npm run dev
+python -m venv venv
+source venv/bin/activate   # on Windows: venv\Scripts\activate
+pip install -r requirements.txt
+alembic upgrade head
+python -m app.seed
+uvicorn app.main:app --reload
 
 # 3. Frontend (new terminal)
 cd frontend
@@ -29,11 +31,15 @@ npm install
 npm run dev
 ```
 
+Backend runs at `http://localhost:8000`, interactive API docs at `http://localhost:8000/docs`. Frontend runs at `http://localhost:5173`.
+
 ## Branching
 
 `feature/<module>-<short-description>`, matching the module names in the ownership table in `docs/ARCHITECTURE.md`. One pull request per vertical slice (backend route plus its frontend page), not one giant PR at the end.
 
 ## Tech stack
 
-Backend: Node.js, Express, Prisma, PostgreSQL, JWT auth.
+Backend: Python, FastAPI, SQLAlchemy, Alembic, PostgreSQL, JWT auth (python-jose), passlib for password hashing.
 Frontend: React, Vite, Tailwind, React Router, Zustand, Recharts.
+
+Python was chosen over a Node backend specifically because AI-powered features (itinerary suggestions, budget prediction, activity recommendations) are on the roadmap, and keeping the API and any future ML/AI code in the same language avoids a second service and a network hop between them.
